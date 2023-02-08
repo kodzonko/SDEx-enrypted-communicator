@@ -49,14 +49,20 @@ const theme = {
     "backdrop": "rgba(41, 50, 50, 0.4)"
   }
 };
+
 const { LightTheme } = adaptNavigationTheme({ reactNavigationLight: DefaultTheme });
 
 function App() {
   const [isSignedIn, setIsSignedIn] = React.useState(false);
-  const [keyPair, setKeyPair] = React.useState();
+  const [keyPair, setKeyPair] = React.useState(null);
 
   return (<PaperProvider theme={theme}>
-    <AuthContext.Provider value={{ isSignedIn, setIsSignedIn, keyPair, setKeyPair }}>
+    <AuthContext.Provider value={{
+      isSignedIn,
+      setIsSignedIn,
+      keyPair,
+      setKeyPair
+    }}>
       <MainStackNavigator theme={LightTheme} />
     </AuthContext.Provider>
   </PaperProvider>);

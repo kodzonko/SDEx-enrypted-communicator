@@ -4,12 +4,14 @@ import { Appbar, Divider, List } from "react-native-paper";
 import { loadContacts } from "../../utils/localStorage";
 import { useNavigation } from "@react-navigation/native";
 import { sortAscendingBySurname } from "../../utils/sort";
+import { IContact, TabsNavigationParamList } from "../../utils/types";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const ContactsScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<TabsNavigationParamList>>();
 
-  const contactsFromSorage = loadContacts();
-  const sortedContactsBySurname = sortAscendingBySurname(contactsFromSorage);
+  const contactsFromStorage: IContact[] = loadContacts();
+  const sortedContactsBySurname = sortAscendingBySurname(contactsFromStorage);
 
   return (<SafeAreaView className="flex-1">
     <Appbar.Header>
@@ -20,7 +22,7 @@ const ContactsScreen = () => {
     </Appbar.Header>
     <FlatList
       data={sortedContactsBySurname}
-      keyExtractor={item => item.id}
+      keyExtractor={item => item.id.toString()}
       ItemSeparatorComponent={() => <Divider />}
       renderItem={({ item }) => (<TouchableOpacity
         // onPress={() => navigation.navigate('Room', {thread: item})}

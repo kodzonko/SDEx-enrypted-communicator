@@ -2,7 +2,9 @@ import { SafeAreaView } from "react-native";
 import * as React from "react";
 import { Appbar, Text } from "react-native-paper";
 
-const SettingsScreen = ({ navigation }) => {
+const SettingsScreen = ({
+                          navigation
+                        }: any) => {
   const _goBack = () => navigation.goBack();
 
   return (<SafeAreaView>

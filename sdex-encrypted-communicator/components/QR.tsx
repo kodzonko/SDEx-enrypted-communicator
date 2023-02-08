@@ -4,7 +4,7 @@ import React from "react";
 
 import { Text, View } from "react-native";
 
-function QRScanner(props) {
+function QRScanner(props: any) {
   return (
     <View>
       <Text>Profile Tab</Text>

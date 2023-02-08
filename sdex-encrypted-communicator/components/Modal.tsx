@@ -1,9 +1,12 @@
 import { Pressable, Text, TextInput, View } from "react-native";
 import React, { useState } from "react";
+// @ts-expect-error TS(1192): Module '"C:/Users/janwa/repo/SDEx-encrypted-commun... Remove this comment to see the full error message
 import server from "../utils/server";
 import { styles } from "../utils/styles";
 
-const Modal = ({ setVisible }) => {
+const Modal = ({
+                 setVisible
+               }: any) => {
   const closeModal = () => setVisible(false);
   const [groupName, setGroupName] = useState("");
 

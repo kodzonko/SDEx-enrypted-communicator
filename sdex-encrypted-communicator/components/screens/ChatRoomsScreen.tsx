@@ -6,17 +6,18 @@ import pl from "date-fns/locale/pl";
 import { loadChatRooms } from "../../utils/localStorage";
 import { useNavigation } from "@react-navigation/native";
 import { sortDescendingByDate } from "../../utils/sort";
+import { IChatRoomListItem, StackNavigationParamList } from "../../utils/types";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 /**
  * Screen displaying all threads existing in local persistent storage + fetched from the server.
  *
- * @param navigation
  * @returns {JSX.Element}
  * @constructor
  */
 const ChatRoomsScreen = () => {
-  const navigation = useNavigation();
-  const [chatRooms, setChatRooms] = React.useState([]);
+  const navigation = useNavigation<StackNavigationProp<StackNavigationParamList>>();
+  const [chatRooms, setChatRooms] = React.useState <IChatRoomListItem[]>([]);
 
   React.useEffect(() => {
     const chatRoomsUnsorted = loadChatRooms();
@@ -27,8 +28,8 @@ const ChatRoomsScreen = () => {
   /**
    * Returns a badge if count > 0 else right arrow.
    */
-  const makeBadge = (count) => {
-    let icon = count > 0 && count < 10 ? `numeric-${count}-circle` : "numeric-9-plus-circle";
+  const makeBadge = (count: any) => {
+    const icon = count > 0 && count < 10 ? `numeric-${count}-circle` : "numeric-9-plus-circle";
 
     return count > 0 ? <List.Icon icon={icon} color="red" /> : <List.Icon icon="arrow-right-circle" />;
   };
@@ -42,7 +43,7 @@ const ChatRoomsScreen = () => {
     </Appbar.Header>
     <FlatList
       data={chatRooms}
-      keyExtractor={item => item.id}
+      keyExtractor={item => item.id.toString()}
       ItemSeparatorComponent={() => <Divider />}
       renderItem={({ item }) => (<TouchableOpacity
         // onPress={() => navigation.navigate('Room', {thread: item})}

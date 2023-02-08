@@ -2,7 +2,10 @@ import * as React from "react";
 import { KeyboardAvoidingView, SafeAreaView, View } from "react-native";
 import { Appbar, Button, TextInput } from "react-native-paper";
 
-const SignUpScreen = ({ navigation }) => {
+
+const SignUpScreen = ({
+                        navigation
+                      }: any) => {
   const [userPIN, setUserPIN] = React.useState("");
   const [userPINRepeated, setUserPINRepeated] = React.useState("");
   const [keyPair, setKeyPair] = React.useState({
@@ -30,19 +33,19 @@ const SignUpScreen = ({ navigation }) => {
         keyboardType="numeric"
         secureTextEntry={true}
         autoFocus={false}
-        minlength={4}
         maxLength={8}
         placeholder="Utwórz PIN"
+        value={userPIN}
         onChangeText={(value) => setUserPIN(value)}
       />
       <TextInput className={"mt-3"}
                  keyboardType="numeric"
                  secureTextEntry={true}
                  autoFocus={false}
-                 minlength={4}
                  maxLength={8}
                  placeholder="Powtórz PIN"
-                 onChangeText={(value) => setUserPIN(value)}
+                 value={userPINRepeated}
+                 onChangeText={(value) => setUserPINRepeated(value)}
       />
       <KeyboardAvoidingView className={"mt-10"}>
         <Button mode="outlined" onPress={handleSignUp}>

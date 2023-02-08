@@ -4,7 +4,9 @@ import { GiftedChat } from "react-native-gifted-chat";
 import { Dimensions, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-function MessagesContent({ navigation }) {
+function MessagesContent({
+                           navigation
+                         }: any) {
   const [messages, setMessages] = useState([
     {
       _id: 123,
@@ -27,7 +29,7 @@ function MessagesContent({ navigation }) {
       createdAt: new Date()
     }
   ]);
-  const onSend = (newMsg) => setMessages([...messages, ...newMsg]);
+  const onSend = (newMsg: any) => setMessages([...messages, ...newMsg]);
   const user = { _id: 1, name: "me" };
   const inverted = false;
   const { width, height } = Dimensions.get("window");

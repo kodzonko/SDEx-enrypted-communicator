@@ -1,47 +1,71 @@
-import * as React from "react";
 import * as SecureStore from "expo-secure-store";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from "@react-native-community/async-storage";
+import { Alert } from "react-native";
+import { IChatRoomListItem, IContact } from "./types";
+import Datastore from "react-native-local-mongodb";
 
-export const saveSecure = async (key, value) => {
+export const saveSecure = async (key: any, value: any) => {
   await SecureStore.setItemAsync(key, value);
 };
 
-export const getSecure = async (key) => {
-  let result = await SecureStore.getItemAsync(key);
+export const getSecure = async (key: string): Promise<string | null> => {
+  const result = await SecureStore.getItemAsync(key)
+    .then((value) => {
+      return value;
+    })
+    .catch((error) => {
+      Alert.alert("Błąd komunikacji z SecureStore", `Nie udało się pobrać wartości dla klucza ${key} z powodu: ${error?.message}`, [
+        {
+          // @ts-i
+          text: "Okej", onPress: () => {
+          }
+        }
+      ]);
+
+
+    });
   if (result) {
     return result;
   } else {
-    alert("Nie ma żadnej wartości dla tego klucza.");
+    Alert.alert("Nie ma żadnej wartości dla tego klucza.");
+    return null;
   }
 };
 
-export const deleteSecure = async (key) => {
-  let result = await SecureStore.deleteItemAsync(key);
+export const deleteSecure = async (key: any) => {
+  const result = await SecureStore.deleteItemAsync(key);
+  // @ts-expect-error TS(1345): An expression of type 'void' cannot be tested for ... Remove this comment to see the full error message
   if (!result) {
-    alert("Nie udało się usunąć wartości dla tego klucza.");
+    Alert.alert("Nie udało się usunąć wartości dla tego klucza.");
   }
 };
 
-var Datastore = require("react-native-local-mongodb"),
-  db = new Datastore({ filename: "mongoStorageFile", storage: AsyncStorage, autoload: true });
+const db = new Datastore({ filename: "mongoStorageFile", storage: AsyncStorage, autoload: true });
 
-export const saveInsecure = async (value) => {
-  db.insert(value);
+export const saveInsecure = async (value: any) => {
+  db.insert(value, (error) => {
+    Alert.alert("Błąd zapisu", `Wartość ${value} nie została zapisana z powodu: ${error?.message}`, [
+      {
+        text: "Okej", onPress: () => {
+        }
+      }
+    ]);
+  });
 };
 
-export const getInsecure = async (query) => {
+export const getInsecure = async (query: any) => {
   db.findOne(query);
 };
 
-export const updateInsecure = async (oldValue, newValue) => {
+export const updateInsecure = async (oldValue: any, newValue: any) => {
   db.update(oldValue, newValue);
 };
 
-export const removeInsecure = async (query) => {
+export const removeInsecure = async (query: any) => {
   db.remove({ _id: "id2" });
 };
 
-export const loadContacts = () => {
+export const loadContacts = (): IContact[] => {
 
   return [{
     "id": 1,
@@ -121,7 +145,7 @@ export const loadContacts = () => {
   }];
 };
 
-export const loadChatRooms = () => {
+export const loadChatRooms = (): IChatRoomListItem[] => {
   return [{
     "id": 1, "name": "Dorene", "surname": "Seleway", "lastMsgDate": "2023-01-25T16:57:37Z", "unreadMsgCount": 9
   }, {

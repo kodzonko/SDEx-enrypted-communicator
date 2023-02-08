@@ -8,7 +8,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import SettingsScreen from "../screens/SettingsScreen";
 
 const Stack = createNativeStackNavigator();
-const MainStackNavigator = (props) => {
+const MainStackNavigator = (props: any) => {
   const { isSignedIn, setIsSignedIn, keyPair, setKeyPair } = React.useContext(AuthContext);
   return (<NavigationContainer theme={props.theme}>
     <Stack.Navigator>
