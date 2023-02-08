@@ -3,7 +3,7 @@
     "prettier-plugin-organize-imports",
     "prettier-plugin-tailwindcss"
   ],
-  "pluginSearchDirs": false,
+  "pluginSearchDirs": [],
   "tailwindConfig": "./tailwind.config.js",
   "quoteProps": "as-needed",
   "trailingComma": "all",
