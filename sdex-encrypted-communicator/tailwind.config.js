@@ -1,7 +1,14 @@
 const colors = require("tailwindcss/colors");
+const nativewind = require("nativewind/tailwind/css");
 
+/** @type {import("tailwindcss").Config} */
 module.exports = {
-  content: ["./App.js", "./components/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./App.tsx",
+    "./components/**/*.{js,ts,jsx,tsx,html}",
+    "./utils/**/*.{js,ts,jsx,tsx,html}",
+  ],
+  plugins: [nativewind],
   theme: {
     colors: {
       inherit: colors.inherit,
@@ -30,22 +37,20 @@ module.exports = {
       purple: colors.purple,
       fuchsia: colors.fuchsia,
       pink: colors.pink,
-      rose: colors.rose
+      rose: colors.rose,
     },
     fontFamily: {
       sans: ["Graphik", "sans-serif"],
-      serif: ["Merriweather", "serif"]
+      serif: ["Merriweather", "serif"],
     },
     extend: {
       spacing: {
         "8xl": "96rem",
-        "9xl": "128rem"
+        "9xl": "128rem",
       },
       borderRadius: {
-        "4xl": "2rem"
-      }
-    }
-  }
+        "4xl": "2rem",
+      },
+    },
+  },
 };
-
-export {};

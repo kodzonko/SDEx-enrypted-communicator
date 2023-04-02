@@ -59,3 +59,12 @@ buck-out/
 */ios/Pods/
 */.expo/
 */.yarn/
+
+# MongoDB auth cert
+X509-cert-6153357055082114367.pem
+
+# Python
+__pycache__/
+
+# env private
+.env

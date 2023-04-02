@@ -2,8 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 
 export interface IAuthContext {
   isSignedIn: boolean;
-  keyPair: { privateKey: string, publicKey: string } | null;
-
+  keyPair: { privateKey: string; publicKey: string } | null;
 }
 
 export interface IAuthContextSetters {
@@ -26,15 +25,17 @@ export interface IChatRoomListItem {
   surname: string;
   lastMsgDate: string;
   unreadMsgCount: number;
-
 }
 
 export type StackNavigationParamList = {
   Home: undefined;
   Login: undefined;
   SignUp: undefined;
-}
+};
 
 export type TabsNavigationParamList = {
   Settings: undefined;
-}
+  Contacts: undefined;
+  ChatRooms: undefined;
+  Chat: undefined;
+};

@@ -29,7 +29,6 @@ export const styles = StyleSheet.create({
   loginbutton: {
     backgroundColor: "green",
     padding: 12,
-    // marginVertical: 10,
     marginTop: 10,
     marginHorizontal: "auto",
     borderRadius: 50,
