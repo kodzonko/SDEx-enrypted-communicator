@@ -1,8 +1,17 @@
 # Jak uruchomić projekt
 
+## Aplikacja kliencka
+
 ```shell
+cd sdex-encrypted-communicator
 npm install
 npm start
+```
+
+## Aplikacja serwerowa
+
+```shell
+...
 ```
 
 następnie z menu opcja:

@@ -5,7 +5,6 @@ import {
   MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
 } from "react-native-paper";
-import AuthContext from "./components/AuthContext";
 import MainStackNavigator from "./components/navigation/MainStackNavigator";
 
 // UI theme
@@ -59,21 +58,9 @@ const theme = {
 const { LightTheme } = adaptNavigationTheme({ reactNavigationLight: DefaultTheme });
 
 function App() {
-  const [isSignedIn, setIsSignedIn] = React.useState(false);
-  const [keyPair, setKeyPair] = React.useState(null);
-
   return (
     <PaperProvider theme={theme}>
-      <AuthContext.Provider
-        value={{
-          isSignedIn,
-          setIsSignedIn,
-          keyPair,
-          setKeyPair,
-        }}
-      >
-        <MainStackNavigator theme={LightTheme} />
-      </AuthContext.Provider>
+      <MainStackNavigator theme={LightTheme} />
     </PaperProvider>
   );
 }

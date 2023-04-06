@@ -1,15 +1,23 @@
-import { createContext } from "react";
-import { IAuthContextCombined } from "../utils/types";
+import { create } from "zustand";
+import { devtools, persist } from "zustand/middleware";
 
-const AuthContext = createContext<IAuthContextCombined>({
-  isSignedIn: false,
-  // tslint:disable-next-line:no-empty
-  setIsSignedIn: () => {
-  },
-  keyPair: null,
-  // tslint:disable-next-line:no-empty
-  setKeyPair: () => {
-  }
-});
+interface AuthState {
+  isSignedIn: boolean;
+  signIn: () => void;
+  signOut: () => void;
+}
 
-export default AuthContext;
+export const useAuthStore = create<AuthState>()(
+  devtools(
+    persist(
+      (set) => ({
+        isSignedIn: false,
+        signIn: () => set((state) => ({ isSignedIn: true })),
+        signOut: () => set((state) => ({ isSignedIn: false })),
+      }),
+      {
+        name: "auth-storage",
+      },
+    ),
+  ),
+);

@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
-import AuthContext from "../AuthContext";
+import { useAuthStore } from "../AuthContext";
 import ChatScreen from "../screens/ChatScreen";
 import LoginScreen from "../screens/LoginScreen";
 import SettingsScreen from "../screens/SettingsScreen";
@@ -10,8 +10,7 @@ import BottomTabNavigator from "./BottomTabNavigator";
 
 const Stack = createNativeStackNavigator();
 const MainStackNavigator = (props: any) => {
-  const { isSignedIn, setIsSignedIn, keyPair, setKeyPair } =
-    React.useContext(AuthContext);
+  const isSignedIn = useAuthStore((state) => state.isSignedIn);
   return (
     <NavigationContainer theme={props.theme}>
       <Stack.Navigator>
@@ -22,7 +21,7 @@ const MainStackNavigator = (props: any) => {
               component={BottomTabNavigator}
               options={{
                 headerShown: false,
-                animationTypeForReplace: props.isSignedIn ? "pop" : "push",
+                animationTypeForReplace: isSignedIn ? "pop" : "push",
               }}
             />
             <Stack.Screen
@@ -47,7 +46,7 @@ const MainStackNavigator = (props: any) => {
               component={LoginScreen}
               options={{
                 headerShown: false,
-                animationTypeForReplace: props.isSignedIn ? "pop" : "push",
+                animationTypeForReplace: isSignedIn ? "pop" : "push",
               }}
             />
             <Stack.Screen
@@ -55,7 +54,7 @@ const MainStackNavigator = (props: any) => {
               component={SignUpScreen}
               options={{
                 headerShown: false,
-                animationTypeForReplace: props.isSignedIn ? "pop" : "push",
+                animationTypeForReplace: isSignedIn ? "pop" : "push",
               }}
             />
           </>
