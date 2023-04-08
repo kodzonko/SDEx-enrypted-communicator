@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Alert, KeyboardAvoidingView, SafeAreaView, View } from "react-native";
 import { Appbar, Button, TextInput } from "react-native-paper";
-import { getSecure } from "../../utils/localStorage";
+import { getSecure } from "../../localStorage";
 import { useAuthStore } from "../AuthContext";
 
 const LoginScreen = ({ navigation }: any) => {

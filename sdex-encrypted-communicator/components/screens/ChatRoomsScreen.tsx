@@ -5,9 +5,9 @@ import pl from "date-fns/locale/pl";
 import * as React from "react";
 import { FlatList, SafeAreaView, TouchableOpacity } from "react-native";
 import { Appbar, Divider, List } from "react-native-paper";
-import { loadChatRooms } from "../../utils/localStorage";
+import { loadChatRooms } from "../../localStorage";
+import { IChatRoomListItem, StackNavigationParamList } from "../../types";
 import { sortDescendingByDate } from "../../utils/sort";
-import { IChatRoomListItem, StackNavigationParamList } from "../../utils/types";
 
 /**
  * Screen displaying all threads existing in local persistent storage + fetched from the server.

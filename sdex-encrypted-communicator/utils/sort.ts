@@ -1,4 +1,4 @@
-import { IChatRoomListItem, IContact } from "./types";
+import { IChatRoomListItem, IContact } from "../types";
 
 export const sortDescendingByDate = (
   threads: IChatRoomListItem[],

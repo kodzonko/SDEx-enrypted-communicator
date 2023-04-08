@@ -54,7 +54,6 @@ const theme = {
   },
 };
 
-// @ts-ignore
 const { LightTheme } = adaptNavigationTheme({ reactNavigationLight: DefaultTheme });
 
 function App() {

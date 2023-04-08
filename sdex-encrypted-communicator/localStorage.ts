@@ -1,72 +1,78 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
-import Datastore from "react-native-local-mongodb";
+import { GENERIC_LOCAL_STORAGE_ERROR } from "./errorMessages";
 import { IChatRoomListItem, IContact } from "./types";
 
-export const saveSecure = async (key: any, value: any) => {
-  await SecureStore.setItemAsync(key, value);
-};
-
-export const getSecure = async (key: string): Promise<string | null> => {
-  const result = await SecureStore.getItemAsync(key)
-    .then((value) => {
-      return value;
-    })
-    .catch((error) => {
-      Alert.alert(
-        "Błąd komunikacji z SecureStore",
-        `Nie udało się pobrać wartości dla klucza ${key} z powodu: ${error?.message}`,
-        [
-          {
-            // tslint:disable-next-line:no-empty
-            text: "Okej",
-            onPress: () => {},
-          },
-        ],
-      );
-    });
-  if (result) {
-    return result;
-  } else {
-    Alert.alert("Nie ma żadnej wartości dla tego klucza.", "", [
-      {
-        // tslint:disable-next-line:no-empty
-        text: "Okej",
-        onPress: () => {},
-      },
-    ]);
-    return null;
-  }
-};
-
-export const deleteSecure = async (key: any) => {
-  await SecureStore.deleteItemAsync(key).catch((error) => {
-    Alert.alert("Nie udało się usunąć wartości dla tego klucza.");
-  });
-};
-
-// @ts-ignore
-const db = new Datastore({
-  filename: "mongoStorageFile",
-  storage: AsyncStorage,
-  autoload: true,
-});
-
-export const saveInsecure = async (value: any) => {
-  db.insert(value, (error) => {
+export const saveSecure = async (key: string, value: string): Promise<void> => {
+  await SecureStore.setItemAsync(key, value).catch((error) => {
     Alert.alert(
-      "Błąd zapisu",
-      `Wartość ${value} nie została zapisana z powodu: ${error?.message}`,
+      GENERIC_LOCAL_STORAGE_ERROR,
+      `Nie udało się zapisać "${key}": "${value}" w bazie danych.`,
       [
         {
-          // tslint:disable-next-line:no-empty
           text: "Okej",
           onPress: () => {},
         },
       ],
     );
   });
+};
+
+export const getSecure = async (key: string): Promise<string | null> => {
+  let output = null;
+  await SecureStore.getItemAsync(key)
+    .then((value) => {
+      if (value === null) {
+        Alert.alert("Nie ma żadnej wartości dla tego klucza.", "", [
+          {
+            text: "Okej",
+            onPress: () => {},
+          },
+        ]);
+      }
+      output = value;
+    })
+    .catch((error) => {
+      Alert.alert(
+        GENERIC_LOCAL_STORAGE_ERROR,
+        `Nie udało się pobrać wartości dla klucza: ${key}.`,
+        [
+          {
+            text: "Okej",
+            onPress: () => {},
+          },
+        ],
+      );
+    });
+  return output;
+};
+
+export const deleteSecure = async (key: string): Promise<void> => {
+  await SecureStore.deleteItemAsync(key).catch((error) => {
+    Alert.alert(
+      GENERIC_LOCAL_STORAGE_ERROR,
+      "Nie udało się usunąć wartości dla tego klucza.",
+    );
+  });
+};
+
+export const saveInsecure = async (key: string, value: object): Promise<void> => {
+  try {
+    const stringifiedValue = JSON.stringify(value);
+    await AsyncStorage.setItem(key, stringifiedValue);
+  } catch (error) {
+    Alert.alert(
+      GENERIC_LOCAL_STORAGE_ERROR,
+      `Para wartości "${key}": "${value}" nie mogła zostać zapisana.`,
+      [
+        {
+          text: "Okej",
+          onPress: () => {},
+        },
+      ],
+    );
+  }
 };
 
 export const getInsecure = async (query: any) => {

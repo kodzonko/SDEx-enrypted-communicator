@@ -1,6 +1,6 @@
 import { blake3 } from "@noble/hashes/blake3";
-import { EncryptionError } from "../errors";
-import { XORByteArrays } from "./math";
+import { EncryptionError } from "./errors";
+import { XORByteArrays } from "./utils/math";
 
 const HASH_LENGTH = 32;
 
@@ -36,13 +36,10 @@ export const encrypt = (
     msgBlocks.push(new Uint8Array(HASH_LENGTH));
   }
 
-  // @ts-ignore
   const c1 = encryptBlock(msgBlocks[0], sessionKeyHash, seed);
-  // @ts-ignore
   const c2 = encryptBlock(msgBlocks[1], userPrivateKeyHash, sessionKeyHash);
   const h1 = blake3(seed, {
     dkLen: HASH_LENGTH,
-    // @ts-ignore
     context: msgBlocksToContext(msgBlocks[0], msgBlocks[1]),
   });
   const h1XORedWithSeed = bytesToStr(XORByteArrays(h1, seed));
@@ -50,7 +47,6 @@ export const encrypt = (
     msgBlocks.length >= 4
       ? blake3(h1XORedWithSeed, {
           dkLen: HASH_LENGTH,
-          // @ts-ignore
           context: msgBlocksToContext(msgBlocks[2], msgBlocks[3]),
         })
       : null;
@@ -63,7 +59,6 @@ export const encrypt = (
   if (msgBlocks.length > 4) {
     for (let i = 2; i < msgBlocks.length / 2; i += 2) {
       const hashKIteration = calculateKHashIteration(
-        // @ts-ignore
         hashIterations[i - 1],
         hashIterations[i - 2],
         msgBlocks[i * 2 - 1],
@@ -72,11 +67,9 @@ export const encrypt = (
       hashIterations.push(hashKIteration);
       if (i % 2 === 0) {
         encryptedMsgBlocks.push(
-          // @ts-ignore
           encryptBlock(msgBlocks[i], userPrivateKeyHash, hashKIteration),
         );
       } else {
-        // @ts-ignore
         encryptBlock(msgBlocks[i], hashKIteration, hashIterations[i - 1]);
       }
     }
@@ -130,7 +123,6 @@ const decrypt = (
   // if (msgBlocks.length > 4)
   for (let i = 2; i < cipherMsgBlocks.length; i += 2) {
     const hashKIteration = calculateKHashIteration(
-      // @ts-ignore
       hashIterations[i - 1],
       hashIterations[i - 2],
       "M_{2k-1}",
@@ -138,8 +130,6 @@ const decrypt = (
     );
     hashIterations.push(hashKIteration);
   }
-
-  
 };
 
 const generateSessionKey = (
@@ -153,7 +143,6 @@ const generateSessionKey = (
   const recipientPrivateKeyBytes = strToBytes(recipientPrivateKey);
   const result = new Uint8Array(senderPrivateKeyBytes.length);
   for (let i = 0; i < senderPrivateKeyBytes.length; i++) {
-    // @ts-ignore
     result[i] = senderPrivateKeyBytes[i] ^ recipientPrivateKeyBytes[i];
   }
 
