@@ -1,10 +1,7 @@
-import { Pressable, Text, TextInput, View } from "react-native";
 import React, { useState } from "react";
-import { styles } from "../utils/styles";
+import { Pressable, Text, TextInput, View } from "react-native";
 
-const Modal = ({
-                 setVisible
-               }: any) => {
+const Modal = ({ setVisible }: any) => {
   const closeModal = () => setVisible(false);
   const [groupName, setGroupName] = useState("");
 
@@ -12,22 +9,18 @@ const Modal = ({
     closeModal();
   };
   return (
-    <View style={styles.modalContainer}>
-      <Text style={styles.modalsubheading}>Enter your Group name</Text>
+    <View>
+      <Text>Enter your Group name</Text>
       <TextInput
-        style={styles.modalinput}
         placeholder="Group name"
         onChangeText={(value) => setGroupName(value)}
       />
-      <View style={styles.modalbuttonContainer}>
-        <Pressable style={styles.modalbutton} onPress={handleCreateRoom}>
-          <Text style={styles.modaltext}>CREATE</Text>
+      <View>
+        <Pressable onPress={handleCreateRoom}>
+          <Text>CREATE</Text>
         </Pressable>
-        <Pressable
-          style={[styles.modalbutton, { backgroundColor: "#E14D2A" }]}
-          onPress={closeModal}
-        >
-          <Text style={styles.modaltext}>CANCEL</Text>
+        <Pressable onPress={closeModal}>
+          <Text>CANCEL</Text>
         </Pressable>
       </View>
     </View>

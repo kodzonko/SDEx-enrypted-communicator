@@ -3,7 +3,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
 import { FlatList, SafeAreaView, TouchableOpacity } from "react-native";
 import { Appbar, Divider, List } from "react-native-paper";
-import { loadContacts } from "../../localStorage";
+import { loadContacts } from "../../databases/secureStoreMiddlewares";
 import { IContact, TabsNavigationParamList } from "../../types";
 import { sortAscendingBySurname } from "../../utils/sort";
 

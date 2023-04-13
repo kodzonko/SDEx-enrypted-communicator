@@ -1,6 +1,6 @@
 import * as React from "react";
 import { BottomNavigation } from "react-native-paper";
-import { getUnreadCount } from "../../localStorage";
+import { getUnreadCount } from "../../databases/secureStoreMiddlewares";
 import ChatRoomsScreen from "../screens/ChatRoomsScreen";
 import ContactsScreen from "../screens/ContactsScreen";
 

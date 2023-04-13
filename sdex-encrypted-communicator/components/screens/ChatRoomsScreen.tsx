@@ -5,7 +5,7 @@ import pl from "date-fns/locale/pl";
 import * as React from "react";
 import { FlatList, SafeAreaView, TouchableOpacity } from "react-native";
 import { Appbar, Divider, List } from "react-native-paper";
-import { loadChatRooms } from "../../localStorage";
+import { loadChatRooms } from "../../databases/secureStoreMiddlewares";
 import { IChatRoomListItem, StackNavigationParamList } from "../../types";
 import { sortDescendingByDate } from "../../utils/sort";
 

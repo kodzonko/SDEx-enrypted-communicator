@@ -29,6 +29,7 @@ const SignUpScreen = ({ navigation }: any) => {
         </Text>
         <TextInput
           keyboardType="numeric"
+          mode="outlined"
           secureTextEntry={true}
           autoFocus={false}
           maxLength={8}
@@ -38,6 +39,7 @@ const SignUpScreen = ({ navigation }: any) => {
         />
         <TextInput
           className={"mt-3"}
+          mode="outlined"
           keyboardType="numeric"
           secureTextEntry={true}
           autoFocus={false}

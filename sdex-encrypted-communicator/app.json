@@ -27,7 +27,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo-no-background.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.rdsdcqhtwedpmhqv.sdexencryptedcommunicator"
     },
     "web": {
       "favicon": "./assets/logo-no-background.png"
