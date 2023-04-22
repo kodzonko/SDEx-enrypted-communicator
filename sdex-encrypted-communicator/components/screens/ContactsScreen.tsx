@@ -3,14 +3,14 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
 import { FlatList, SafeAreaView, TouchableOpacity } from "react-native";
 import { Appbar, Divider, List } from "react-native-paper";
-import { loadContacts } from "../../databases/secureStoreMiddlewares";
-import { IContact, TabsNavigationParamList } from "../../types";
-import { sortAscendingBySurname } from "../../utils/sort";
+import { getContacts } from "../../databases/DataHandlers";
+import { sortAscendingBySurname } from "../../utils/Sort";
+import { Contact, TabsNavigationParamList } from "../Types";
 
 const ContactsScreen = () => {
   const navigation = useNavigation<StackNavigationProp<TabsNavigationParamList>>();
 
-  const contactsFromStorage: IContact[] = loadContacts();
+  const contactsFromStorage: Contact[] = getContacts();
   const sortedContactsBySurname = sortAscendingBySurname(contactsFromStorage);
 
   return (

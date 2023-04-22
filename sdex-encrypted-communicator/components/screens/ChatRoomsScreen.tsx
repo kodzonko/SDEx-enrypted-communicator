@@ -5,9 +5,9 @@ import pl from "date-fns/locale/pl";
 import * as React from "react";
 import { FlatList, SafeAreaView, TouchableOpacity } from "react-native";
 import { Appbar, Divider, List } from "react-native-paper";
-import { loadChatRooms } from "../../databases/secureStoreMiddlewares";
-import { IChatRoomListItem, StackNavigationParamList } from "../../types";
-import { sortDescendingByDate } from "../../utils/sort";
+import { loadChatRooms } from "../../databases/DataHandlers";
+import { sortDescendingByDate } from "../../utils/Sort";
+import { ChatRoomListItem, StackNavigationParamList } from "../Types";
 
 /**
  * Screen displaying all threads existing in local persistent storage + fetched from the server.
@@ -17,7 +17,7 @@ import { sortDescendingByDate } from "../../utils/sort";
  */
 const ChatRoomsScreen = () => {
   const navigation = useNavigation<StackNavigationProp<StackNavigationParamList>>();
-  const [chatRooms, setChatRooms] = React.useState<IChatRoomListItem[]>([]);
+  const [chatRooms, setChatRooms] = React.useState<ChatRoomListItem[]>([]);
 
   React.useEffect(() => {
     const chatRoomsUnsorted = loadChatRooms();

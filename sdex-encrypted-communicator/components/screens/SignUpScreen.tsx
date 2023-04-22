@@ -60,7 +60,13 @@ const SignUpScreen = ({ navigation }: any) => {
               Importuj
             </Button>
           </View>
-          <Button mode="contained" className="mt-10 mb-6" onPress={handleSignUp}>
+          <Text variant="bodyLarge" className="mt-4 underline">
+            Twój klucz prywatny: ...
+          </Text>
+          <Text variant="bodyLarge" className="mt-2 underline">
+            Twój klucz publiczny: ...
+          </Text>
+          <Button mode="contained" className="mb-6 mt-10" onPress={handleSignUp}>
             Zarejestruj
           </Button>
           <Button

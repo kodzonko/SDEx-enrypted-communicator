@@ -1,4 +1,4 @@
-import { PreconditionError } from "../errors";
+import { PreconditionError } from "../Errors";
 
 // export const XORByteArrays = (arr1: Uint8Array, arr2: Uint8Array): Uint8Array => {
 //   if (arr1.length !== arr2.length) {

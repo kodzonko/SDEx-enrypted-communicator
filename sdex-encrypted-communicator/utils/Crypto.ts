@@ -1,6 +1,6 @@
 import { blake3 } from "@noble/hashes/blake3";
-import { EncryptionError } from "./errors";
-import { XORByteArrays } from "./utils/math";
+import { EncryptionError } from "../Errors";
+import { XORByteArrays } from "./Math";
 
 const HASH_LENGTH = 32;
 

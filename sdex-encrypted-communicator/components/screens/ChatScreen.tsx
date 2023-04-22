@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Dimensions, SafeAreaView, View } from "react-native";
 import { GiftedChat } from "react-native-gifted-chat";
 import { Appbar } from "react-native-paper";
-import { StackNavigationParamList } from "../../types";
+import { StackNavigationParamList } from "../Types";
 
 function ChatScreen() {
   const [messages, setMessages] = useState([

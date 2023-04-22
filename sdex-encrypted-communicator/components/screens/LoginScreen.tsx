@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Alert, KeyboardAvoidingView, SafeAreaView, View } from "react-native";
 import { Appbar, Button, TextInput } from "react-native-paper";
-import { getSecure } from "../../databases/secureStoreMiddlewares";
-import { useAuthStore } from "../AuthContext";
+import { getSecure } from "../../databases/SecureStoreMiddlewares";
+import { useAuthStore } from "../Contexts";
 
 const LoginScreen = ({ navigation }: any) => {
   const [userInputPIN, setUserInputPIN] = React.useState("");
