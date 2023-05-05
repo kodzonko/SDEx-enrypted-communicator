@@ -1,0 +1,764 @@
+<mxfile host="app.diagrams.net" modified="2023-05-05T23:16:46.431Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36" etag="gcDbJBhp932D0MpZdEo5" version="21.2.8" type="device">
+  <diagram name="Page-1" id="2YBvvXClWsGukQMizWep">
+    <mxGraphModel dx="7220" dy="4398" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2336" pageHeight="1654" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="z0FfPh4K_twok0mwLrKB-125" value="" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;align=left;fontColor=#999999;strokeColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="725" y="1140" width="260" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-1" value="" style="shape=actor;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="40" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-2" value="Ekran startowy&lt;br&gt;(ekran logowania)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="200" y="100" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-3" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.9;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-1" target="z0FfPh4K_twok0mwLrKB-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="90" y="130" as="sourcePoint" />
+            <mxPoint x="450" y="170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-9" value="uruchomienie aplikacji" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-3">
+          <mxGeometry x="-0.2195" y="-1" relative="1" as="geometry">
+            <mxPoint x="6" y="-11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-4" value="&lt;b style=&quot;font-size: 29px;&quot;&gt;SCHEMAT REJESTRACJI UŻYTKOWNIKA&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=29;" vertex="1" parent="1">
+          <mxGeometry x="570" y="-280" width="600" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-5" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-2" target="z0FfPh4K_twok0mwLrKB-8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="460" y="220" as="sourcePoint" />
+            <mxPoint x="490" y="130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-6" value="kliknięcie w odsyłacz" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-5">
+          <mxGeometry x="-0.3385" y="-2" relative="1" as="geometry">
+            <mxPoint x="14" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-8" value="Ekran rejestracji" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="450" y="100" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-13" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;dashed=1;dashPattern=8 8;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-15" target="z0FfPh4K_twok0mwLrKB-8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="395" y="200" as="sourcePoint" />
+            <mxPoint x="450" y="110" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-15" value="&lt;b style=&quot;border-color: var(--border-color);&quot;&gt;Formularz rejestracji:&lt;/b&gt;&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;- wprowadzenie PINu 4-8 cyfr i potwierdzenie go&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&lt;span style=&quot;&quot;&gt;- okno dialogowe dodania kluczy szyfrujących RSA (wczytanie z plików lub wygenerowanie przez aplikację&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=9;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="435" y="210" width="150" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-26" value="" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="530" y="330" as="sourcePoint" />
+            <mxPoint x="750" y="130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-27" value="kliknięcie w przycisk Zarejestruj" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-26">
+          <mxGeometry x="0.2178" y="-1" relative="1" as="geometry">
+            <mxPoint x="-20" y="-11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-16" value="zapisanie PINu do zaszyfrowanej pamięci urządzenia (&lt;i&gt;SecureStore&lt;/i&gt;)" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;spacing=10;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="790" y="60" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-18" value="przesłanie pary kluczy&lt;br&gt;do serwera" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;spacing=10;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="790" y="150" width="170" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-19" value="" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="210" width="290" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-20" value="- umożliwia sprawdzenie przez innych użytkowników czy ten użytkownik jest zarejestrowany (po kluczu publicznym)&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&lt;span style=&quot;&quot;&gt;- wiadomości których adresat nie ma nawiązanego połączenia z serwerem są odrzucane&lt;/span&gt;&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&lt;span style=&quot;&quot;&gt;- klucz prywatny pełni rolę hasła (nie jest przechowywany jawnie w bazie danych), umożliwia autentykację użytkownika także w sytuacji kiedy zaimportuje klucze na innym urządzeniu i zarejestruje się z ich użyciem&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1090" y="270" width="180" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-20" target="z0FfPh4K_twok0mwLrKB-20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-23" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.984;entryY=0.7;entryDx=0;entryDy=0;exitX=0.4;exitY=0.1;exitDx=0;exitDy=0;exitPerimeter=0;dashed=1;dashPattern=8 8;entryPerimeter=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-19" target="z0FfPh4K_twok0mwLrKB-18">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="300" as="sourcePoint" />
+            <mxPoint x="740" y="230" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1060" y="190" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-24" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="z0FfPh4K_twok0mwLrKB-16">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="750" y="130" as="sourcePoint" />
+            <mxPoint x="680" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-25" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="z0FfPh4K_twok0mwLrKB-18">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="750" y="130" as="sourcePoint" />
+            <mxPoint x="680" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-29" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="130" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-30" value="Serwer" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1245" y="100" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-31" value="Użytkownik" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="30" y="70" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-33" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="970" y="169.5" as="sourcePoint" />
+            <mxPoint x="1210" y="169.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-34" value="transport połączeniem socketowym z SSL" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-33">
+          <mxGeometry x="-0.3583" y="-3" relative="1" as="geometry">
+            <mxPoint x="33" y="-23" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-35" value="" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="740" y="-240" width="260" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-36" value="- umożliwia logowanie do aplikacji (i w tle również nawiązanie połączenia z serwerem) za pomocą samego PINu, użytkownik nie musi podawać swoich kluczy RSA aby zalogować się do aplikacji&lt;br&gt;- chroni dostęp do wglądu w kontakty i historię wiadomości przechowywane w aplikacji" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="790" y="-220" width="180" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-37" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;dashed=1;dashPattern=8 8;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-36" target="z0FfPh4K_twok0mwLrKB-16">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="886" y="266" as="sourcePoint" />
+            <mxPoint x="885" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-38" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1360" y="160" as="sourcePoint" />
+            <mxPoint x="1640" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-41" value="zapisanie klucza publicznego w bazie danych&lt;br&gt;(tekst jawny)" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-38">
+          <mxGeometry x="-0.4278" y="2" relative="1" as="geometry">
+            <mxPoint x="-70" y="-18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-39" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
+          <mxGeometry x="1650" y="130" width="60" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-40" value="Baza danych" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1650" y="100" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-42" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1360" y="200" as="sourcePoint" />
+            <mxPoint x="1640" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-43" value="zapisanie klucza prywatnego w bazie danych&lt;br&gt;(jako hash + salt)" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-42">
+          <mxGeometry x="-0.4278" y="2" relative="1" as="geometry">
+            <mxPoint x="-70" y="-18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-44" value="wygenerowanie kodu QR z kluczem publicznym użytkownika i zapisanie go&lt;br&gt;jako obrazu w galerii zdjęć urządzenia" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;spacing=15;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="790" y="210" width="250" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-45" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="z0FfPh4K_twok0mwLrKB-44">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="750" y="130" as="sourcePoint" />
+            <mxPoint x="820" y="185" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="760" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-46" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="z0FfPh4K_twok0mwLrKB-47">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="750" y="130" as="sourcePoint" />
+            <mxPoint x="710" y="320" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="760" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-47" value="zapisanie wygenerowanych kluczy RSA do plików w pamięci urządzenia" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;spacing=15;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="790" y="280" width="250" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-48" value="*jeśli użytkownik wybrał opcję generowania kluczy" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="810" y="330" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-49" value="&lt;b style=&quot;font-size: 29px;&quot;&gt;SCHEMAT LOGOWANIA UŻYTKOWNIKA&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=29;" vertex="1" parent="1">
+          <mxGeometry x="590" y="610" width="580" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-50" value="" style="shape=actor;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="720" width="40" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-51" value="Ekran startowy&lt;br&gt;(ekran logowania)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="210" y="720" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-52" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.9;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-50" target="z0FfPh4K_twok0mwLrKB-51">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="100" y="750" as="sourcePoint" />
+            <mxPoint x="460" y="790" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-53" value="uruchomienie aplikacji" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-52">
+          <mxGeometry x="-0.2195" y="-1" relative="1" as="geometry">
+            <mxPoint x="6" y="-11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-54" value="Użytkownik" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="690" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-57" value="Ekran czatów&lt;br&gt;(lista &quot;pokoi rozmów&quot; z poszczególnymi kontaktami)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="760" y="715" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-58" value="Próba nawiązania&lt;br&gt;połączenia z serwerem&lt;br&gt;(przesłanie klucza&lt;br&gt;prywatnego RSA)" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="530" y="910" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-60" value="Odszyfrowanie historii wiadomości i kontaktów przechowywanych na urządzeniu" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="530" y="820" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-61" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="z0FfPh4K_twok0mwLrKB-60">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="490" y="750" as="sourcePoint" />
+            <mxPoint x="520" y="920" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="490" y="860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-62" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-60" target="z0FfPh4K_twok0mwLrKB-57">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="580" y="790" as="sourcePoint" />
+            <mxPoint x="630" y="740" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="730" y="860" />
+              <mxPoint x="730" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-64" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="910" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-65" value="Serwer" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="880" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-66" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="710" y="949" as="sourcePoint" />
+            <mxPoint x="1000" y="949.44" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-67" value="transport połączeniem socketowym z SSL" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-66">
+          <mxGeometry x="-0.3583" y="-3" relative="1" as="geometry">
+            <mxPoint x="33" y="-23" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-68" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="900" width="60" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-69" value="Baza danych" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="870" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-70" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1390" y="950" as="sourcePoint" />
+            <mxPoint x="1140" y="950" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-71" value="weryfikacja użytkownika w oparciu o hash i salt&lt;br&gt;klucza prywatnego zapisanych w bazie" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-70">
+          <mxGeometry x="-0.3583" y="-3" relative="1" as="geometry">
+            <mxPoint x="-148" y="-19" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-73" value="" style="triangle;whiteSpace=wrap;html=1;rotation=-180;" vertex="1" parent="1">
+          <mxGeometry x="1035" y="700" width="60" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-74" value="" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-57" target="z0FfPh4K_twok0mwLrKB-73">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="760" y="700" as="sourcePoint" />
+            <mxPoint x="810" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-75" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1064.5" y="880" as="sourcePoint" />
+            <mxPoint x="1064.5" y="790" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-77" value="Połączenie aplikacji klienta&lt;br&gt;z serwerem -&amp;gt; możliwość&lt;br&gt;wysyłania i odbierania&lt;br&gt;wiadomości" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="660" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-78" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.024;exitY=1.01;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-73" target="z0FfPh4K_twok0mwLrKB-77">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="960" y="820" as="sourcePoint" />
+            <mxPoint x="1010" y="770" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-79" value="Jeśli serwer działa i autentykacja przebiegła pomyślnie&amp;nbsp;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-78">
+          <mxGeometry x="-0.1404" y="2" relative="1" as="geometry">
+            <mxPoint x="24" y="-8" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-80" value="Połączenie nieudane -&amp;gt; możliwość korzystania z aplikacji w trybie offline (przeglądanie wiadomości, dodawanie kontaktów)" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="760" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-81" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.005;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-73" target="z0FfPh4K_twok0mwLrKB-80">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1109" y="749.44" as="sourcePoint" />
+            <mxPoint x="1410" y="750.44" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-82" value="Jeśli serwer nie działa lub autentykacja nieudana" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-81">
+          <mxGeometry x="-0.1404" y="2" relative="1" as="geometry">
+            <mxPoint x="9" y="-8" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-84" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="z0FfPh4K_twok0mwLrKB-58">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="490" y="860" as="sourcePoint" />
+            <mxPoint x="690" y="930" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="490" y="950" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-85" value="" style="endArrow=none;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="z0FfPh4K_twok0mwLrKB-51">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="490" y="750" as="sourcePoint" />
+            <mxPoint x="840" y="980" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-86" value="wprowadzenie poprawnego PINu" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-85">
+          <mxGeometry x="0.3931" y="3" relative="1" as="geometry">
+            <mxPoint x="33" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-87" value="&lt;span style=&quot;font-size: 29px;&quot;&gt;&lt;b&gt;SCHEMAT PONOWNEJ REJESTRACJI UŻYTKOWNIKA&lt;/b&gt;&lt;br&gt;(nowy telefon bądź wyczyszczenie pamięci aplikacji)&lt;br&gt;&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=29;" vertex="1" parent="1">
+          <mxGeometry x="485" y="1060" width="780" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-88" value="" style="shape=actor;whiteSpace=wrap;html=1;strokeColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1480" width="40" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-89" value="Ekran startowy&lt;br&gt;(ekran logowania)" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#999999;strokeColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="190" y="1480" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-90" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.9;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;strokeColor=#999999;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-88" target="z0FfPh4K_twok0mwLrKB-89">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="80" y="1510" as="sourcePoint" />
+            <mxPoint x="440" y="1550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-91" value="uruchomienie aplikacji" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#999999;" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-90">
+          <mxGeometry x="-0.2195" y="-1" relative="1" as="geometry">
+            <mxPoint x="6" y="-11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-92" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontColor=#999999;strokeColor=#999999;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-89" target="z0FfPh4K_twok0mwLrKB-94">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="450" y="1600" as="sourcePoint" />
+            <mxPoint x="480" y="1510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-93" value="kliknięcie w odsyłacz" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#999999;" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-92">
+          <mxGeometry x="-0.3385" y="-2" relative="1" as="geometry">
+            <mxPoint x="14" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-94" value="Ekran rejestracji" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#999999;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="440" y="1480" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-95" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;dashed=1;dashPattern=8 8;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-96" target="z0FfPh4K_twok0mwLrKB-94">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="385" y="1580" as="sourcePoint" />
+            <mxPoint x="440" y="1490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-96" value="&lt;font color=&quot;#999999&quot;&gt;&lt;b style=&quot;border-color: var(--border-color);&quot;&gt;Formularz rejestracji:&lt;/b&gt;&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;- wprowadzenie PINu&lt;br&gt;4-8 cyfr i potwierdzenie go&lt;/font&gt;&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&lt;span style=&quot;&quot;&gt;- w oknie dialogowym wybór wczytania kluczy z plików&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=9;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="420" y="1580" width="160" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-97" value="" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;fontColor=#999999;strokeColor=#999999;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-94">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="520" y="1710" as="sourcePoint" />
+            <mxPoint x="740" y="1510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-98" value="kliknięcie w przycisk Zarejestruj" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#999999;" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-97">
+          <mxGeometry x="0.2178" y="-1" relative="1" as="geometry">
+            <mxPoint x="-20" y="-11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-99" value="zapisanie PINu do zaszyfrowanej pamięci urządzenia (&lt;i&gt;SecureStore&lt;/i&gt;)" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;spacing=10;fontColor=#999999;strokeColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="780" y="1440" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-100" value="przesłanie pary kluczy&lt;br&gt;do serwera" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;spacing=10;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="780" y="1530" width="170" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-101" value="" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="1590" width="310" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-102" value="- para kluczy zostanie ponownie zapisana, przy czy salt dla hashu klucza prywatnego będzie inny, więc zapisany w bazie hash także będzie inny.&lt;br&gt;- klucz publiczny będzie zapisany, ale nie nadpisze w bazie istniejącego już rekordu, po prostu rekord z poprzedniej rejestracji pozostanie osierocony, z perspektywy serwera nie ma to znaczenia, wiadomości są przekazywane tylko do aktywnie połączonych w momencie wysyłania wiadomości adresatów" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1085" y="1650" width="180" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-103" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-102" target="z0FfPh4K_twok0mwLrKB-102">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-104" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.984;entryY=0.7;entryDx=0;entryDy=0;exitX=0.4;exitY=0.1;exitDx=0;exitDy=0;exitPerimeter=0;dashed=1;dashPattern=8 8;entryPerimeter=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-101" target="z0FfPh4K_twok0mwLrKB-100">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="490" y="1680" as="sourcePoint" />
+            <mxPoint x="730" y="1610" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1050" y="1570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-105" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#999999;" edge="1" parent="1" target="z0FfPh4K_twok0mwLrKB-99">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="740" y="1510" as="sourcePoint" />
+            <mxPoint x="670" y="1630" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-106" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#999999;" edge="1" parent="1" target="z0FfPh4K_twok0mwLrKB-100">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="740" y="1510" as="sourcePoint" />
+            <mxPoint x="670" y="1630" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-107" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontColor=#999999;strokeColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="1210" y="1470" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-108" value="Serwer" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="1235" y="1440" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-109" value="Użytkownik" style="text;html=1;strokeColor=#999999;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="20" y="1450" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-110" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fontColor=#999999;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="960" y="1509.5" as="sourcePoint" />
+            <mxPoint x="1200" y="1509.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-111" value="transport połączeniem socketowym z SSL" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#999999;" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-110">
+          <mxGeometry x="-0.3583" y="-3" relative="1" as="geometry">
+            <mxPoint x="33" y="-23" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-112" value="- umożliwia logowanie do aplikacji (i w tle również nawiązanie połączenia z serwerem) za pomocą samego PINu, użytkownik nie musi podawać swoich kluczy RSA aby zalogować się do aplikacji&lt;br&gt;- chroni dostęp do wglądu w kontakty i historię wiadomości przechowywane w aplikacji" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="775" y="1160" width="180" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-113" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;dashed=1;dashPattern=8 8;fontColor=#999999;strokeColor=#999999;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-112" target="z0FfPh4K_twok0mwLrKB-99">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="876" y="1646" as="sourcePoint" />
+            <mxPoint x="875" y="1590" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-114" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fontColor=#999999;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1350" y="1500" as="sourcePoint" />
+            <mxPoint x="1630" y="1500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-115" value="zapisanie klucza publicznego w bazie danych&lt;br&gt;(tekst jawny)" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];fontColor=#999999;" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-114">
+          <mxGeometry x="-0.4278" y="2" relative="1" as="geometry">
+            <mxPoint x="-60" y="-18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-116" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fontColor=#999999;strokeColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="1470" width="60" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-117" value="Baza danych" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="1440" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-118" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fontColor=#999999;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1350" y="1540" as="sourcePoint" />
+            <mxPoint x="1630" y="1540" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-119" value="zapisanie klucza prywatnego w bazie danych&lt;br&gt;(jako hash + salt)" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];fontColor=#999999;" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-118">
+          <mxGeometry x="-0.4278" y="2" relative="1" as="geometry">
+            <mxPoint x="-60" y="-18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-120" value="wygenerowanie kodu QR z kluczem publicznym użytkownika i zapisanie go&lt;br&gt;jako obrazu w galerii zdjęć urządzenia" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;spacing=15;strokeColor=#999999;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="780" y="1590" width="250" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-121" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#999999;" edge="1" parent="1" target="z0FfPh4K_twok0mwLrKB-120">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="740" y="1510" as="sourcePoint" />
+            <mxPoint x="810" y="1565" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="750" y="1600" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-133" value="* Elementy powtarzające się z diagramem pierwszej rejestracji zostały wyszarzone" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=15;fontStyle=0" vertex="1" parent="1">
+          <mxGeometry x="498" y="1158" width="310" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-134" value="&lt;span style=&quot;font-size: 29px;&quot;&gt;&lt;b&gt;SCHEMAT KOMUNIKACJI MIĘDZY UŻYTKOWNIKAMI&lt;/b&gt;&lt;br&gt;&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=29;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="2150" width="750" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-135" value="" style="shape=actor;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="17.5" y="2308" width="40" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-136" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.977;exitY=0.619;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-135" target="z0FfPh4K_twok0mwLrKB-139">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-27.500000000000227" y="2334.5" as="sourcePoint" />
+            <mxPoint x="282.5" y="2335" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-137" value="wybranie z widoku &quot;pokojów rozmów&quot;&lt;br&gt;czatu z wybranym kontaktem&lt;br&gt;(lub naciśnięcie przycisku modala (+)&lt;br&gt;i wybranie kontaktu z książki adresowej,&lt;br&gt;aby utworzyć nowe okno czatu" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-136">
+          <mxGeometry x="-0.2195" y="-1" relative="1" as="geometry">
+            <mxPoint x="-65" y="-38" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-138" value="- Użytkownik zalogowany&lt;br&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;- aplikacja połączona z&lt;br&gt;&amp;nbsp; serwerem (w trybie online)&lt;/span&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="2190" width="190" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-139" value="Ekran rozmowy" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="302.5" y="2315" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-145" value="Podział wiadomości&lt;br&gt;na bloki równej wielkości,&lt;br&gt;(opcjonalnie serializacja zdjęcia)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="577.5" y="2315" width="165" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-146" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-139" target="z0FfPh4K_twok0mwLrKB-145">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="507.5" y="2400" as="sourcePoint" />
+            <mxPoint x="557.5" y="2350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-147" value="wpisanie wiadomości&lt;br&gt;(opcjonalnie dodanie&lt;br&gt;zdjęcia z galerii)&lt;br&gt;i naciśnięcie guzika wyślij" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-146">
+          <mxGeometry x="-0.5315" y="-1" relative="1" as="geometry">
+            <mxPoint x="-24" y="-31" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-148" value="" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="1185" width="300" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-149" value="użytkownik traci historię czatu oraz kontakty, ale inni użytkownicy nie muszą ponownie dodawać go do swojej książki adresowej (o ile nie zmienił pary kluczy)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="1155" width="180" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-150" value="Szyfrowanie bloków&lt;br&gt;wiadomości metodą SDEx" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="807.5" y="2315" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-153" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-145" target="z0FfPh4K_twok0mwLrKB-150">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="697.5" y="2450" as="sourcePoint" />
+            <mxPoint x="747.5" y="2400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-154" value="Szyfrowanie bloków&lt;br&gt;wiadomości kluczami asymetrycznymi nadawcy i odbiorcy" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="2315" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-155" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-150" target="z0FfPh4K_twok0mwLrKB-154">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="897.5" y="2355" as="sourcePoint" />
+            <mxPoint x="992.5" y="2355" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-156" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="2313" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-157" value="Serwer" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1520" y="2283" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-158" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1240" y="2345" as="sourcePoint" />
+            <mxPoint x="1480" y="2345" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-159" value="transport połączeniem socketowym z SSL" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-158">
+          <mxGeometry x="-0.3583" y="-3" relative="1" as="geometry">
+            <mxPoint x="33" y="-18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-160" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1500" y="2400" as="sourcePoint" />
+            <mxPoint x="930" y="2390" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1500" y="2440" />
+              <mxPoint x="930" y="2440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-161" value="przekazanie hasła użytkownika i hasła sesji potrzebnych do szyfrowania" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-160">
+          <mxGeometry x="0.0231" y="-2" relative="1" as="geometry">
+            <mxPoint x="21" y="-15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-163" value="" style="shape=actor;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2987" y="2435" width="40" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-164" value="- Użytkownik zalogowany&lt;br&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;- aplikacja połączona z&lt;br&gt;&amp;nbsp; serwerem (w trybie online)&lt;/span&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="2920" y="2340" width="190" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-165" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1620" y="2344.63" as="sourcePoint" />
+            <mxPoint x="1860" y="2344.63" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-166" value="transport połączeniem socketowym z SSL" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-165">
+          <mxGeometry x="-0.3583" y="-3" relative="1" as="geometry">
+            <mxPoint x="33" y="-18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-167" value="Deszyfrowanie bloków&lt;br&gt;wiadomości kluczami asymetrycznymi nadawcy i odbiorcy" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1860" y="2315" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-168" value="Deszyfrowanie bloków&lt;br&gt;wiadomości metodą SDEx" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="2110" y="2315" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-170" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-167" target="z0FfPh4K_twok0mwLrKB-168">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="2040" y="2460" as="sourcePoint" />
+            <mxPoint x="2090" y="2410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-171" value="Złożenie bloków tekstu&lt;br&gt;w całość (opcjonalnie deserializacja zdjęcia)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="2360" y="2315" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-172" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-168" target="z0FfPh4K_twok0mwLrKB-171">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="2280" y="2480" as="sourcePoint" />
+            <mxPoint x="2330" y="2430" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-175" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="880" y="2390" as="sourcePoint" />
+            <mxPoint x="1530" y="2400" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="880" y="2470" />
+              <mxPoint x="1530" y="2470" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-176" value="przekazanie hasła użytkownika i hasła sesji potrzebnych do szyfrowania" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="1225.0042424242424" y="2456" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-177" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="2160" y="2390" as="sourcePoint" />
+            <mxPoint x="1610" y="2400" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="2160" y="2450" />
+              <mxPoint x="1610" y="2450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-178" value="przekazanie hasła użytkownika i hasła sesji potrzebnych do szyfrowania" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-177">
+          <mxGeometry x="0.0231" y="-2" relative="1" as="geometry">
+            <mxPoint x="21" y="-15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-179" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1580" y="2400" as="sourcePoint" />
+            <mxPoint x="2220" y="2390" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1580" y="2480" />
+              <mxPoint x="2220" y="2480" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-180" value="przekazanie hasła użytkownika i hasła sesji potrzebnych do szyfrowania" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z0FfPh4K_twok0mwLrKB-179">
+          <mxGeometry x="-0.034" y="6" relative="1" as="geometry">
+            <mxPoint x="12" y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-181" value="Dowolny ekran (zalogowanego użytkownika) w aplikacji" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="2660" y="2315" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-182" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-171" target="z0FfPh4K_twok0mwLrKB-181">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="2680" y="2450" as="sourcePoint" />
+            <mxPoint x="2730" y="2400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-183" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;dashPattern=8 8;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-184" target="z0FfPh4K_twok0mwLrKB-181">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="2740" y="2450" as="sourcePoint" />
+            <mxPoint x="2560" y="2380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-184" value="Po otrzymaniu i odszyfrowaniu wiadomości pojawia się baner z nazwą nadawcy i początkiem wiadomości" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="2660" y="2430" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-185" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=-0.014;entryY=0.58;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="z0FfPh4K_twok0mwLrKB-184" target="z0FfPh4K_twok0mwLrKB-163">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="2535" y="2355" as="sourcePoint" />
+            <mxPoint x="2670" y="2355" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-187" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="40" y="230" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-188" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="270" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-189" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="40" y="310" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-190" value="warstwa frontendu" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="120" y="230" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-191" value="warstwa backendu po stronie klienta" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="120" y="270" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-192" value="warstwa backendu po stronie serwera" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="115" y="310" width="220" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-193" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="50" y="830" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-194" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="50" y="870" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-195" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="50" y="910" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-196" value="warstwa frontendu" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="130" y="830" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-197" value="warstwa backendu po stronie klienta" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="130" y="870" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-198" value="warstwa backendu po stronie serwera" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="125" y="910" width="220" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-199" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="27.5" y="1580" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-200" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="27.5" y="1620" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-202" value="warstwa frontendu" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="107.5" y="1580" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-203" value="warstwa backendu po stronie klienta" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="107.5" y="1620" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-205" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="7.5" y="2415" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-206" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="7.5" y="2455" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-207" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="7.5" y="2495" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-208" value="warstwa frontendu" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="87.5" y="2415" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-209" value="warstwa backendu po stronie klienta" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="87.5" y="2455" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z0FfPh4K_twok0mwLrKB-210" value="warstwa backendu po stronie serwera" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="82.5" y="2495" width="220" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
