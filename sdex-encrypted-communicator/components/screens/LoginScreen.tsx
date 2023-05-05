@@ -1,79 +1,72 @@
 import * as React from "react";
 import { Alert, KeyboardAvoidingView, SafeAreaView, View } from "react-native";
 import { Appbar, Button, TextInput } from "react-native-paper";
-import { getSecure } from "../../databases/SecureStoreMiddlewares";
+import logger from "../../Logger";
+import { GENERIC_AUTHORIZATION_ERROR_MSG } from "../../Messages";
+import { getSecure } from "../../storage/SecureStoreMiddlewares";
+import styles from "../../Styles";
+import { GENERIC_OKAY_DISMISS_BUTTON } from "../Buttons";
 import { useAuthStore } from "../Contexts";
 
-const LoginScreen = ({ navigation }: any) => {
+function LoginScreen({ navigation }: any) {
   const [userInputPIN, setUserInputPIN] = React.useState("");
   const [userActualPIN, setUserActualPIN] = React.useState("");
   const signIn = useAuthStore((state) => state.signIn);
 
   React.useEffect(() => {
-    const getActualPIN = async () => {
-      await getSecure("userPIN")
-        .then((value) => (value ? setUserActualPIN(value) : null))
-        .catch((error) => {
-          Alert.alert(
-            "Błąd autoryzacji",
-            `Nie udało się pobrać PINu z bazy danych: ${error.message()}`,
-            [
-              {
-                text: "Okej",
-                onPress: () => {},
-              },
-            ],
-          );
-
-          if (!userActualPIN) {
-            Alert.alert(
-              "Błąd autoryzacji",
-              "PIN nie istnieje w bazie, zarejestruj się",
-              [
-                {
-                  text: "Okej",
-                  onPress: () => {},
-                },
-              ],
-            );
-          }
-        });
+    const fetchActualPIN = async (): Promise<void> => {
+      const actualPin = await getSecure("userPIN");
+      if (actualPin !== null) {
+        logger.info("PIN fetched from secure storage.");
+        setUserActualPIN(actualPin.toString());
+      } else {
+        logger.info("PIN missing in secure storage.");
+        Alert.alert(GENERIC_AUTHORIZATION_ERROR_MSG, "Brak PINu, zarejestruj się", [
+          GENERIC_OKAY_DISMISS_BUTTON,
+        ]);
+      }
     };
+    fetchActualPIN();
   }, []);
 
   const handleSignIn = () => {
+    logger.debug("Verifying user PIN.");
     if (userInputPIN.trim().length >= 4 && userInputPIN.trim().length <= 8) {
       if (userInputPIN.trim() === userActualPIN) {
+        logger.info("PIN verified, signing in.");
         signIn();
       } else {
-        Alert.alert("Błąd autoryzacji", "PIN jest niepoprawny", [
-          {
-            text: "Okej",
-            onPress: () => {},
-          },
+        logger.info("PIN verified as incorrect.");
+        Alert.alert(GENERIC_AUTHORIZATION_ERROR_MSG, "PIN jest niepoprawny", [
+          GENERIC_OKAY_DISMISS_BUTTON,
         ]);
       }
     } else {
-      Alert.alert("Błąd autoryzacji", "Podaj PIN aby się zalogować (4-8 cyfr).", [
-        {
-          text: "Okej",
-          onPress: () => {},
-        },
-      ]);
+      logger.debug("PIN length incorrect. Skipped secure storage verification.");
+      Alert.alert(
+        GENERIC_AUTHORIZATION_ERROR_MSG,
+        "Podaj PIN aby się zalogować (4-8 cyfr).",
+        [GENERIC_OKAY_DISMISS_BUTTON],
+      );
     }
   };
 
   return (
-    <SafeAreaView className="flex-1">
-      <Appbar.Header>
-        <Appbar.Content title="Logowanie" />
+    <SafeAreaView className="flex flex-1 flex-col">
+      <Appbar.Header style={styles.appBarHeader}>
+        <Appbar.Content
+          title="Logowanie"
+          titleStyle={styles.appBarTitle}
+          className="ml-11"
+        />
       </Appbar.Header>
       <View className="my-auto items-center justify-center">
         <TextInput
           keyboardType="numeric"
           mode="outlined"
-          secureTextEntry={true}
-          autoFocus={true}
+          style={styles.textInputPin}
+          secureTextEntry
+          autoFocus
           maxLength={8}
           placeholder="Wprowadź PIN"
           value={userInputPIN}
@@ -81,20 +74,21 @@ const LoginScreen = ({ navigation }: any) => {
             setUserInputPIN(value);
           }}
         />
-        <Button mode="contained" className="mt-3" onPress={handleSignIn}>
+        <Button mode="contained" className="my-7 w-40" onPress={handleSignIn}>
           Zaloguj
         </Button>
-        <KeyboardAvoidingView>
-          <Button
-            mode="text"
-            className="mt-3 align-bottom"
-            onPress={() => navigation.navigate("SignUp")}
-          >
-            Nie masz konta? Załóż je.
-          </Button>
-        </KeyboardAvoidingView>
       </View>
+      <KeyboardAvoidingView className="mb-2 mt-auto">
+        <Button
+          mode="text"
+          className="mt-7 align-bottom"
+          onPress={() => navigation.navigate("SignUp")}
+        >
+          Nie masz konta? Załóż je {">"}
+        </Button>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
-};
+}
+
 export default LoginScreen;

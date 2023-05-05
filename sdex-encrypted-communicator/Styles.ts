@@ -1,191 +1,85 @@
-// import { StyleSheet } from "react-native";
+import { DefaultTheme as NavigationDefaultTheme } from "@react-navigation/native";
+import { StyleSheet } from "react-native";
+import { adaptNavigationTheme, MD3LightTheme } from "react-native-paper";
 
-// export const styles = StyleSheet.create({
-//   loginscreen: {
-//     flex: 1,
-//     backgroundColor: "#EEF1FF",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     padding: 12,
-//     width: "100%"
-//   },
-//   loginheading: {
-//     fontSize: 26,
-//     marginTop: 30,
-//     marginBottom: "auto"
-//   },
-//   logininputContainer: {
-//     width: "100%",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     marginBottom: "auto"
-//   },
-//   logininput: {
-//     borderWidth: 1,
-//     width: "90%",
-//     padding: 8,
-//     borderRadius: 2
-//   },
-//   loginbutton: {
-//     backgroundColor: "green",
-//     padding: 12,
-//     marginTop: 10,
-//     marginHorizontal: "auto",
-//     borderRadius: 50,
-//     elevation: 1
-//   },
-//   loginbuttonText: {
-//     textAlign: "center",
-//     color: "#fff",
-//     fontWeight: "600"
-//   },
-//   loginButtonsContainer: {
-//     flexDirection: "row"
-//   },
-//   chatscreen: {
-//     backgroundColor: "#F7F7F7",
-//     flex: 1,
-//     padding: 10,
-//     position: "relative"
-//   },
-//   chatheading: {
-//     fontSize: 24,
-//     fontWeight: "bold",
-//     color: "green"
-//   },
-//   chattopContainer: {
-//     backgroundColor: "#F7F7F7",
-//     height: 70,
-//     width: "100%",
-//     padding: 20,
-//     justifyContent: "center",
-//     marginBottom: 15,
-//     elevation: 2
-//   },
-//   chatheader: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     justifyContent: "space-between"
-//   },
-//   chatlistContainer: {
-//     paddingHorizontal: 10
-//   },
-//   chatemptyContainer: {
-//     width: "100%",
-//     height: "80%",
-//     alignItems: "center",
-//     justifyContent: "center"
-//   },
-//   chatemptyText: { fontWeight: "bold", fontSize: 24, paddingBottom: 30 },
-//   messagingscreen: {
-//     flex: 1
-//   },
-//   messaginginputContainer: {
-//     width: "100%",
-//     minHeight: 100,
-//     backgroundColor: "white",
-//     paddingVertical: 30,
-//     paddingHorizontal: 15,
-//     justifyContent: "center",
-//     flexDirection: "row"
-//   },
-//   messaginginput: {
-//     borderWidth: 1,
-//     padding: 15,
-//     flex: 1,
-//     marginRight: 10,
-//     borderRadius: 20
-//   },
-//   messagingbuttonContainer: {
-//     width: "30%",
-//     backgroundColor: "green",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     borderRadius: 50
-//   },
-//   modalbutton: {
-//     width: "40%",
-//     height: 45,
-//     backgroundColor: "green",
-//     borderRadius: 5,
-//     alignItems: "center",
-//     justifyContent: "center",
-//     color: "#fff"
-//   },
-//   modalbuttonContainer: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     marginTop: 10
-//   },
-//   modaltext: {
-//     color: "#fff"
-//   },
-//   modalContainer: {
-//     width: "100%",
-//     borderTopColor: "#ddd",
-//     borderTopWidth: 1,
-//     elevation: 1,
-//     height: 400,
-//     backgroundColor: "#fff",
-//     position: "absolute",
-//     bottom: 0,
-//     zIndex: 10,
-//     paddingVertical: 50,
-//     paddingHorizontal: 20
-//   },
-//   modalinput: {
-//     borderWidth: 2,
-//     padding: 15
-//   },
-//   modalsubheading: {
-//     fontSize: 20,
-//     fontWeight: "bold",
-//     marginBottom: 15,
-//     textAlign: "center"
-//   },
-//   mmessageWrapper: {
-//     width: "100%",
-//     alignItems: "flex-start",
-//     marginBottom: 15
-//   },
-//   mmessage: {
-//     maxWidth: "50%",
-//     backgroundColor: "#f5ccc2",
-//     padding: 15,
-//     borderRadius: 10,
-//     marginBottom: 2
-//   },
-//   mvatar: {
-//     marginRight: 5
-//   },
-//   cchat: {
-//     width: "100%",
-//     flexDirection: "row",
-//     alignItems: "center",
-//     borderRadius: 5,
-//     paddingHorizontal: 15,
-//     backgroundColor: "#fff",
-//     height: 80,
-//     marginBottom: 10
-//   },
-//   cavatar: {
-//     marginRight: 15
-//   },
-//   cusername: {
-//     fontSize: 18,
-//     marginBottom: 5,
-//     fontWeight: "bold"
-//   },
-//   cmessage: {
-//     fontSize: 14,
-//     opacity: 0.7
-//   },
-//   crightContainer: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     flex: 1
-//   },
-//   ctime: {
-//     opacity: 0.5
-//   }
-// });
+const { LightTheme } = adaptNavigationTheme({
+  reactNavigationLight: NavigationDefaultTheme,
+});
+
+export const theme = {
+  ...MD3LightTheme,
+  ...LightTheme,
+  colors: {
+    ...LightTheme.colors,
+    primary: "rgb(0, 95, 175)",
+    onPrimary: "rgb(255, 255, 255)",
+    primaryContainer: "rgb(212, 227, 255)",
+    onPrimaryContainer: "rgb(0, 28, 58)",
+    secondary: "rgb(84, 95, 113)",
+    onSecondary: "rgb(255, 255, 255)",
+    secondaryContainer: "rgb(216, 227, 248)",
+    onSecondaryContainer: "rgb(17, 28, 43)",
+    tertiary: "rgb(110, 86, 118)",
+    onTertiary: "rgb(255, 255, 255)",
+    tertiaryContainer: "rgb(247, 216, 255)",
+    onTertiaryContainer: "rgb(39, 20, 48)",
+    error: "rgb(186, 26, 26)",
+    onError: "rgb(255, 255, 255)",
+    errorContainer: "rgb(255, 218, 214)",
+    onErrorContainer: "rgb(65, 0, 2)",
+    background: "rgb(253, 252, 255)",
+    onBackground: "rgb(26, 28, 30)",
+    surface: "rgb(253, 252, 255)",
+    onSurface: "rgb(26, 28, 30)",
+    surfaceVariant: "rgb(224, 226, 236)",
+    onSurfaceVariant: "rgb(67, 71, 78)",
+    outline: "rgb(116, 119, 127)",
+    outlineVariant: "rgb(195, 198, 207)",
+    shadow: "rgb(0, 0, 0)",
+    scrim: "rgb(0, 0, 0)",
+    inverseSurface: "rgb(47, 48, 51)",
+    inverseOnSurface: "rgb(241, 240, 244)",
+    inversePrimary: "rgb(165, 200, 255)",
+    elevation: {
+      level0: "transparent",
+      level1: "rgb(240, 244, 251)",
+      level2: "rgb(233, 239, 249)",
+      level3: "rgb(225, 235, 246)",
+      level4: "rgb(223, 233, 245)",
+      level5: "rgb(218, 230, 244)",
+    },
+    surfaceDisabled: "rgba(26, 28, 30, 0.12)",
+    onSurfaceDisabled: "rgba(26, 28, 30, 0.38)",
+    backdrop: "rgba(45, 49, 56, 0.4)",
+  },
+};
+
+const styles = StyleSheet.create({
+  appBarHeader: {
+    height: 90,
+    backgroundColor: theme.colors.primary,
+  },
+  appBarTitle: {
+    color: theme.colors.onPrimary,
+    fontWeight: "700",
+    fontSize: 30,
+    lineHeight: 36,
+  },
+  appBarIcons: {
+    color: theme.colors.onPrimary,
+  },
+  textInputPin: {
+    width: 200,
+  },
+  surface: {
+    marginLeft: 30,
+    marginRight: 30,
+    padding: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    borderStartStartRadius: "0.5rem" /* 8px */,
+    borderEndStartRadius: "0.5rem" /* 8px */,
+  },
+});
+
+export default styles;

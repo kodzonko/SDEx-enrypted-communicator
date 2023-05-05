@@ -2,15 +2,45 @@
   "name": "sdex-encrypted-communicator",
   "version": "1.0.0",
   "scripts": {
-    "start": "SET NODE_OPTIONS=--openssl-legacy-provider && npx expo start --dev-client",
+    "start": "SET NODE_OPTIONS=--openssl-legacy-provider && expo start --dev-client",
     "android": "expo run:android --device",
     "ios": "expo run:ios --device",
     "web": "SET NODE_OPTIONS=--openssl-legacy-provider && expo start --web",
-    "lint": "tslint --fix -c ./tslint.json './{components,utils}/*{.ts,.tsx}'",
+    "lint": "eslint --fix \"**/*.{js,jsx,ts,tsx}\"",
     "test": "jest"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "jest-expo",
+    "verbose": true,
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)"
+    ],
+    "transform": {
+      "^.+\\\\.(ts|tsx|js|jsx|html)$": [
+        "babel-jest",
+        {
+          "babelConfig": true
+        }
+      ]
+    },
+    "setupFiles": [
+      "<rootDir>/jest/setup.js"
+    ],
+    "setupFilesAfterEnv": [
+      "@testing-library/jest-native/extend-expect"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "collectCoverageFrom": [
+      "components/**/*.{js,jsx,ts,tsx}",
+      "screens/**/*.{js,jsx,ts,tsx}",
+      "databases/**/*.{js,jsx,ts,tsx}",
+      "utils/**/*.{js,jsx,ts,tsx}",
+      "App.tsx"
+    ]
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
@@ -34,11 +64,14 @@
     "crypto-js": "^4.1.1",
     "date-fns": "^2.29.3",
     "expo": "~48.0.10",
-    "expo-dev-client": "~2.1.6",
+    "expo-dev-client": "~2.2.1",
+    "expo-document-picker": "~11.2.2",
+    "expo-file-system": "~15.2.2",
     "expo-secure-store": "~12.1.1",
     "expo-splash-screen": "~0.18.1",
     "expo-status-bar": "~1.4.4",
     "js-crypto-aes": "^1.0.4",
+    "keypair": "^1.0.4",
     "nativewind": "^2.0.11",
     "react": "18.2.0",
     "react-art": "^18.2.0",
@@ -47,9 +80,8 @@
     "react-native-config": "^1.5.0",
     "react-native-gesture-handler": "~2.9.0",
     "react-native-gifted-chat": "^2.0.1",
-    "react-native-local-mongodb": "^4.0.0",
     "react-native-logs": "^5.0.1",
-    "react-native-paper": "^5.6.0",
+    "react-native-paper": "^5.7.0",
     "react-native-paper-form-builder": "^2.1.2",
     "react-native-reanimated": "~2.14.4",
     "react-native-safe-area-context": "4.5.0",
@@ -57,30 +89,46 @@
     "react-native-sqlite-storage": "^6.0.1",
     "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.10",
+    "setimmediate": "^1.0.5",
     "socket.io-client": "^4.6.1",
+    "tailwindcss": "^3.3.2",
     "tslib": "^2.5.0",
     "typescript": "^4.9.4",
     "zustand": "^4.3.7",
-    "expo-file-system": "~15.2.2"
+    "expo-media-library": "~15.2.3",
+    "expo-sharing": "~11.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.21.4",
     "@babel/eslint-parser": "^7.21.3",
+    "@babel/preset-env": "^7.21.4",
+    "@babel/preset-typescript": "^7.21.4",
+    "@jest/globals": "^29.5.0",
+    "@testing-library/jest-native": "^5.4.2",
     "@testing-library/react-native": "^12.0.1",
-    "@types/jest": "^29.5.0",
+    "@types/jest": "^29.5.1",
     "@types/node": "^18.15.11",
     "@types/prettier": "^2.7.2",
     "@types/react-test-renderer": "^18.0.0",
     "@types/tailwindcss": "^3.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.1",
+    "@typescript-eslint/parser": "^5.59.1",
+    "babel-jest": "^29.5.0",
     "babel-loader": "^8.3.0",
+    "eslint": "^8.39.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-native": "^4.0.0",
     "jest": "^29.5.0",
+    "jest-expo": "^48.0.2",
     "prettier": "^2.8.7",
     "prettier-plugin-organize-imports": "^3.2.2",
     "prettier-plugin-tailwindcss": "^0.2.7",
     "react-native-typescript-transformer": "^1.2.13",
-    "tailwindcss": "^3.3.1",
+    "react-test-renderer": "^18.2.0",
     "ts-jest": "^29.1.0",
     "ts-migrate": "^0.1.35",
     "tslint-eslint-rules": "^5.4.0"

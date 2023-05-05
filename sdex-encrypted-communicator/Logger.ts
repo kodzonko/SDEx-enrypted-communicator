@@ -14,5 +14,5 @@ const config = {
   },
 };
 
-let logger = _logger.createLogger<"debug" | "info" | "warn" | "error">(config);
+const logger = _logger.createLogger<"debug" | "info" | "warn" | "error">(config);
 export default logger;

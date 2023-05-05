@@ -1,10 +1,8 @@
 import * as React from "react";
-import { BottomNavigation } from "react-native-paper";
-import { getUnreadCount } from "../../databases/SecureStoreMiddlewares";
-import ChatRoomsScreen from "../screens/ChatRoomsScreen";
+
 import ContactsScreen from "../screens/ContactsScreen";
 
-const BottomTabNavigator = () => {
+function BottomTabNavigator() {
   const [index, setIndex] = React.useState(0);
   const unreadCount = getUnreadCount();
   const [routes] = React.useState([
@@ -24,19 +22,22 @@ const BottomTabNavigator = () => {
     },
   ]);
 
-  const renderScene = BottomNavigation.SceneMap({
+  const renderScene = BotomNavigation.SceneMap({
     chatRooms: ChatRoomsScreen,
     contacts: ContactsScreen,
   });
 
   return (
     <BottomNavigation
-      navigationState={{ index, routes }}
+      navigationState={{
+        index,
+        routes,
+      }}
       onIndexChange={setIndex}
       renderScene={renderScene}
-      shifting={true}
+      shifting
     />
   );
-};
+}
 
 export default BottomTabNavigator;

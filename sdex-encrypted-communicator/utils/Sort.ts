@@ -1,4 +1,4 @@
-import { ChatRoomListItem, Contact } from "../components/Types";
+
 
 export const sortDescendingByDate = (
   threads: ChatRoomListItem[],

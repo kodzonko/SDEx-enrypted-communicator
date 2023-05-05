@@ -3,5 +3,5 @@ export const ContactGroups = Object.freeze({
   Acquaintances: Symbol("znajomi"),
   Friends: Symbol("przyjaciele"),
   Job: Symbol("praca"),
-  Others: Symbol("inni")
+  Others: Symbol("inni"),
 });

@@ -9,6 +9,7 @@ export interface Contact {
   name: string;
   surname: string;
   publicKey: string;
+  messagingKey: string;
 }
 
 export interface ChatRoomListItem {
@@ -21,9 +22,10 @@ export interface ChatRoomListItem {
 export interface MessageItem {
   id: number;
   contactId: number;
-  text: string;
-  mediaPath: string;
+  textContent: string;
+  mediaContentPath: string;
   time: Date;
+  unread: boolean;
 }
 
 export type StackNavigationParamList = {
@@ -38,3 +40,13 @@ export type TabsNavigationParamList = {
   ChatRooms: undefined;
   Chat: undefined;
 };
+
+export interface KeyPair {
+  publicKey: string;
+  privateKey: string;
+}
+
+export interface KeyPairUpdate {
+  updatePublicKey: (publicKey: KeyPair["publicKey"]) => void;
+  updatePrivateKey: (privateKey: KeyPair["privateKey"]) => void;
+}

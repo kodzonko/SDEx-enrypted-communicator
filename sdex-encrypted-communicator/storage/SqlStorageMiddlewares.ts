@@ -1,21 +1,13 @@
-import {
-  enablePromise,
-  openDatabase,
-  ResultSet,
-  SQLiteDatabase,
-} from "react-native-sqlite-storage";
-import { Contact, MessageItem } from "../components/Types";
-import logger from "../Logger";
+import { enablePromise, openDatabase } from "react-native-sqlite-storage";
 
 enablePromise(true);
 
-export const getDbConnection = async () => {
-  return openDatabase({
+export const getDbConnection = async () =>
+  openDatabase({
     name: "sdex-communicator.db",
     createFromLocation: "sdex-communicator.db",
     location: "default",
   });
-};
 
 export const insertContact = async (
   dbSession: SQLiteDatabase,
@@ -29,10 +21,10 @@ export const insertContact = async (
       VALUES(${contact.name}, ${contact.surname}, ${contact.publicKey});`,
     );
     logger.info("Query executed successfully.");
-    logger.debug("Results: " + results);
+    logger.debug(`Results: ${results}`);
     return true;
   } catch (error) {
-    logger.error("SQL db connection error: " + error);
+    logger.error(GENERIC_LOCAL_STORAGE_SQL_ERROR_MSG + error);
     return false;
   }
 };
@@ -51,36 +43,37 @@ export const fetchChatRooms = async (
        ORDER BY m.time DESC;`,
     );
     logger.info("Query executed. Returning results.");
-    logger.debug("Results: " + results);
+    logger.debug(`Results: ${results}`);
     return results;
   } catch (error) {
-    logger.error("SQL db connection error: " + error);
+    logger.error(GENERIC_LOCAL_STORAGE_SQL_ERROR_MSG + error);
   }
 };
 
 export const fetchContacts = async (
   dbSession: SQLiteDatabase,
-): Promise<[ResultSet] | void> => {
+): Promise<[ResultSet]> => {
   try {
     logger.info("Fetching contacts from the SQL database.");
     logger.info("Executing query.");
-    const results = dbSession.executeSql(
-      `SELECT contactId, name, surname, publicKey
+    const results = await dbSession.executeSql(
+      `SELECT contactId, name, surname, publicKey, messagingKey
       FROM contacts
       ORDER BY surname, name;`,
     );
     logger.info("Query executed. Returning results.");
-    logger.debug("Results: " + results);
+    logger.debug(`Results: ${results}`);
     return results;
   } catch (error) {
-    logger.error("SQL db connection error: " + error);
+    logger.error(GENERIC_LOCAL_STORAGE_SQL_ERROR_MSG + error);
+    throw new SqlDatabaseError(GENERIC_LOCAL_STORAGE_SQL_ERROR_MSG + error);
   }
 };
 
 export const fetchMessages = async (
   dbSession: SQLiteDatabase,
   contactId: number,
-): Promise<[ResultSet] | void> => {
+): Promise<[ResultSet]> => {
   try {
     logger.info("Fetching messages for a specified contact from the SQL database.");
     logger.info("Executing query.");
@@ -91,10 +84,11 @@ export const fetchMessages = async (
       ORDER BY time;`,
     );
     logger.info("Query executed. Returning results.");
-    logger.debug("Results: " + results);
+    logger.debug(`Results: ${results}`);
     return results;
   } catch (error) {
-    logger.error("SQL db connection error: " + error);
+    logger.error(GENERIC_LOCAL_STORAGE_SQL_ERROR_MSG + error);
+    throw new SqlDatabaseError(GENERIC_LOCAL_STORAGE_SQL_ERROR_MSG + error);
   }
 };
 
@@ -107,14 +101,34 @@ export const insertMessage = async (
     logger.info("Inserting a message to the SQL database.");
     logger.info("Executing query.");
     const results = await dbSession.executeSql(
-      `INSERT INTO messages (contactId, text, mediaPath, time)
-      VALUES(${contactId}, ${message.text}, ${message.mediaPath}, ${message.time});`,
+      `INSERT INTO messages (fk_contact_id, text_content, media_content_path, time, unread)
+      VALUES(${contactId}, ${message.textContent}, ${message.mediaContentPath}, ${message.time}, ${message.unread});`,
     );
     logger.info("Query executed successfully.");
-    logger.debug("Results: " + results);
+    logger.debug(`Results: ${results}`);
     return true;
   } catch (error) {
-    logger.error("SQL db connection error: " + error);
+    logger.error(GENERIC_LOCAL_STORAGE_SQL_ERROR_MSG + error);
     return false;
+  }
+};
+
+export const fetchUnreadCount = async (
+  dbSession: SQLiteDatabase,
+): Promise<[ResultSet]> => {
+  try {
+    logger.info("Getting messages count from the SQL database.");
+    logger.info("Executing query.");
+    const results = await dbSession.executeSql(
+      `SELECT COUNT(*)
+      FROM messages
+      WHERE unread = 1;`,
+    );
+    logger.info("Query executed successfully.");
+    logger.debug(`Results: ${results}`);
+    return results;
+  } catch (error) {
+    logger.error(GENERIC_LOCAL_STORAGE_SQL_ERROR_MSG + error);
+    throw new SqlDatabaseError(GENERIC_LOCAL_STORAGE_SQL_ERROR_MSG + error);
   }
 };

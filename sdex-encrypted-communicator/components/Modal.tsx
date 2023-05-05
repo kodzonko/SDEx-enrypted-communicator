@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import React,{ useState } from "react";
+import { Pressable,Text,TextInput,View } from "react-native";
 
-const Modal = ({ setVisible }: any) => {
+function Modal({ setVisible }: any) {
   const closeModal = () => setVisible(false);
   const [groupName, setGroupName] = useState("");
 
@@ -25,6 +25,6 @@ const Modal = ({ setVisible }: any) => {
       </View>
     </View>
   );
-};
+}
 
 export default Modal;

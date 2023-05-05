@@ -1,16 +1,16 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
-import { FlatList, SafeAreaView, TouchableOpacity } from "react-native";
-import { Appbar, Divider, List } from "react-native-paper";
-import { getContacts } from "../../databases/DataHandlers";
+import { FlatList,SafeAreaView,TouchableOpacity } from "react-native";
+import { Appbar,Divider,List } from "react-native-paper";
+import { getContacts } from "../../storage/DataHandlers";
+import { Contact,TabsNavigationParamList } from "../../Types";
 import { sortAscendingBySurname } from "../../utils/Sort";
-import { Contact, TabsNavigationParamList } from "../Types";
 
-const ContactsScreen = () => {
+function ContactsScreen() {
   const navigation = useNavigation<StackNavigationProp<TabsNavigationParamList>>();
 
-  const contactsFromStorage: Contact[] = getContacts();
+  const contactsFromStorage: Contact[] = getContacts().catch((error) => {});
   const sortedContactsBySurname = sortAscendingBySurname(contactsFromStorage);
 
   return (
@@ -31,9 +31,7 @@ const ContactsScreen = () => {
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <Divider />}
         renderItem={({ item }) => (
-          <TouchableOpacity
-          // onPress={() => navigation.navigate('Room', {thread: item})}
-          >
+          <TouchableOpacity>
             <List.Item
               className="my-2"
               title={`${item.name} ${item.surname}`}
@@ -47,6 +45,6 @@ const ContactsScreen = () => {
       />
     </SafeAreaView>
   );
-};
+}
 
 export default ContactsScreen;

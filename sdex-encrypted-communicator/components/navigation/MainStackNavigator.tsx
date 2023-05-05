@@ -9,7 +9,7 @@ import SignUpScreen from "../screens/SignUpScreen";
 import BottomTabNavigator from "./BottomTabNavigator";
 
 const Stack = createNativeStackNavigator();
-const MainStackNavigator = (props: any) => {
+function MainStackNavigator(props: any) {
   const isSignedIn = useAuthStore((state) => state.isSignedIn);
   return (
     <NavigationContainer theme={props.theme}>
@@ -59,33 +59,9 @@ const MainStackNavigator = (props: any) => {
             />
           </>
         )}
-        {/*<Stack.Screen*/}
-        {/*  name="Home"*/}
-        {/*  component={BottomTabNavigator}*/}
-        {/*  options={{*/}
-        {/*    headerShown: false, animationTypeForReplace: props.isSignedIn ? "pop" : "push"*/}
-        {/*  }}*/}
-        {/*/>*/}
-        {/*<Stack.Screen*/}
-        {/*  name="Login"*/}
-        {/*  component={LoginScreen}*/}
-        {/*  options={{*/}
-        {/*    headerShown: false, animationTypeForReplace: props.isSignedIn ? "pop" : "push"*/}
-        {/*  }}*/}
-        {/*/>*/}
-        {/*<Stack.Screen*/}
-        {/*  name="SignUp"*/}
-        {/*  component={SignUpScreen}*/}
-        {/*  options={{*/}
-        {/*    headerShown: false, animationTypeForReplace: props.isSignedIn ? "pop" : "push"*/}
-        {/*  }}*/}
-        {/*/>*/}
-        {/*<Stack.Screen name="Settings" component={SettingsScreen} options={{*/}
-        {/*  headerShown: false, animationTypeForReplace: props.isSignedIn ? "pop" : "push"*/}
-        {/*}} />*/}
       </Stack.Navigator>
     </NavigationContainer>
   );
-};
+}
 
 export default MainStackNavigator;

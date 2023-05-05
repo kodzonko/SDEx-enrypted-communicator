@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "sdex-encrypted-communicator",
+    "name": "SDEx Encrypted Communicator",
     "slug": "sdex-encrypted-communicator",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -28,10 +28,15 @@
         "foregroundImage": "./assets/logo-no-background.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.rdsdcqhtwedpmhqv.sdexencryptedcommunicator"
+      "package": "pl.janwadolowski.sdexcommunicator"
     },
     "web": {
       "favicon": "./assets/logo-no-background.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "01f7d59d-2001-444f-8a81-81b9c210cf03"
+      }
     }
   }
 }

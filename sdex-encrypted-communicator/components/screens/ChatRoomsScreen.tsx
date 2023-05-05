@@ -3,11 +3,11 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { formatDistance } from "date-fns";
 import pl from "date-fns/locale/pl";
 import * as React from "react";
-import { FlatList, SafeAreaView, TouchableOpacity } from "react-native";
-import { Appbar, Divider, List } from "react-native-paper";
-import { loadChatRooms } from "../../databases/DataHandlers";
+import { FlatList,SafeAreaView,TouchableOpacity } from "react-native";
+import { Appbar,Divider,List } from "react-native-paper";
+import { getChatRooms } from "../../storage/DataHandlers";
+import { ChatRoomListItem,StackNavigationParamList } from "../../Types";
 import { sortDescendingByDate } from "../../utils/Sort";
-import { ChatRoomListItem, StackNavigationParamList } from "../Types";
 
 /**
  * Screen displaying all threads existing in local persistent storage + fetched from the server.
@@ -15,14 +15,17 @@ import { ChatRoomListItem, StackNavigationParamList } from "../Types";
  * @returns {JSX.Element}
  * @constructor
  */
-const ChatRoomsScreen = () => {
+function ChatRoomsScreen() {
   const navigation = useNavigation<StackNavigationProp<StackNavigationParamList>>();
   const [chatRooms, setChatRooms] = React.useState<ChatRoomListItem[]>([]);
 
   React.useEffect(() => {
-    const chatRoomsUnsorted = loadChatRooms();
-    const sortedChatRooms = sortDescendingByDate(chatRoomsUnsorted);
-    setChatRooms(sortedChatRooms);
+    const chatRoomsUnsorted = getChatRooms();
+    if (typeof chatRoomsUnsorted === undefined) {
+    } else {
+      const sortedChatRooms = sortDescendingByDate(chatRoomsUnsorted);
+      setChatRooms(sortedChatRooms);
+    }
   }, []);
 
   /**
@@ -74,6 +77,6 @@ const ChatRoomsScreen = () => {
       />
     </SafeAreaView>
   );
-};
+}
 
 export default ChatRoomsScreen;

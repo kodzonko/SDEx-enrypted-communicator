@@ -1,6 +1,4 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
-import { AuthState } from "./Types";
 
 export const useAuthStore = create<AuthState>()(
   devtools(
@@ -12,6 +10,22 @@ export const useAuthStore = create<AuthState>()(
       }),
       {
         name: "auth-storage",
+      },
+    ),
+  ),
+);
+
+export const useKeysStore = create<KeyPair & KeyPairUpdate>()(
+  devtools(
+    persist(
+      (set) => ({
+        publicKey: "",
+        updatePublicKey: (value) => set((state) => ({ publicKey: value })),
+        privateKey: "",
+        updatePrivateKey: (value) => set((state) => ({ privateKey: value })),
+      }),
+      {
+        name: "keys-storage",
       },
     ),
   ),
