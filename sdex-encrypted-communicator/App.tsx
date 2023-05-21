@@ -1,4 +1,4 @@
-import * as React from "react";
+
 import { Provider as PaperProvider } from "react-native-paper";
 import "setimmediate";
 import MainStackNavigator from "./components/navigation/MainStackNavigator";

@@ -10,10 +10,7 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
-import { shallow } from "zustand/shallow";
-import { generateKeyPair, readKeyFromFile } from "../../crypto/RsaCrypto";
-import { BUTTON_ACCEPT_TEXT } from "../../Messages";
-import styles from "../../Styles";
+
 import { useKeysStore } from "../Contexts";
 
 function SignUpScreen({ navigation }: any) {
@@ -44,7 +41,7 @@ function SignUpScreen({ navigation }: any) {
         type: "text/plain",
       });
       if (resultPublic.type === "success") {
-        readKeyFromFile(resultPublic.uri)
+        readFile(resultPublic.uri)
           .then((value) => {
             updatePublicKey(value);
           })
@@ -54,7 +51,7 @@ function SignUpScreen({ navigation }: any) {
         type: "text/plain",
       });
       if (resultPrivate.type === "success") {
-        readKeyFromFile(resultPrivate.uri)
+        readFile(resultPrivate.uri)
           .then((value) => {
             updatePrivateKey(value);
           })
@@ -122,6 +119,9 @@ function SignUpScreen({ navigation }: any) {
           value={userPINRepeated}
           onChangeText={(value) => setUserPINRepeated(value)}
         />
+        <Text variant="bodyLarge" className="mt-2 text-red-600">
+          4-8 cyfr
+        </Text>
       </Surface>
       <Surface
         style={[
@@ -139,17 +139,25 @@ function SignUpScreen({ navigation }: any) {
           mode="contained"
           onPress={showKeyObtainDialog}
           className="mx-2 mb-6 w-40"
+          disabled={privateKey.length > 0 && publicKey.length > 0}
         >
           Uzyskaj
         </Button>
-        <Text variant="bodyLarge" className="mt-4 underline">
-          Twój klucz prywatny: {privateKey.length > 0 ? publicKey : "..."}
+        <Text variant="bodyLarge" className="mt-4">
+          Klucz prywatny: {privateKey ? "\u2714" : "\u274C"}
         </Text>
-        <Text variant="bodyLarge" className="mt-2 underline">
-          Twój klucz publiczny: {publicKey.length > 0 ? publicKey : "..."}
+        <Text variant="bodyLarge" className="mt-2">
+          Klucz publiczny: {publicKey ? "\u2714" : "\u274C"}
         </Text>
       </Surface>
-      <Button mode="contained" className="mx-auto mt-5 w-40" onPress={handleSignUp}>
+      <Button
+        mode="contained"
+        className="mx-auto mt-5 w-40"
+        onPress={handleSignUp}
+        disabled={
+          !privateKey || !publicKey || userPIN.length < 4 || userPIN !== userPINRepeated
+        }
+      >
         Zarejestruj
       </Button>
       <KeyboardAvoidingView className="mb-2 mt-auto">

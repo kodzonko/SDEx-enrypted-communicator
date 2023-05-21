@@ -106,7 +106,7 @@ async def test_socket_manager_forwards_message_to_target_user(
 
 
 @pytest.mark.asyncio
-async def test_socket_manager_closes_connection_on_forward_message_if_target_user_not_found(
+async def test_socket_manager_closes_connection_on_forward_message_if_target_user_not_found(  # noqa
     source_user: User,
     websocket_connection: WebSocket,
     socket_manager: SocketManager,

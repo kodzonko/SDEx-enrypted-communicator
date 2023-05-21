@@ -36,8 +36,8 @@
     ],
     "collectCoverageFrom": [
       "components/**/*.{js,jsx,ts,tsx}",
-      "screens/**/*.{js,jsx,ts,tsx}",
-      "databases/**/*.{js,jsx,ts,tsx}",
+      "crypto/**/*.{js,jsx,ts,tsx}",
+      "storage/**/*.{js,jsx,ts,tsx}",
       "utils/**/*.{js,jsx,ts,tsx}",
       "App.tsx"
     ]
@@ -63,12 +63,14 @@
     "@types/socket.io-client": "^3.0.0",
     "crypto-js": "^4.1.1",
     "date-fns": "^2.29.3",
-    "expo": "~48.0.10",
+    "expo": "~48.0.15",
     "expo-dev-client": "~2.2.1",
     "expo-document-picker": "~11.2.2",
     "expo-file-system": "~15.2.2",
+    "expo-media-library": "~15.2.3",
     "expo-secure-store": "~12.1.1",
-    "expo-splash-screen": "~0.18.1",
+    "expo-sharing": "~11.2.2",
+    "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
     "js-crypto-aes": "^1.0.4",
     "keypair": "^1.0.4",
@@ -76,7 +78,7 @@
     "react": "18.2.0",
     "react-art": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-native": "0.71.6",
+    "react-native": "0.71.8",
     "react-native-config": "^1.5.0",
     "react-native-gesture-handler": "~2.9.0",
     "react-native-gifted-chat": "^2.0.1",
@@ -94,9 +96,7 @@
     "tailwindcss": "^3.3.2",
     "tslib": "^2.5.0",
     "typescript": "^4.9.4",
-    "zustand": "^4.3.7",
-    "expo-media-library": "~15.2.3",
-    "expo-sharing": "~11.2.2"
+    "zustand": "^4.3.7"
   },
   "devDependencies": {
     "@babel/core": "^7.21.4",

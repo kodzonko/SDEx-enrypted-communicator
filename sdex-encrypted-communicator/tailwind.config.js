@@ -7,6 +7,8 @@ module.exports = {
     "./App.tsx",
     "./components/**/*.{js,ts,jsx,tsx,html}",
     "./utils/**/*.{js,ts,jsx,tsx,html}",
+    "./crypto/**/*.{js,ts,jsx,tsx,html}",
+    "./storage/**/*.{js,ts,jsx,tsx,html}",
   ],
   plugins: [nativewind],
   theme: {

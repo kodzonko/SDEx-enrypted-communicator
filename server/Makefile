@@ -6,9 +6,7 @@ run:
 	poetry run uvicorn $(SRC).main:app --reload
 
 lint:
-	poetry run autoflake $(SRC) $(TESTS)
-	poetry run isort $(SRC) $(TESTS)
-	poetry run black $(SRC) $(TESTS)
+	poetry run ruff check --fix .
 
 test-unit:
 	poetry run pytest --failed-first --new-first --cov=$(SRC) $(TESTS)/unit
