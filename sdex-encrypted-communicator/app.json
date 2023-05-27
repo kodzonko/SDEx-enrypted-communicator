@@ -6,6 +6,9 @@
     "orientation": "portrait",
     "icon": "./assets/logo-no-background.png",
     "userInterfaceStyle": "light",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
     "splash": {
       "image": "./assets/logo-no-background.png",
       "resizeMode": "contain",
@@ -13,16 +16,15 @@
     },
     "jsEngine": "hermes",
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/01f7d59d-2001-444f-8a81-81b9c210cf03"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "config": {
-        "usesNonExemptEncryption": false
-      }
+      "bundleIdentifier": "pl.janwadolowski.sdexcommunicator"
     },
     "android": {
       "adaptiveIcon": {
