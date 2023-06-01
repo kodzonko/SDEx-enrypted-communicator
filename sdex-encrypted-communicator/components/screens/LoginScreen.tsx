@@ -1,14 +1,15 @@
 import * as React from "react";
-import { Alert, KeyboardAvoidingView, SafeAreaView, View } from "react-native";
-import { Appbar, Button, TextInput } from "react-native-paper";
-import logger from "../../Logger";
-import { GENERIC_AUTHORIZATION_ERROR_MSG } from "../../Messages";
-import { getSecure } from "../../storage/SecureStoreMiddlewares";
-import styles from "../../Styles";
+import { Alert,KeyboardAvoidingView,SafeAreaView,View } from "react-native";
+import { Appbar,Button,TextInput } from "react-native-paper";
 import { GENERIC_OKAY_DISMISS_BUTTON } from "../Buttons";
 import { useAuthStore } from "../Contexts";
+import logger from "../Logger";
+import { GENERIC_AUTHORIZATION_ERROR_MSG } from "../Messages";
+import { getSecure } from "../storage/SecureStoreMiddlewares";
+import styles from "../Styles";
+import { LoginScreenPropsType } from "../Types";
 
-function LoginScreen({ navigation }: any) {
+function LoginScreen({ navigation }: LoginScreenPropsType) {
   const [userInputPIN, setUserInputPIN] = React.useState("");
   const [userActualPIN, setUserActualPIN] = React.useState("");
   const signIn = useAuthStore((state) => state.signIn);
@@ -21,9 +22,6 @@ function LoginScreen({ navigation }: any) {
         setUserActualPIN(actualPin.toString());
       } else {
         logger.info("PIN missing in secure storage.");
-        Alert.alert(GENERIC_AUTHORIZATION_ERROR_MSG, "Brak PINu, zarejestruj się", [
-          GENERIC_OKAY_DISMISS_BUTTON,
-        ]);
       }
     };
     fetchActualPIN();
@@ -31,6 +29,12 @@ function LoginScreen({ navigation }: any) {
 
   const handleSignIn = () => {
     logger.debug("Verifying user PIN.");
+    if (userActualPIN === "") {
+      Alert.alert(GENERIC_AUTHORIZATION_ERROR_MSG, "Brak PINu, zarejestruj się", [
+        GENERIC_OKAY_DISMISS_BUTTON,
+      ]);
+      return;
+    }
     if (userInputPIN.trim().length >= 4 && userInputPIN.trim().length <= 8) {
       if (userInputPIN.trim() === userActualPIN) {
         logger.info("PIN verified, signing in.");

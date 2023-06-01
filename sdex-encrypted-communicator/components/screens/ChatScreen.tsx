@@ -1,7 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
-import { Dimensions, SafeAreaView, View } from "react-native";
+import React,{ useState } from "react";
+import { Dimensions,SafeAreaView,View } from "react-native";
 import { GiftedChat } from "react-native-gifted-chat";
+
+import { Appbar } from "react-native-paper";
+
+import { StackNavigationParamList } from "../Types";
 
 function ChatScreen() {
   const [messages, setMessages] = useState([
@@ -26,9 +30,8 @@ function ChatScreen() {
       createdAt: new Date(),
     },
   ]);
-  const navigation = useNavigation<StackNavigationrop<StackNavigationParamList>>();
-  cnst;
-  _goBack = () => navigation.goBack();
+  const navigation = useNavigation<StackNavigation<StackNavigationParamList>>();
+  const _goBack = () => navigation.goBack();
   const onSend = (newMsg: any) => setMessages([...messages, ...newMsg]);
   const user = {
     _id: 1,
@@ -37,7 +40,7 @@ function ChatScreen() {
   const inverted = false;
   const { width, height } = Dimensions.get("window");
 
-  retrn(
+  return (
     <SafeAreaView className="flex-1">
       <Appbar.Header>
         <Appbar.BackAction onPress={_goBack} />
@@ -58,7 +61,7 @@ function ChatScreen() {
           }}
         />
       </View>
-    </SafeAreaView>,
+    </SafeAreaView>
   );
 }
 

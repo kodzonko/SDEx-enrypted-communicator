@@ -32,9 +32,8 @@ jest.mock("react-native-safe-area-context", () => {
 
 jest.mock("react-native-paper", () => {
   const RealModule = jest.requireActual("react-native-paper");
-  const MockedModule = {
+  return {
     ...RealModule,
     Portal: ({ children }) => <View>{children}</View>,
   };
-  return MockedModule;
 });

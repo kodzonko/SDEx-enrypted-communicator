@@ -4,7 +4,12 @@ export const GENERIC_AUTHORIZATION_ERROR_MSG = "Błąd autoryzacji";
 export const BUTTON_ACCEPT_TEXT = "Okej";
 
 // Backend
-export const GENERIC_LOCAL_STORAGE_SQL_ERROR_MSG = "SQL db connection error: ";
+export const GENERIC_LOCAL_STORAGE_SQL_CONNECTION_ERROR_MSG =
+  "SQL db connection error: ";
+export const GENERIC_LOCAL_STORAGE_SQL_QUERY_FAILURE_MSG =
+  "Query executed with error: ";
+export const GENERIC_LOCAL_STORAGE_SQL_QUERY_SUCCESS_MSG =
+  "Query executed successfully.";
 export const GENERIC_LOCAL_STORAGE_SECURESTORE_ERROR_MSG =
   "SecureStore db connection error: ";
 

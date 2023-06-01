@@ -1,13 +1,11 @@
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { formatDistance } from "date-fns";
 import pl from "date-fns/locale/pl";
 import * as React from "react";
 import { FlatList,SafeAreaView,TouchableOpacity } from "react-native";
 import { Appbar,Divider,List } from "react-native-paper";
-import { getChatRooms } from "../../storage/DataHandlers";
-import { ChatRoomListItem,StackNavigationParamList } from "../../Types";
-import { sortDescendingByDate } from "../../utils/Sort";
+import { getChatRooms } from "../storage/DataHandlers";
+import { ChatRoomListItem,ChatRoomsScreenPropsType } from "../Types";
+import { sortDescendingByDate } from "../utils/Sort";
 
 /**
  * Screen displaying all threads existing in local persistent storage + fetched from the server.
@@ -15,17 +13,16 @@ import { sortDescendingByDate } from "../../utils/Sort";
  * @returns {JSX.Element}
  * @constructor
  */
-function ChatRoomsScreen() {
-  const navigation = useNavigation<StackNavigationProp<StackNavigationParamList>>();
+function ChatRoomsScreen({ navigation }: ChatRoomsScreenPropsType) {
   const [chatRooms, setChatRooms] = React.useState<ChatRoomListItem[]>([]);
 
   React.useEffect(() => {
-    const chatRoomsUnsorted = getChatRooms();
-    if (typeof chatRoomsUnsorted === undefined) {
-    } else {
-      const sortedChatRooms = sortDescendingByDate(chatRoomsUnsorted);
-      setChatRooms(sortedChatRooms);
-    }
+    const chatRooms = getChatRooms()
+      .then((chatRoomsUnsorted) => {
+        const chatRoomsSorted = sortDescendingByDate(chatRoomsUnsorted);
+        setChatRooms(chatRoomsSorted);
+      })
+      .catch((error) => {});
   }, []);
 
   /**
@@ -46,18 +43,18 @@ function ChatRoomsScreen() {
     <SafeAreaView className="flex-1">
       <Appbar.Header>
         <Appbar.Content title="Wiadomości" />
-        <Appbar.Action
-          size={30}
-          className="mr-2"
-          icon="cog-outline"
-          onPress={() => {
-            navigation.navigate("Settings");
-          }}
-        />
+        {/* <Appbar.Action */}
+        {/*   size={30} */}
+        {/*   className="mr-2" */}
+        {/*   icon="cog-outline" */}
+        {/*   onPress={() => { */}
+        {/*     navigation.navigate("Settings"); */}
+        {/*   }} */}
+        {/* /> */}
       </Appbar.Header>
       <FlatList
         data={chatRooms}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.name + item.surname}
         ItemSeparatorComponent={() => <Divider />}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => navigation.navigate("Chat")}>

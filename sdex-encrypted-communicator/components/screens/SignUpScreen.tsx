@@ -10,10 +10,16 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
+import { shallow } from "zustand/shallow";
+import { generateKeyPair } from "../crypto/RsaCrypto";
+import { readFile } from "../storage/FileOps";
+import styles from "../Styles";
 
 import { useKeysStore } from "../Contexts";
+import { BUTTON_ACCEPT_TEXT } from "../Messages";
+import { SignUpScreenPropsType } from "../Types";
 
-function SignUpScreen({ navigation }: any) {
+function SignUpScreen({ navigation }: SignUpScreenPropsType) {
   const [userPIN, setUserPIN] = React.useState("");
   const [userPINRepeated, setUserPINRepeated] = React.useState("");
   const { publicKey, updatePublicKey, privateKey, updatePrivateKey } = useKeysStore(
@@ -73,8 +79,8 @@ function SignUpScreen({ navigation }: any) {
 
       <Portal>
         <Dialog visible={keyObtainDialogVisible} onDismiss={hideKeyObtainDialog}>
-          <Dialog.Title style={{ textAlign: "center" }}>Wczytaj klucze</Dialog.Title>
-          <Dialog.Content className="flex flex-1 flex-col items-center">
+          <Dialog.Title style={{ textAlign: "center" }}>Dodaj klucze</Dialog.Title>
+          <Dialog.Content className="flex flex-1 flex-col items-center justify-center">
             <Button mode="contained" onPress={handleKeysGen} className="mx-2 mb-6 w-40">
               Wygeneruj
             </Button>

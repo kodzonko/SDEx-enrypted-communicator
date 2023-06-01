@@ -1,8 +1,9 @@
 import * as React from "react";
 import { SafeAreaView } from "react-native";
-import { Appbar,Text } from "react-native-paper";
+import { Appbar, Text } from "react-native-paper";
+import { SettingsScreenPropsType } from "../Types";
 
-function SettingsScreen({ navigation }: any) {
+function SettingsScreen({ navigation }: SettingsScreenPropsType) {
   const _goBack = () => navigation.goBack();
 
   return (

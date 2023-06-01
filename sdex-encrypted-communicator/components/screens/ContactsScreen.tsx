@@ -1,15 +1,11 @@
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
-import { FlatList,SafeAreaView,TouchableOpacity } from "react-native";
-import { Appbar,Divider,List } from "react-native-paper";
-import { getContacts } from "../../storage/DataHandlers";
-import { Contact,TabsNavigationParamList } from "../../Types";
-import { sortAscendingBySurname } from "../../utils/Sort";
+import { FlatList, SafeAreaView, TouchableOpacity } from "react-native";
+import { Appbar, Divider, List } from "react-native-paper";
+import { getContacts } from "../storage/DataHandlers";
+import { Contact, ContactsScreenPropsType } from "../Types";
+import { sortAscendingBySurname } from "../utils/Sort";
 
-function ContactsScreen() {
-  const navigation = useNavigation<StackNavigationProp<TabsNavigationParamList>>();
-
+function ContactsScreen({ navigation }: ContactsScreenPropsType) {
   const contactsFromStorage: Contact[] = getContacts().catch((error) => {});
   const sortedContactsBySurname = sortAscendingBySurname(contactsFromStorage);
 

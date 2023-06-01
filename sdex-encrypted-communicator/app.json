@@ -34,7 +34,8 @@
       "package": "pl.janwadolowski.sdexcommunicator"
     },
     "web": {
-      "favicon": "./assets/logo-no-background.png"
+      "favicon": "./assets/logo-no-background.png",
+      "bundler": "metro"
     },
     "extra": {
       "eas": {

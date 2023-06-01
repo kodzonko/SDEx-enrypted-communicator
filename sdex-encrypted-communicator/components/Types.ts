@@ -28,18 +28,41 @@ export interface MessageItem {
   unread: boolean;
 }
 
-export type StackNavigationParamList = {
-  Home: undefined;
+export type UnauthenticatedStackNavigationParamList = {
   Login: undefined;
   SignUp: undefined;
 };
 
-export type TabsNavigationParamList = {
+export type AuthenticatedStackNavigationParamList = {
+  ChatRooms: undefined;
   Settings: undefined;
   Contacts: undefined;
-  ChatRooms: undefined;
-  Chat: undefined;
 };
+
+export type LoginScreenPropsType = NativeStackScreenProps<
+  UnauthenticatedStackNavigationParamList,
+  "Login"
+>;
+
+export type SignUpScreenPropsType = NativeStackScreenProps<
+  UnauthenticatedStackNavigationParamList,
+  "SignUp"
+>;
+
+export type ChatRoomsScreenPropsType = NativeStackScreenProps<
+  AuthenticatedStackNavigationParamList,
+  "ChatRooms"
+>;
+
+export type SettingsScreenPropsType = NativeStackScreenProps<
+  AuthenticatedStackNavigationParamList,
+  "Settings"
+>;
+
+export type ContactsScreenPropsType = NativeStackScreenProps<
+  AuthenticatedStackNavigationParamList,
+  "Contacts"
+>;
 
 export interface KeyPair {
   publicKey: string;
