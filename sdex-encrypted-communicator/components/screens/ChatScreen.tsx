@@ -1,50 +1,43 @@
-import { useNavigation } from "@react-navigation/native";
-import React,{ useState } from "react";
-import { Dimensions,SafeAreaView,View } from "react-native";
+import * as React from "react";
+import { Dimensions, SafeAreaView, View } from "react-native";
 import { GiftedChat } from "react-native-gifted-chat";
 
 import { Appbar } from "react-native-paper";
 
-import { StackNavigationParamList } from "../Types";
+import { useContactIdStore } from "../Contexts";
+import { getMessages } from "../storage/DataHandlers";
+import styles from "../Styles";
+import { ChatRoomsStackChatScreenPropsType } from "../Types";
 
-function ChatScreen() {
-  const [messages, setMessages] = useState([
-    {
-      _id: 123,
-      text: "Hej, masz chwilę?",
-      user: {
-        _id: 2,
-        name: "you",
-        avatar: "/me.jpg",
-      },
-      createdAt: new Date(),
-    },
-    {
-      _id: 456,
-      text: "Musimy pogadać :)",
-      user: {
-        _id: 2,
-        name: "you",
-        avatar: "/me.jpg",
-      },
-      createdAt: new Date(),
-    },
-  ]);
-  const navigation = useNavigation<StackNavigation<StackNavigationParamList>>();
-  const _goBack = () => navigation.goBack();
-  const onSend = (newMsg: any) => setMessages([...messages, ...newMsg]);
-  const user = {
-    _id: 1,
-    name: "me",
-  };
+function ChatScreen({ navigation }: ChatRoomsStackChatScreenPropsType) {
+  // const messages = useMessagesStore((state) => state.messages);
+  // const setMessages = useMessagesStore((state) => state.setMessages);
+  const [messages, setMessages] = React.useState([]);
+  const contactId = useContactIdStore((state) => state.contactId);
+
+  React.useEffect(() => {
+    (async () => {
+      const messagesFromStorage = await getMessages(contactId);
+      const userFromStorage = await getContact(contactId);
+      setMessages(await getMessages(contactId));
+    })();
+  }, []);
+
+  const onSend = React.useCallback((messages = []) => {
+    setMessages((previousMessages) => GiftedChat.append(previousMessages, messages));
+  }, []);
+
   const inverted = false;
   const { width, height } = Dimensions.get("window");
 
   return (
     <SafeAreaView className="flex-1">
-      <Appbar.Header>
-        <Appbar.BackAction onPress={_goBack} />
-        <Appbar.Content title="<username>" />
+      <Appbar.Header style={styles.appBarHeader}>
+        <Appbar.Content title="<username>" titleStyle={styles.appBarTitle} />
+        <Appbar.BackAction
+          onPress={() => navigation.goBack()}
+          iconColor={styles.appBarIcons.color}
+        />
       </Appbar.Header>
       <View
         style={{
@@ -53,11 +46,11 @@ function ChatScreen() {
         }}
       >
         <GiftedChat
-          {...{
-            messages,
-            onSend,
-            user,
-            inverted,
+          messages={messages}
+          onSend={(messages) => onSend(messages)}
+          user={{
+            _id: 0,
+            name: "Ty",
           }}
         />
       </View>

@@ -1,12 +1,14 @@
-import { Provider as PaperProvider } from "react-native-paper";
+import { withExpoSnack } from "nativewind";
+import * as React from "react";
+import { PaperProvider } from "react-native-paper";
 import "setimmediate";
-import { useAuthStore } from "./components/Contexts";
 import AuthenticatedBottomTabNavigator from "./components/navigation/AuthenticatedBottomTabNavigator";
 import UnauthenticatedStackNavigator from "./components/navigation/UnauthenticatedStackNavigator";
 import { theme } from "./components/Styles";
 
 function App() {
-  const isSignedIn = useAuthStore((state) => state.isSignedIn);
+  // const isSignedIn = useAuthStore((state) => state.isSignedIn);
+  const isSignedIn = true;
   return (
     <PaperProvider theme={theme}>
       {isSignedIn ? (

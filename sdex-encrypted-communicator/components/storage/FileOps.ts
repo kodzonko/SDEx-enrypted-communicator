@@ -1,10 +1,15 @@
 import * as FileSystem from "expo-file-system";
+import { Platform } from "react-native";
 import { FileSystemError } from "../Errors";
 import logger from "../Logger";
 import { GENERIC_LOCAL_STORAGE_FILESYSTEM_ERROR_MSG } from "../Messages";
 
 export const readFile = async (path: string): Promise<string> => {
-  logger.info("Reading from a file.");
+  logger.info("Reading content from a file.");
+  if (Platform.OS === "web") {
+    logger.info("expo-file-system is not supported on web, returning.");
+    return "";
+  }
   try {
     return await FileSystem.readAsStringAsync(path);
   } catch (error) {
@@ -14,7 +19,11 @@ export const readFile = async (path: string): Promise<string> => {
 };
 
 export const writeFile = async (path: string, value: string): Promise<void> => {
-  logger.info(`Writing to a file: "${path}".`);
+  logger.info("Writing content to a file..");
+  if (Platform.OS === "web") {
+    logger.info("expo-file-system is not supported on web, returning.");
+    return;
+  }
   try {
     await FileSystem.writeAsStringAsync(path, value);
   } catch (error) {
@@ -25,20 +34,28 @@ export const writeFile = async (path: string, value: string): Promise<void> => {
 
 export const saveImage = async (fileName: string): Promise<void> => {
   logger.info("Saving image to the device storage.");
-  FileSystem.StorageAccessFramework;
 };
 
 export const saveFileToDocumentsDirectory = async (
   fileName: string,
-  content: object,
+  content: any,
 ): Promise<void> => {
+  logger.info("Saving image to the device storage.");
+  if (Platform.OS === "web") {
+    logger.info("expo-file-system is not supported on web, returning.");
+    return;
+  }
   const filePath = `${FileSystem.documentDirectory}${fileName}}`;
   await writeFile(filePath, JSON.stringify(content));
 };
 
 export const readFileFromDocumentsDirectory = async (
   fileName: string,
-): Promise<object> => {
+): Promise<any> => {
+  if (Platform.OS === "web") {
+    logger.info("expo-file-system is not supported on web, returning.");
+    return;
+  }
   const filePath = `${FileSystem.documentDirectory}${fileName}}`;
   let content = await readFile(filePath);
   return JSON.parse(content);
@@ -46,13 +63,21 @@ export const readFileFromDocumentsDirectory = async (
 
 export const saveFileToCacheDirectory = async (
   fileName: string,
-  content: object,
+  content: any,
 ): Promise<void> => {
+  if (Platform.OS === "web") {
+    logger.info("expo-file-system is not supported on web, returning.");
+    return;
+  }
   const filePath = `${FileSystem.cacheDirectory}${fileName}}`;
   await writeFile(filePath, JSON.stringify(content));
 };
 
-export const readFileFromCacheDirectory = async (fileName: string): Promise<object> => {
+export const readFileFromCacheDirectory = async (fileName: string): Promise<any> => {
+  if (Platform.OS === "web") {
+    logger.info("expo-file-system is not supported on web, returning.");
+    return;
+  }
   const filePath = `${FileSystem.cacheDirectory}${fileName}}`;
   let content = await readFile(filePath);
   return JSON.parse(content);

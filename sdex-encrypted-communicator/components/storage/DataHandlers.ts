@@ -1,17 +1,25 @@
+import { WebSQLDatabase } from "expo-sqlite";
 import logger from "../Logger";
-import { Contact } from "../Types";
-import { fetchContacts,insertContact,openDatabase } from "./SqlStorageMiddlewares";
+import { MISSING_SQL_DB_SESSION_FAILURE_MSG } from "../Messages";
+import { ChatRoomListItem, Contact, Message } from "../Types";
+import {
+  getChatRoomsQuery,
+  getContactByIdQuery,
+  getContactsQuery,
+  getMessagesQuery,
+  getUnreadCountQuery,
+  saveContactQuery,
+  saveMessageQuery,
+} from "./SqlStorageMiddlewares";
 
-export const getContacts = async (): Promise<Contact[]> => {
+export const getContacts = async (dbSession?: WebSQLDatabase): Promise<Contact[]> => {
   logger.info("Getting contacts from the SQL database.");
   const contacts: Contact[] = [];
-  logger.info("Obtaining database session.");
-  const dbSession = await openDatabase();
   if (!dbSession) {
     logger.error("Failed to open db session. Returning empty list.");
     return contacts;
   }
-  const results = await fetchContacts(dbSession);
+  const results = await getContactsQuery(dbSession);
   logger.info("Converting database results to Contact items.");
   results.forEach((result) => {
     for (let index = 0; index < result.rows.length; index += 1) {
@@ -22,15 +30,33 @@ export const getContacts = async (): Promise<Contact[]> => {
   return contacts;
 };
 
-export const saveContact = async (contact: Contact): Promise<boolean> => {
-  logger.info("Saving new contact to SQL database.");
-  logger.info("Obtaining database session.");
-  const dbSession = await openDatabase();
+export const getContactById = async (
+  dbSession: WebSQLDatabase,
+  contactId: number,
+): Promise<Contact | undefined> => {
+  logger.info("Getting contact by id from SQL database.");
   if (!dbSession) {
-    logger.error("Failed to open db session. Returning.");
+    logger.error("Failed to open db session. Returning empty list.");
+    return;
+  }
+  const results = await getContactByIdQuery(dbSession, contactId);
+  logger.info("Converting database result to Contact.");
+  const contact: Contact = results[0].rows.item(0);
+
+  logger.info("Returning contacts list.");
+  return contact;
+};
+
+export const saveContact = async (
+  contact: Contact,
+  dbSession?: WebSQLDatabase,
+): Promise<boolean> => {
+  logger.info("Saving a contact to SQL database.");
+  if (!dbSession) {
+    logger.error(MISSING_SQL_DB_SESSION_FAILURE_MSG + " Returning false.");
     return false;
   }
-  const successful = await insertContact(dbSession, contact);
+  const successful = await saveContactQuery(dbSession, contact);
   if (successful) {
     logger.info("Contact saved successfully.");
     return true;
@@ -39,16 +65,16 @@ export const saveContact = async (contact: Contact): Promise<boolean> => {
   return false;
 };
 
-export const getChatRooms = async (): Promise<ChatRoomListItem[]> => {
-  logger.info("Getting chat rooms.");
+export const getChatRooms = async (
+  dbSession?: WebSQLDatabase,
+): Promise<ChatRoomListItem[]> => {
+  logger.info("Getting chat rooms from SQL database.");
   const chatRooms: ChatRoomListItem[] = [];
-  logger.info("Obtaining database session.");
-  const dbSession = await openDatabase();
   if (!dbSession) {
-    logger.error("Failed to open db session. Returning empty list.");
+    logger.error(MISSING_SQL_DB_SESSION_FAILURE_MSG + " Returning []");
     return chatRooms;
   }
-  const results = await fetchChatRooms(dbSession);
+  const results = await getChatRoomsQuery(dbSession);
   logger.info("Converting database results to ChatRoom items.");
   results.forEach((result) => {
     for (let index = 0; index < result.rows.length; index += 1) {
@@ -59,17 +85,18 @@ export const getChatRooms = async (): Promise<ChatRoomListItem[]> => {
   return chatRooms;
 };
 
-export const getMessages = async (contact: Contact): Promise<MessageItem[]> => {
+export const getMessages = async (
+  contactId: number,
+  dbSession?: WebSQLDatabase,
+): Promise<Message[]> => {
   logger.info("Getting messages with a provided contact.");
-  const messages: MessageItem[] = [];
-  logger.info("Obtaining database session.");
-  const dbSession = await openDatabase();
+  const messages: Message[] = [];
   if (!dbSession) {
-    logger.error("Failed to open db session. Returning empty list.");
+    logger.error(MISSING_SQL_DB_SESSION_FAILURE_MSG + " Returning []");
     return messages;
   }
   logger.info("Dispatching database middleware.");
-  const results = await fetchMessages(dbSession, contact.id);
+  const results = await getMessagesQuery(dbSession, contactId);
   logger.info("Converting database results to MessageItems.");
   results.forEach((result) => {
     for (let index = 0; index < result.rows.length; index += 1) {
@@ -84,20 +111,20 @@ export const getMessages = async (contact: Contact): Promise<MessageItem[]> => {
  * Save message data into the database.
  * @param contactId Contact ID of the message author.
  * @param message Message data to save.
+ * @param dbSession WebSQLDatabase session.
  * @returns True if the message was saved successfully, false otherwise.
  */
 export const saveMessage = async (
   contactId: number,
-  message: MessageItem,
+  message: Message,
+  dbSession?: WebSQLDatabase,
 ): Promise<boolean> => {
   logger.info("Saving new message to SQL database.");
-  logger.info("Obtaining database session.");
-  const dbSession = await openDatabase();
   if (!dbSession) {
-    logger.error("Failed to open db session. Returning.");
+    logger.error(MISSING_SQL_DB_SESSION_FAILURE_MSG + " Returning false.");
     return false;
   }
-  const results = await insertMessage(dbSession, contactId, message);
+  const results = await saveMessageQuery(dbSession, message);
   if (results) {
     logger.info("Message saved successfully.");
     return true;
@@ -106,15 +133,13 @@ export const saveMessage = async (
   return false;
 };
 
-export const getUnreadCount = async (): Promise<number> => {
-  logger.debug("Getting a number of unread messages from the SQL database.");
-  logger.info("Obtaining database session.");
-  const dbSession = await openDatabase();
+export const getUnreadCount = async (dbSession?: WebSQLDatabase): Promise<number> => {
+  logger.info("Getting a number of unread messages from SQL database.");
   if (!dbSession) {
     logger.error("Failed to open db session. Returning 0.");
     return 0;
   }
   logger.info("Returning unread count.");
-  const results = await fetchUnreadCount(dbSession);
+  const results = await getUnreadCountQuery(dbSession);
   return results[0].rows.item(0);
 };

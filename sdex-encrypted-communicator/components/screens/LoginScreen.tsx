@@ -1,21 +1,21 @@
 import * as React from "react";
-import { Alert,KeyboardAvoidingView,SafeAreaView,View } from "react-native";
-import { Appbar,Button,TextInput } from "react-native-paper";
+import { Alert, KeyboardAvoidingView, SafeAreaView, View } from "react-native";
+import { Appbar, Button, TextInput } from "react-native-paper";
 import { GENERIC_OKAY_DISMISS_BUTTON } from "../Buttons";
 import { useAuthStore } from "../Contexts";
 import logger from "../Logger";
 import { GENERIC_AUTHORIZATION_ERROR_MSG } from "../Messages";
 import { getSecure } from "../storage/SecureStoreMiddlewares";
 import styles from "../Styles";
-import { LoginScreenPropsType } from "../Types";
+import { UnauthenticatedStackLoginScreenPropsType } from "../Types";
 
-function LoginScreen({ navigation }: LoginScreenPropsType) {
+function LoginScreen({ navigation }: UnauthenticatedStackLoginScreenPropsType) {
   const [userInputPIN, setUserInputPIN] = React.useState("");
   const [userActualPIN, setUserActualPIN] = React.useState("");
   const signIn = useAuthStore((state) => state.signIn);
 
   React.useEffect(() => {
-    const fetchActualPIN = async (): Promise<void> => {
+    (async () => {
       const actualPin = await getSecure("userPIN");
       if (actualPin !== null) {
         logger.info("PIN fetched from secure storage.");
@@ -23,8 +23,7 @@ function LoginScreen({ navigation }: LoginScreenPropsType) {
       } else {
         logger.info("PIN missing in secure storage.");
       }
-    };
-    fetchActualPIN();
+    })();
   }, []);
 
   const handleSignIn = () => {

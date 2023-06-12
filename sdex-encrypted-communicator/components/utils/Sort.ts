@@ -1,19 +1,19 @@
+import { ChatRoomListItem, Contact, Message } from "../Types";
 
-
-export const sortDescendingByDate = (
+export const sortChatRoomsDescendingByDate = (
   chatRoomListItems: ChatRoomListItem[],
 ): ChatRoomListItem[] => {
-  const arr: ChatRoomListItem[] = [];
-  return arr
-    .concat(chatRoomListItems)
-    .sort((a: ChatRoomListItem, b: ChatRoomListItem) =>
-      a.lastMsgDate < b.lastMsgDate ? 1 : -1,
-    );
+  return chatRoomListItems.sort(
+    (a, b) => b.lastMsgDate.getTime() - a.lastMsgDate.getTime(),
+  );
+};
+
+export const sortMessagesAscendingByDate = (messages: Message[]): Message[] => {
+  return messages.sort((a, b) => a.time.getTime() - b.time.getTime());
 };
 
 export const sortAscendingBySurname = (contactsList: Contact[]): Contact[] => {
-  const arr: Contact[] = [];
-  return arr
-    .concat(contactsList)
-    .sort((a: Contact, b: Contact) => (a.surname > b.surname ? 1 : -1));
+  return contactsList.sort((a: Contact, b: Contact) =>
+    a.surname > b.surname ? 1 : -1,
+  );
 };

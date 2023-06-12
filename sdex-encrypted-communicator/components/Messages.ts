@@ -4,8 +4,7 @@ export const GENERIC_AUTHORIZATION_ERROR_MSG = "Błąd autoryzacji";
 export const BUTTON_ACCEPT_TEXT = "Okej";
 
 // Backend
-export const GENERIC_LOCAL_STORAGE_SQL_CONNECTION_ERROR_MSG =
-  "SQL db connection error: ";
+export const MISSING_SQL_DB_SESSION_FAILURE_MSG = "Database session not available.";
 export const GENERIC_LOCAL_STORAGE_SQL_QUERY_FAILURE_MSG =
   "Query executed with error: ";
 export const GENERIC_LOCAL_STORAGE_SQL_QUERY_SUCCESS_MSG =

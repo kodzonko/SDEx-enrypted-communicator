@@ -1,28 +1,33 @@
 import { formatDistance } from "date-fns";
 import pl from "date-fns/locale/pl";
 import * as React from "react";
-import { FlatList,SafeAreaView,TouchableOpacity } from "react-native";
-import { Appbar,Divider,List } from "react-native-paper";
+import { FlatList, SafeAreaView, TouchableOpacity } from "react-native";
+import { Appbar, Divider, List } from "react-native-paper";
+import {
+  useChatRoomsStore,
+  useContactIdStore,
+  useSqlDbSessionStore,
+} from "../Contexts";
 import { getChatRooms } from "../storage/DataHandlers";
-import { ChatRoomListItem,ChatRoomsScreenPropsType } from "../Types";
-import { sortDescendingByDate } from "../utils/Sort";
+import styles from "../Styles";
+import { ChatRoomsStackChatRoomsScreenPropsType } from "../Types";
+import { sortChatRoomsDescendingByDate } from "../utils/Sort";
 
 /**
  * Screen displaying all threads existing in local persistent storage + fetched from the server.
- *
- * @returns {JSX.Element}
- * @constructor
  */
-function ChatRoomsScreen({ navigation }: ChatRoomsScreenPropsType) {
-  const [chatRooms, setChatRooms] = React.useState<ChatRoomListItem[]>([]);
+function ChatRoomsScreen({ navigation }: ChatRoomsStackChatRoomsScreenPropsType) {
+  const chatRooms = useChatRoomsStore((state) => state.chatRooms);
+  const setChatRooms = useChatRoomsStore((state) => state.setChatRooms);
+  const setContactId = useContactIdStore((state) => state.setContactId);
+  const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
 
   React.useEffect(() => {
-    const chatRooms = getChatRooms()
-      .then((chatRoomsUnsorted) => {
-        const chatRoomsSorted = sortDescendingByDate(chatRoomsUnsorted);
-        setChatRooms(chatRoomsSorted);
-      })
-      .catch((error) => {});
+    (async () => {
+      const chatRoomsFromDb = await getChatRooms(sqlDbSession);
+      const sortedChatRooms = sortChatRoomsDescendingByDate(chatRoomsFromDb);
+      setChatRooms(sortedChatRooms);
+    })();
   }, []);
 
   /**
@@ -41,23 +46,25 @@ function ChatRoomsScreen({ navigation }: ChatRoomsScreenPropsType) {
 
   return (
     <SafeAreaView className="flex-1">
-      <Appbar.Header>
-        <Appbar.Content title="Wiadomości" />
-        {/* <Appbar.Action */}
-        {/*   size={30} */}
-        {/*   className="mr-2" */}
-        {/*   icon="cog-outline" */}
-        {/*   onPress={() => { */}
-        {/*     navigation.navigate("Settings"); */}
-        {/*   }} */}
-        {/* /> */}
+      <Appbar.Header style={styles.appBarHeader}>
+        <Appbar.Content title="Wiadomości" titleStyle={styles.appBarTitle} />
+        <Appbar.Action
+          icon="cog"
+          iconColor={styles.appBarIcons.color}
+          onPress={() => navigation.navigate("Settings")}
+        />
       </Appbar.Header>
       <FlatList
         data={chatRooms}
         keyExtractor={(item) => item.name + item.surname}
         ItemSeparatorComponent={() => <Divider />}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
+          <TouchableOpacity
+            onPress={() => {
+              setContactId(item.contactId);
+              navigation.navigate("Chat");
+            }}
+          >
             <List.Item
               title={`${item.name} ${item.surname}`}
               description={formatDistance(new Date(item.lastMsgDate), new Date(), {

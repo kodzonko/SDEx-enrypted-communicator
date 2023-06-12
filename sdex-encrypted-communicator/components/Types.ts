@@ -1,3 +1,8 @@
+import { CompositeScreenProps } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { StackScreenProps } from "@react-navigation/stack";
+import * as SQLite from "expo-sqlite";
+
 export interface AuthState {
   isSignedIn: boolean;
   signIn: () => void;
@@ -12,64 +17,117 @@ export interface Contact {
   messagingKey: string;
 }
 
-export interface ChatRoomListItem {
+export type ContactsStoreContactList = { contacts: Contact[] };
+
+export type ContactsStoreContactAction = {
+  addContact: (contact: Contact) => void;
+  setContacts: (contacts: Contact[]) => void;
+  getContact: (id: number) => Contact | undefined;
+  updateContact: (id: number, contact: Contact) => void;
+  removeContact: (id: number) => void;
+};
+
+export type ChatRoomListItem = {
   name: string;
   surname: string;
-  lastMsgDate: string;
+  contactId: number;
+  lastMsgDate: Date;
   unreadMsgCount: number;
-}
+};
 
-export interface MessageItem {
+export type Message = {
   id: number;
   contactId: number;
-  textContent: string;
-  mediaContentPath: string;
-  time: Date;
+  text: string;
+  createdAt: Date;
   unread: boolean;
-}
+  image?: string;
+  video?: string;
+  audio?: string;
+};
+
+export type MessagesStoreMessageList = { messages: Message[] };
+
+export type MessagesStoreMessageAction = {
+  addMessage: (message: Message) => void;
+  setMessages: (messages: Message[]) => void;
+  getLastMessage: (contactId: number) => Message | undefined;
+};
+
+export type ChatRoomsStoreChatRoomList = { chatRooms: ChatRoomListItem[] };
+
+export type ChatRoomsStoreChatRoomAction = {
+  addChatRoom: (chatRoom: ChatRoomListItem) => void;
+  setChatRooms: (chatRooms: ChatRoomListItem[]) => void;
+};
+
+export type ContactIdStoreType = {
+  contactId: number;
+  setContactId: (id: number) => void;
+};
+
+export type SqlDbSessionStoreType = {
+  sqlDbSession?: SQLite.WebSQLDatabase;
+  setSqlDbSession: (name?: string) => void;
+};
 
 export type UnauthenticatedStackNavigationParamList = {
   Login: undefined;
   SignUp: undefined;
 };
 
-export type AuthenticatedStackNavigationParamList = {
-  ChatRooms: undefined;
-  Settings: undefined;
-  Contacts: undefined;
-};
-
-export type LoginScreenPropsType = NativeStackScreenProps<
+export type UnauthenticatedStackLoginScreenPropsType = NativeStackScreenProps<
   UnauthenticatedStackNavigationParamList,
   "Login"
 >;
 
-export type SignUpScreenPropsType = NativeStackScreenProps<
+export type UnauthenticatedStackSignUpScreenPropsType = NativeStackScreenProps<
   UnauthenticatedStackNavigationParamList,
   "SignUp"
 >;
 
-export type ChatRoomsScreenPropsType = NativeStackScreenProps<
-  AuthenticatedStackNavigationParamList,
+export type AuthenticatedBottomTabNavigationParamList = {
+  ChatRoomsStack: undefined;
+  ContactsStack: undefined;
+};
+
+export type ChatRoomsStackNavigationParamList = {
+  ChatRooms: undefined;
+  Chat: undefined;
+  Settings: undefined;
+};
+
+export type ChatRoomsStackChatRoomsScreenPropsType = NativeStackScreenProps<
+  ChatRoomsStackNavigationParamList,
   "ChatRooms"
 >;
 
-export type SettingsScreenPropsType = NativeStackScreenProps<
-  AuthenticatedStackNavigationParamList,
-  "Settings"
+export type ChatRoomsStackChatScreenPropsType = NativeStackScreenProps<
+  ChatRoomsStackNavigationParamList,
+  "Chat"
 >;
 
-export type ContactsScreenPropsType = NativeStackScreenProps<
-  AuthenticatedStackNavigationParamList,
+export type ContactsStackNavigationParamList = {
+  Contacts: undefined;
+  Settings: undefined;
+};
+
+export type ContactsStackContactsScreenPropsType = NativeStackScreenProps<
+  ContactsStackNavigationParamList,
   "Contacts"
 >;
 
-export interface KeyPair {
+export type SettingsScreenPropsType = CompositeScreenProps<
+  StackScreenProps<ChatRoomsStackNavigationParamList, "Settings">,
+  StackScreenProps<ContactsStackNavigationParamList, "Settings">
+>;
+
+export type KeyPair = {
   publicKey: string;
   privateKey: string;
-}
+};
 
-export interface KeyPairUpdate {
-  updatePublicKey: (publicKey: KeyPair["publicKey"]) => void;
-  updatePrivateKey: (privateKey: KeyPair["privateKey"]) => void;
-}
+export type KeyPairUpdate = {
+  updatePublicKey: (publicKey: KeyPair["publicKey"]) => void; // eslint-disable-line no-unused-vars
+  updatePrivateKey: (privateKey: KeyPair["privateKey"]) => void; // eslint-disable-line no-unused-vars
+};

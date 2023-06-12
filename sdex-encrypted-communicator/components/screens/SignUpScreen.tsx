@@ -12,14 +12,14 @@ import {
 } from "react-native-paper";
 import { shallow } from "zustand/shallow";
 import { generateKeyPair } from "../crypto/RsaCrypto";
-import { readFile } from "../storage/FileOps";
+import { readFile, saveFileToDocumentsDirectory } from "../storage/FileOps";
 import styles from "../Styles";
 
 import { useKeysStore } from "../Contexts";
 import { BUTTON_ACCEPT_TEXT } from "../Messages";
-import { SignUpScreenPropsType } from "../Types";
+import { UnauthenticatedStackSignUpScreenPropsType } from "../Types";
 
-function SignUpScreen({ navigation }: SignUpScreenPropsType) {
+function SignUpScreen({ navigation }: UnauthenticatedStackSignUpScreenPropsType) {
   const [userPIN, setUserPIN] = React.useState("");
   const [userPINRepeated, setUserPINRepeated] = React.useState("");
   const { publicKey, updatePublicKey, privateKey, updatePrivateKey } = useKeysStore(
@@ -32,9 +32,11 @@ function SignUpScreen({ navigation }: SignUpScreenPropsType) {
     shallow,
   );
   const [keyObtainDialogVisible, setKeyObtainDialogVisible] = React.useState(false);
-  const _goBack = () => navigation.goBack();
 
-  const handleSignUp = () => {};
+  const handleSignUp = async () => {
+    await saveFileToDocumentsDirectory("id_rsa.pub", publicKey);
+    await saveFileToDocumentsDirectory("id_rsa", privateKey);
+  };
 
   const handleKeysGen = () => {
     const generatedKeyPair = generateKeyPair();
@@ -73,8 +75,11 @@ function SignUpScreen({ navigation }: SignUpScreenPropsType) {
   return (
     <SafeAreaView className="flex flex-1 flex-col">
       <Appbar.Header style={styles.appBarHeader}>
-        <Appbar.BackAction onPress={_goBack} iconColor={styles.appBarIcons.color} />
         <Appbar.Content title="Rejestracja" titleStyle={styles.appBarTitle} />
+        <Appbar.BackAction
+          onPress={() => navigation.goBack()}
+          iconColor={styles.appBarIcons.color}
+        />
       </Appbar.Header>
 
       <Portal>

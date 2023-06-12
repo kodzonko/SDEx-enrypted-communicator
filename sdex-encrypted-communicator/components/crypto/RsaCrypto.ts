@@ -1,6 +1,9 @@
 import * as FileSystem from "expo-file-system";
 import keypair from "keypair";
-
+import { FileSystemError } from "../Errors";
+import logger from "../Logger";
+import { GENERIC_LOCAL_STORAGE_FILESYSTEM_ERROR_MSG } from "../Messages";
+import { KeyPair } from "../Types";
 
 /**
  * Generate a new RSA key pair.
