@@ -1,5 +1,7 @@
 import * as React from "react";
-import { Alert, KeyboardAvoidingView, SafeAreaView, View } from "react-native";
+import {
+  Alert, KeyboardAvoidingView, SafeAreaView, View,
+} from "react-native";
 import { Appbar, Button, TextInput } from "react-native-paper";
 import { GENERIC_OKAY_DISMISS_BUTTON } from "../Buttons";
 import { useAuthStore } from "../Contexts";
@@ -87,7 +89,9 @@ function LoginScreen({ navigation }: UnauthenticatedStackLoginScreenPropsType) {
           className="mt-7 align-bottom"
           onPress={() => navigation.navigate("SignUp")}
         >
-          Nie masz konta? Załóż je {">"}
+          Nie masz konta? Załóż je
+          {" "}
+          {">"}
         </Button>
       </KeyboardAvoidingView>
     </SafeAreaView>

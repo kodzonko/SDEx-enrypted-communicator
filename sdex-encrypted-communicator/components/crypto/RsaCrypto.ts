@@ -9,7 +9,7 @@ import { KeyPair } from "../Types";
  * Generate a new RSA key pair.
  * @param bits The number of bits to use in the key pair (default is 2048).
  */
-export const generateKeyPair = (bits: number = 2048): KeyPair => {
+export const generateKeyPair = (bits = 2048): KeyPair => {
   const keyPair = keypair({ bits });
 
   return {

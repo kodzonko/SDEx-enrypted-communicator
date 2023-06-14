@@ -9,12 +9,24 @@ export interface AuthState {
   signOut: () => void;
 }
 
-export interface Contact {
-  id: number;
-  name: string;
-  surname: string;
-  publicKey: string;
-  messagingKey: string;
+export class Contact {
+  public id?: number;
+  public name: string;
+  public surname: string;
+  public publicKey: string;
+  public messagingKey: string;
+
+  constructor(name: string, surname: string, publicKey: string, messagingKey: string, id?: number) {
+    this.name = name;
+    this.surname = surname;
+    this.publicKey = publicKey;
+    this.messagingKey = messagingKey;
+    this.id = id;
+  }
+
+  public getFullName(): string {
+    return `${this.name} ${this.surname}`;
+  }
 }
 
 export type ContactsStoreContactList = { contacts: Contact[] };
@@ -27,38 +39,64 @@ export type ContactsStoreContactAction = {
   removeContact: (id: number) => void;
 };
 
-export type ChatRoomListItem = {
-  name: string;
-  surname: string;
-  contactId: number;
-  lastMsgDate: Date;
-  unreadMsgCount: number;
-};
+export class ChatRoom {
+  public name: string;
+  public surname: string;
+  public contactId: number;
+  public lastMessageDate: Date;
+  public unreadMessageCount: number;
 
-export type Message = {
-  id: number;
-  contactId: number;
-  text: string;
-  createdAt: Date;
-  unread: boolean;
-  image?: string;
-  video?: string;
-  audio?: string;
-};
+  constructor(
+    name: string,
+    surname: string,
+    contactId: number,
+    lastMessageDate: Date,
+    unreadMessageCount: number,
+  ) {
+    this.name = name;
+    this.surname = surname;
+    this.contactId = contactId;
+    this.lastMessageDate = lastMessageDate;
+    this.unreadMessageCount = unreadMessageCount;
+  }
+}
 
-export type MessagesStoreMessageList = { messages: Message[] };
+export class Message {
+  public id?: number;
+  public contactId: number;
+  public text: string;
+  public createdAt: Date;
+  public unread: boolean;
+  public image?: string;
+  public video?: string;
+  public audio?: string;
 
-export type MessagesStoreMessageAction = {
-  addMessage: (message: Message) => void;
-  setMessages: (messages: Message[]) => void;
-  getLastMessage: (contactId: number) => Message | undefined;
-};
+  constructor(
+    contactId: number,
+    text: string,
+    createdAt: Date,
+    unread: boolean,
+    image?: string,
+    video?: string,
+    audio?: string,
+    id?: number,
+  ) {
+    this.id = id;
+    this.contactId = contactId;
+    this.text = text;
+    this.createdAt = createdAt;
+    this.unread = unread;
+    this.image = image;
+    this.video = video;
+    this.audio = audio;
+  }
+}
 
-export type ChatRoomsStoreChatRoomList = { chatRooms: ChatRoomListItem[] };
+export type ChatRoomsStoreChatRoomList = { chatRooms: ChatRoom[] };
 
 export type ChatRoomsStoreChatRoomAction = {
-  addChatRoom: (chatRoom: ChatRoomListItem) => void;
-  setChatRooms: (chatRooms: ChatRoomListItem[]) => void;
+  addChatRoom: (chatRoom: ChatRoom) => void;
+  setChatRooms: (chatRooms: ChatRoom[]) => void;
 };
 
 export type ContactIdStoreType = {

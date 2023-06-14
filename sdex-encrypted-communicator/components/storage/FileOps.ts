@@ -57,7 +57,7 @@ export const readFileFromDocumentsDirectory = async (
     return;
   }
   const filePath = `${FileSystem.documentDirectory}${fileName}}`;
-  let content = await readFile(filePath);
+  const content = await readFile(filePath);
   return JSON.parse(content);
 };
 
@@ -79,6 +79,6 @@ export const readFileFromCacheDirectory = async (fileName: string): Promise<any>
     return;
   }
   const filePath = `${FileSystem.cacheDirectory}${fileName}}`;
-  let content = await readFile(filePath);
+  const content = await readFile(filePath);
   return JSON.parse(content);
 };

@@ -1,19 +1,10 @@
-import { ChatRoomListItem, Contact, Message } from "../Types";
+import { ChatRoom, Contact, Message } from "../Types";
 
-export const sortChatRoomsDescendingByDate = (
-  chatRoomListItems: ChatRoomListItem[],
-): ChatRoomListItem[] => {
-  return chatRoomListItems.sort(
-    (a, b) => b.lastMsgDate.getTime() - a.lastMsgDate.getTime(),
-  );
-};
+export const sortChatRoomsDescendingByDate = (chatRoomListItems: ChatRoom[]): ChatRoom[] =>
+  chatRoomListItems.sort((a, b) => b.lastMessageDate.getTime() - a.lastMessageDate.getTime());
 
-export const sortMessagesAscendingByDate = (messages: Message[]): Message[] => {
-  return messages.sort((a, b) => a.time.getTime() - b.time.getTime());
-};
+export const sortMessagesAscendingByDate = (messages: Message[]): Message[] =>
+  messages.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
-export const sortAscendingBySurname = (contactsList: Contact[]): Contact[] => {
-  return contactsList.sort((a: Contact, b: Contact) =>
-    a.surname > b.surname ? 1 : -1,
-  );
-};
+export const sortAscendingBySurname = (contactsList: Contact[]): Contact[] =>
+  contactsList.sort((a: Contact, b: Contact) => (a.surname > b.surname ? 1 : -1));

@@ -1,5 +1,7 @@
-import React,{ useState } from "react";
-import { Pressable,Text,TextInput,View } from "react-native";
+import React, { useState } from "react";
+import {
+  Pressable, Text, TextInput, View,
+} from "react-native";
 
 function Modal({ setVisible }: any) {
   const closeModal = () => setVisible(false);

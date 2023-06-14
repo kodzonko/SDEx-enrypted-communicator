@@ -1,33 +1,40 @@
 import * as React from "react";
 import { Dimensions, SafeAreaView, View } from "react-native";
-import { GiftedChat } from "react-native-gifted-chat";
+import { GiftedChat, IMessage as GiftedChatMessage } from "react-native-gifted-chat";
 
 import { Appbar } from "react-native-paper";
 
-import { useContactIdStore } from "../Contexts";
-import { getMessages } from "../storage/DataHandlers";
+import { useContactIdStore, useSqlDbSessionStore } from "../Contexts";
+import { DataHandlerError } from "../Errors";
+import { getContactById, getMessagesByContactId } from "../storage/DataHandlers";
 import styles from "../Styles";
 import { ChatRoomsStackChatScreenPropsType } from "../Types";
+import { messageToGiftedChatMessage } from "../utils/Converters";
 
 function ChatScreen({ navigation }: ChatRoomsStackChatScreenPropsType) {
-  // const messages = useMessagesStore((state) => state.messages);
-  // const setMessages = useMessagesStore((state) => state.setMessages);
-  const [messages, setMessages] = React.useState([]);
+  const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
+  const [messages, setMessages] = React.useState<GiftedChatMessage[]>([]);
   const contactId = useContactIdStore((state) => state.contactId);
 
   React.useEffect(() => {
     (async () => {
-      const messagesFromStorage = await getMessages(contactId);
-      const userFromStorage = await getContact(contactId);
-      setMessages(await getMessages(contactId));
+      const userFromStorage = await getContactById(contactId, sqlDbSession);
+      if (!userFromStorage) {
+        throw new DataHandlerError(`User with id ${contactId} not found in storage.`);
+      }
+      const messagesFromStorage = await getMessagesByContactId(contactId, sqlDbSession);
+      const giftedChatMessages: GiftedChatMessage[] = [];
+      messagesFromStorage.forEach((message) => {
+        giftedChatMessages.push(messageToGiftedChatMessage(message, userFromStorage));
+      });
+      setMessages(giftedChatMessages);
     })();
   }, []);
 
-  const onSend = React.useCallback((messages = []) => {
+  const onSend = React.useCallback((messages: GiftedChatMessage[] = []) => {
     setMessages((previousMessages) => GiftedChat.append(previousMessages, messages));
   }, []);
 
-  const inverted = false;
   const { width, height } = Dimensions.get("window");
 
   return (

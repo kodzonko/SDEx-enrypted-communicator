@@ -34,8 +34,7 @@ function ChatRoomsScreen({ navigation }: ChatRoomsStackChatRoomsScreenPropsType)
    * Returns a badge if count > 0 else right arrow.
    */
   const makeBadge = (count: any) => {
-    const icon =
-      count > 0 && count < 10 ? `numeric-${count}-circle` : "numeric-9-plus-circle";
+    const icon = count > 0 && count < 10 ? `numeric-${count}-circle` : "numeric-9-plus-circle";
 
     return count > 0 ? (
       <List.Icon icon={icon} color="red" />

@@ -10,7 +10,7 @@ function ChatRoomsStackNavigator() {
   return (
     <ChatRoomsStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName={"ChatRooms"}
+      initialRouteName="ChatRooms"
     >
       <ChatRoomsStack.Screen name="ChatRooms" component={ChatRoomsScreen} />
       <ChatRoomsStack.Screen name="Chat" component={ChatScreen} />

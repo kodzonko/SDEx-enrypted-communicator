@@ -22,7 +22,9 @@ import { UnauthenticatedStackSignUpScreenPropsType } from "../Types";
 function SignUpScreen({ navigation }: UnauthenticatedStackSignUpScreenPropsType) {
   const [userPIN, setUserPIN] = React.useState("");
   const [userPINRepeated, setUserPINRepeated] = React.useState("");
-  const { publicKey, updatePublicKey, privateKey, updatePrivateKey } = useKeysStore(
+  const {
+    publicKey, updatePublicKey, privateKey, updatePrivateKey,
+  } = useKeysStore(
     (state) => ({
       publicKey: state.publicKey,
       updatePublicKey: state.updatePublicKey,
@@ -155,10 +157,14 @@ function SignUpScreen({ navigation }: UnauthenticatedStackSignUpScreenPropsType)
           Uzyskaj
         </Button>
         <Text variant="bodyLarge" className="mt-4">
-          Klucz prywatny: {privateKey ? "\u2714" : "\u274C"}
+          Klucz prywatny:
+          {" "}
+          {privateKey ? "\u2714" : "\u274C"}
         </Text>
         <Text variant="bodyLarge" className="mt-2">
-          Klucz publiczny: {publicKey ? "\u2714" : "\u274C"}
+          Klucz publiczny:
+          {" "}
+          {publicKey ? "\u2714" : "\u274C"}
         </Text>
       </Surface>
       <Button

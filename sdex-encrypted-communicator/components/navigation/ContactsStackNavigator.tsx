@@ -9,7 +9,7 @@ function ContactsStackNavigator() {
   return (
     <ContactsStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName={"Contacts"}
+      initialRouteName="Contacts"
     >
       <ContactsStack.Screen name="Contacts" component={ContactsScreen} />
       <ContactsStack.Screen name="Settings" component={SettingsScreen} />

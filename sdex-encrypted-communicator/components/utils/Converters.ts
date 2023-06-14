@@ -14,17 +14,15 @@ export const bytesToString = (bytes: Uint8Array): string => {
 export const messageToGiftedChatMessage = (
   message: Message,
   contact: Contact,
-): GiftedChatMessage => {
-  return {
-    _id: message.id,
-    text: message.text,
-    createdAt: message.createdAt,
-    image: message.image,
-    video: message.video,
-    audio: message.audio,
-    user: {
-      _id: message.contactId,
-      name: contact.name + " " + contact.surname,
-    },
-  };
-};
+): GiftedChatMessage => ({
+  _id: message.id,
+  text: message.text,
+  createdAt: message.createdAt,
+  image: message.image,
+  video: message.video,
+  audio: message.audio,
+  user: {
+    _id: message.contactId,
+    name: `${contact.name} ${contact.surname}`,
+  },
+});
