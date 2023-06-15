@@ -6,8 +6,8 @@
     "android": "expo run:android --device",
     "ios": "expo run:ios --device",
     "web": "SET NODE_OPTIONS=--openssl-legacy-provider && expo start --web",
-    "lint": "eslint --fix --ext .ts --ext .tsx --ext .js --ext jsx .",
-    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|jsx|tsx|json)\"",
+    "lint": "eslint --fix --ext .ts --ext .tsx --ext .js --ext .jsx components",
+    "format": "prettier --ignore-path ./.gitignore --write \"(components/**/*.+(js|ts|jsx|tsx|json)|App.tsx)\"",
     "test": "jest"
   },
   "jest": {
@@ -33,13 +33,11 @@
     "moduleFileExtensions": [
       "ts",
       "tsx",
-      "js"
+      "js",
+      "jsx"
     ],
     "collectCoverageFrom": [
       "components/**/*.{js,jsx,ts,tsx}",
-      "crypto/**/*.{js,jsx,ts,tsx}",
-      "storage/**/*.{js,jsx,ts,tsx}",
-      "utils/**/*.{js,jsx,ts,tsx}",
       "App.tsx"
     ]
   },
@@ -54,12 +52,14 @@
     "@react-navigation/stack": "^6.3.12",
     "@tsconfig/react-native": "^2.0.3",
     "@types/crypto-js": "^4.1.1",
+    "@types/deepmerge": "^2.2.0",
     "@types/react": "~18.0.27",
     "@types/react-dom": "~18.0.10",
     "@types/react-native": "~0.71.5",
     "@types/react-native-vector-icons": "^6.4.13",
     "crypto-js": "^4.1.1",
     "date-fns": "^2.29.3",
+    "deepmerge": "^4.3.1",
     "expo": "~48.0.18",
     "expo-asset": "~8.9.1",
     "expo-dev-client": "~2.2.1",

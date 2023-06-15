@@ -25,11 +25,22 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": ["react", "react-hooks", "react-native", "@typescript-eslint", "prettier"],
+  "plugins": [
+    "react",
+    "react-hooks",
+    "react-native",
+    "@typescript-eslint",
+    "prettier"
+  ],
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
       },
       "react": {
         "version": "detect"
@@ -47,6 +58,23 @@
         "tsx": "never"
       }
     ],
+    "@typescript-eslint/no-floating-promises": [
+      "error",
+      {
+        "ignoreIIFE": true
+      }
+    ],
+    "react/jsx-filename-extension": [
+      "error",
+      {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
+      }
+    ],
     "quotes": [
       "warn",
       "double",
@@ -55,7 +83,14 @@
         "allowTemplateLiterals": true
       }
     ],
-    "max-classes-per-file": ["off"],
-    "no-bitwise": ["off"]
+    "max-classes-per-file": [
+      "off"
+    ],
+    "no-bitwise": [
+      "off"
+    ],
+    "import/prefer-default-export": [
+      "off"
+    ]
   }
 }
