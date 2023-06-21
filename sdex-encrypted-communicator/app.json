@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/logo-no-background.png",
     "userInterfaceStyle": "light",
+    "scheme": "sdex-encrypted-communicator",
     "runtimeVersion": {
       "policy": "sdkVersion"
     },
@@ -19,9 +20,7 @@
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/01f7d59d-2001-444f-8a81-81b9c210cf03"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "pl.janwadolowski.sdexcommunicator"

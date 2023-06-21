@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "scripts": {
     "start": "SET NODE_OPTIONS=--openssl-legacy-provider && expo start --dev-client",
-    "android": "expo run:android --device",
+    "android": "expo run:android --device Galaxy_S20_Plus_API_33",
     "ios": "expo run:ios --device",
     "web": "SET NODE_OPTIONS=--openssl-legacy-provider && expo start --web",
-    "lint": "eslint --fix --ext .ts --ext .tsx --ext .js --ext .jsx components",
-    "format": "prettier --ignore-path ./.gitignore --write \"(components/**/*.+(js|ts|jsx|tsx|json)|App.tsx)\"",
+    "lint": "eslint --fix --ext .ts --ext .tsx --ext .js --ext .jsx src",
+    "format": "prettier --ignore-path ../.gitignore --write \"(src/**/*.+(js|ts|jsx|tsx|json)|App.tsx)\"",
     "test": "jest"
   },
   "jest": {
@@ -37,7 +37,7 @@
       "jsx"
     ],
     "collectCoverageFrom": [
-      "components/**/*.{js,jsx,ts,tsx}",
+      "src/**/*.{js,jsx,ts,tsx}",
       "App.tsx"
     ]
   },
@@ -45,7 +45,9 @@
     "@expo/vector-icons": "^13.0.0",
     "@expo/webpack-config": "^18.0.1",
     "@noble/hashes": "^1.2.0",
+    "@pchmn/expo-material3-theme": "^1.0.1",
     "@react-native-async-storage/async-storage": "1.17.11",
+    "@react-native-community/blur": "^4.3.2",
     "@react-navigation/bottom-tabs": "^6.5.3",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.9",
@@ -60,12 +62,15 @@
     "crypto-js": "^4.1.1",
     "date-fns": "^2.29.3",
     "deepmerge": "^4.3.1",
-    "expo": "~48.0.18",
+    "expo": "^48.0.19",
     "expo-asset": "~8.9.1",
+    "expo-constants": "~14.2.1",
     "expo-dev-client": "~2.2.1",
     "expo-document-picker": "~11.2.2",
     "expo-file-system": "~15.2.2",
+    "expo-linking": "~4.0.1",
     "expo-media-library": "~15.2.3",
+    "expo-router": "^1.5.3",
     "expo-secure-store": "~12.1.1",
     "expo-sharing": "~11.2.2",
     "expo-splash-screen": "~0.18.2",
@@ -120,6 +125,7 @@
     "eslint": "^8.42.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.8.0",
+    "eslint-import-resolver-react-native": "^0.2.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-prettier": "^4.2.1",
@@ -138,6 +144,8 @@
   "private": true,
   "overrides": {
     "@expo/config-plugins": "~6.0.0",
-    "@expo/prebuild-config": "~6.0.0"
+    "@expo/prebuild-config": "~6.0.0",
+    "metro": "0.76.0",
+    "metro-resolver": "0.76.0"
   }
 }

@@ -28,7 +28,13 @@
     "allowUnreachableCode": false
   },
   "exclude": [
-    "node_modules",
+    "node_modules"
+  ],
+  "include": [
+    "src/**/*",
+    "App.tsx",
+    "app.d.ts",
+    "declarations.d.ts",
     "babel.config.js",
     "metro.config.js",
     "jest.config.js"
