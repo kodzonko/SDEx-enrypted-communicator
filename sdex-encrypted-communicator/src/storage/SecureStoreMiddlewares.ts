@@ -1,6 +1,5 @@
 import * as SecureStore from "expo-secure-store";
 import logger from "../Logger";
-import { GENERIC_LOCAL_STORAGE_SECURESTORE_ERROR_MSG } from "../Messages";
 
 /**
  * Saves key: value pair to SecureStore
@@ -9,22 +8,26 @@ import { GENERIC_LOCAL_STORAGE_SECURESTORE_ERROR_MSG } from "../Messages";
  * @returns true if successful, false otherwise
  */
 export const saveSecure = async (key: string, value: object | string): Promise<boolean> => {
-  const valueStringified = JSON.stringify(value);
-  return SecureStore.setItemAsync(key, valueStringified)
-    .then(() => true)
+  logger.info("Saving value in SecureStore");
+  return SecureStore.setItemAsync(key, JSON.stringify(value))
+    .then(() => {
+      logger.info("Value saved successfully in SecureStore.");
+      return true;
+    })
     .catch((error: Error) => {
-      logger.error(GENERIC_LOCAL_STORAGE_SECURESTORE_ERROR_MSG + error.message);
+      logger.error(`Failed to save value in SecureStore. Error=${error.message}`);
       return false;
     });
 };
-
 /**
  * Gets entry from SecureStore by key
  * @param key - key of an entry to get
  * @returns JSON-parsed object if successful (and entry found), undefined otherwise
  */
 export const getSecure = async (key: string): Promise<object | string | undefined> => {
+  logger.info("Getting data from SecureStore.");
   const value = await SecureStore.getItemAsync(key);
+  logger.debug(`Retrieved from SecureStore; value=${JSON.stringify(value)}`);
   return value !== null ? <object | string>JSON.parse(value) : undefined;
 };
 
@@ -33,10 +36,15 @@ export const getSecure = async (key: string): Promise<object | string | undefine
  * @param key - key of an entry to remove
  * @returns true if successful, false otherwise
  */
-export const deleteSecure = async (key: string): Promise<boolean> =>
-  SecureStore.deleteItemAsync(key)
-    .then(() => true)
+export const deleteSecure = async (key: string): Promise<boolean> => {
+  logger.info("Deleting data from SecureStore.");
+  return SecureStore.deleteItemAsync(key)
+    .then(() => {
+      logger.info("Deleted value successfully.");
+      return true;
+    })
     .catch((error: Error) => {
-      logger.error(GENERIC_LOCAL_STORAGE_SECURESTORE_ERROR_MSG + error.message);
+      logger.error(`Failed to delete value from SecureStore. Error=${error.message}`);
       return false;
     });
+};

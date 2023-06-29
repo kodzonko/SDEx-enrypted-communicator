@@ -1,15 +1,6 @@
-// prettier-ignore
-// import "react-native-gesture-handler";
-// prettier-ignore
-// import { registerRootComponent } from "expo";
-// import "expo-router/entry";
-// import App from "./App";
-
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
-// registerRootComponent(App);
-
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { registerRootComponent } from "expo";
 import { ExpoRoot } from "expo-router";
 

@@ -1,19 +1,18 @@
 import * as React from "react";
-import { Alert, SafeAreaView } from "react-native";
+import { SafeAreaView } from "react-native";
 import { GiftedChat, IMessage as GiftedChatMessage } from "react-native-gifted-chat";
 
 import { Appbar } from "react-native-paper";
 
 import { Link, useLocalSearchParams } from "expo-router";
-import { useSqlDbSessionStore } from "../../../contexts/DbSession";
-import logger from "../../../Logger";
-import { GENERIC_DB_MISSING_DATA_ERROR_MSG } from "../../../Messages";
-import { getContactById, getMessagesByContactId } from "../../../storage/DataHandlers";
-import styles from "../../../Styles";
-import { Contact } from "../../../Types";
-import { messageToGiftedChatMessage } from "../../../utils/Converters";
+import { useSqlDbSessionStore } from "../../contexts/DbSession";
+import logger from "../../Logger";
+import { getContactById, getMessagesByContactId } from "../../storage/DataHandlers";
+import styles from "../../Styles";
+import { Contact } from "../../Types";
+import { messageToGiftedChatMessage } from "../../utils/Converters";
 
-export default function Profile() {
+export default function Chat() {
   const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
   const [messages, setMessages] = React.useState<GiftedChatMessage[]>([]);
   const [contact, setContact] = React.useState<Contact | undefined>(undefined);
@@ -23,13 +22,13 @@ export default function Profile() {
 
   React.useEffect(() => {
     (async () => {
-      // If contactID is -1, then user is creating a new contact.
-      if (contactId && contactId !== "-1") {
+      if (contactId) {
         logger.info(`Fetching contact info for contactId=${JSON.stringify(contactId)}.`);
-        setContact(await getContactById(Number(contactId), sqlDbSession));
-        if (!contact) {
-          logger.error(`User with id=${JSON.stringify(contactId)} not found in storage.`);
-          Alert.alert(GENERIC_DB_MISSING_DATA_ERROR_MSG, "Użytkownik nie został znaleziony.");
+        const dbQueryResult = await getContactById(Number(contactId), sqlDbSession);
+        if (!dbQueryResult) {
+          logger.error(`User with contactId=${JSON.stringify(contactId)} not found in storage.`);
+        } else {
+          setContact(dbQueryResult);
         }
       }
     })();
@@ -61,7 +60,7 @@ export default function Profile() {
           title={contact ? contact.getFullName() : "<name>"}
           titleStyle={styles.appBarTitle}
         />
-        <Link href="/chat-rooms" asChild>
+        <Link href="/chats" asChild>
           <Appbar.BackAction iconColor={styles.appBarIcons.color} />
         </Link>
       </Appbar.Header>

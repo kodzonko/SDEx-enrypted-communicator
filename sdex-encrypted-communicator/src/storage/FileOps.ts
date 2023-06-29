@@ -1,3 +1,4 @@
+import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import { Platform } from "react-native";
 import logger from "../Logger";
@@ -106,4 +107,20 @@ export const readFileFromCacheDirectory = async (
   const parsedContent = content ? <object | string>JSON.parse(content) : undefined;
   logger.debug(`Returning content=${JSON.stringify(parsedContent)}`);
   return parsedContent;
+};
+
+/**
+ *Selects a file from the device storage.
+ * @param mimeType The mime type of the file to select.
+ * @returns Returns the path to the file or undefined if the user cancels the file selection.
+ */
+export const selectFile = async (mimeType: string): Promise<string | undefined> => {
+  logger.info(`Selecting a file. Mime type=${mimeType}`);
+  const documentResult = await DocumentPicker.getDocumentAsync({
+    type: mimeType,
+    copyToCacheDirectory: true,
+  });
+  const uri = documentResult.type === "success" ? documentResult.uri : undefined;
+  logger.debug(`Selected file uri=${JSON.stringify(uri)}`);
+  return uri;
 };

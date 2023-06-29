@@ -15,6 +15,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "plugins": ["expo-document-picker"],
     "jsEngine": "hermes",
     "updates": {
       "fallbackToCacheTimeout": 0,

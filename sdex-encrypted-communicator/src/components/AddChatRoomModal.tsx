@@ -35,7 +35,10 @@ export default function AddChatRoomModal({
     if (contactId) {
       hideModalFunction();
       logger.info(`Going into chat screen with Contact=${contactId}`);
-      router.push(`/chat/${contactId}`);
+      router.push({
+        pathname: "/chat/[contactId]",
+        params: { contactId },
+      });
     } else {
       logger.error(`Ignoring button press. contactId=${JSON.stringify(contactId)}`);
     }

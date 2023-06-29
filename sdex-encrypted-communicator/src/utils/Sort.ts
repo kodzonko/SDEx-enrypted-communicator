@@ -6,5 +6,7 @@ export const sortChatRoomsDescendingByDate = (chatRoomListItems: ChatRoom[]): Ch
 export const sortMessagesAscendingByDate = (messages: Message[]): Message[] =>
   messages.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
-export const sortAscendingBySurname = (contactsList: ContactListItem[]): ContactListItem[] =>
+export const sortContactsAscendingBySurname = (
+  contactsList: ContactListItem[],
+): ContactListItem[] =>
   contactsList.sort((a: ContactListItem, b: ContactListItem) => (a.surname > b.surname ? 1 : -1));

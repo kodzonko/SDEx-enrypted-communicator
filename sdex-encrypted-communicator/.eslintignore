@@ -2,3 +2,7 @@ node_modules
 dist
 .expo
 .vscode
+.idea
+android
+assets
+icons

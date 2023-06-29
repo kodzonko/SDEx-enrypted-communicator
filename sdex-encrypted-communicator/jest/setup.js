@@ -1,5 +1,4 @@
 import "react";
-import { View } from "react-native";
 import "react-native-gesture-handler/jestSetup";
 
 // include this section and the NativeAnimatedHelper section for mocking react-native-reanimated
@@ -27,13 +26,5 @@ jest.mock("react-native-safe-area-context", () => {
     SafeAreaProvider: jest.fn().mockImplementation(({ children }) => children),
     SafeAreaConsumer: jest.fn().mockImplementation(({ children }) => children(inset)),
     useSafeAreaInsets: jest.fn().mockImplementation(() => inset),
-  };
-});
-
-jest.mock("react-native-paper", () => {
-  const RealModule = jest.requireActual("react-native-paper");
-  return {
-    ...RealModule,
-    Portal: ({ children }) => <View>{children}</View>,
   };
 });

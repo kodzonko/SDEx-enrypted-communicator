@@ -77,7 +77,7 @@ export default function ChatRooms() {
         renderItem={({ item }) => (
           <Link
             href={{
-              pathname: "/chats/[contactId]",
+              pathname: "/chat/[contactId]",
               params: { contactId: item.contactId },
             }}
             asChild

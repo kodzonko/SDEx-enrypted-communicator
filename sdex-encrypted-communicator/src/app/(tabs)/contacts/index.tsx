@@ -3,26 +3,17 @@ import { FlatList, SafeAreaView, StyleProp, ViewStyle } from "react-native";
 import { Appbar, Divider, FAB, List } from "react-native-paper";
 
 import { useIsFocused } from "@react-navigation/native";
-import { Link, useRouter } from "expo-router";
-import AddContactModal from "../../../components/AddContactModal";
+import { Link } from "expo-router";
 import { useSqlDbSessionStore } from "../../../contexts/DbSession";
 import { getContacts } from "../../../storage/DataHandlers";
 import styles from "../../../Styles";
 import { ContactListItem } from "../../../Types";
 
 export default function Contacts() {
-  // const contacts = useContactsStore((state) => state.contacts);
-  // const setContacts = useContactsStore((state) => state.setContacts);
-  // const getContact = useContactsStore((state) => state.getContact);
-  // const removeContact = useContactsStore((state) => state.removeContact);
   const [contacts, setContacts] = React.useState<ContactListItem[]>([]);
-  const [contactId, setContactId] = React.useState<number | undefined>(undefined);
 
   const isFocused = useIsFocused();
-
-  const [addContactModalVisible, setAddContactModalVisible] = React.useState(false);
   const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
-  const router = useRouter();
 
   const divider = () => <Divider />;
   const leftIcon = (props: { color: string; style?: StyleProp<ViewStyle> }) => (
@@ -43,9 +34,6 @@ export default function Contacts() {
     }
   }, [sqlDbSession, isFocused]);
 
-  const showModal = () => setAddContactModalVisible(true);
-  const hideModal = () => setAddContactModalVisible(false);
-
   return (
     <SafeAreaView className="flex-1">
       <Appbar.Header style={styles.appBarHeader}>
@@ -59,17 +47,32 @@ export default function Contacts() {
         keyExtractor={(item, index) => (item.id ? item.id.toString() : index.toString())}
         ItemSeparatorComponent={divider}
         renderItem={({ item }) => (
-          <List.Item
-            className="my-2"
-            title={`${item.name} ${item.surname}`}
-            left={leftIcon}
-            right={rightIcon}
-            titleNumberOfLines={1}
-          />
+          <Link
+            href={{
+              pathname: "/contact/[contactId]",
+              params: { contactId: item.id },
+            }}
+            asChild
+          >
+            <List.Item
+              className="my-2"
+              title={`${item.name} ${item.surname}`}
+              left={leftIcon}
+              right={rightIcon}
+              titleNumberOfLines={1}
+            />
+          </Link>
         )}
       />
-      <FAB icon="plus" style={styles.fab} onPress={showModal} />
-      <AddContactModal visible={addContactModalVisible} hideModalFunction={hideModal} />
+      <Link
+        href={{
+          pathname: "/contact/[contactId]",
+          params: { contactId: -1 },
+        }}
+        asChild
+      >
+        <FAB icon="plus" style={styles.fab} />
+      </Link>
     </SafeAreaView>
   );
 }

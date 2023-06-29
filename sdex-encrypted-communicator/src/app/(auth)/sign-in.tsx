@@ -16,14 +16,15 @@ export default function SignIn() {
 
   React.useEffect((): void => {
     (async () => {
-      const actualPin = await getSecure("userPIN");
-      if (!actualPin) {
+      logger.info("Fetching user PIN from SecureStore.");
+      const actualPinFromDb = await getSecure("userPIN");
+      if (!actualPinFromDb) {
         logger.info(
           "PIN missing or failed to fetch from SecureStore. Authorization won't be possible.",
         );
-      } else {
-        logger.info("PIN fetched from SecureStore.");
-        setUserActualPIN(JSON.stringify(actualPin));
+      } else if (typeof actualPinFromDb === "string") {
+        setUserActualPIN(actualPinFromDb);
+        logger.info("PIN successfully fetched from SecureStore.");
       }
     })();
   }, []);

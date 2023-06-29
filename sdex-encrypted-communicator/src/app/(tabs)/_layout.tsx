@@ -63,12 +63,6 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="chats/[contactId]"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
         name="contacts/index"
         options={{
           tabBarIcon: makeIcon("book-outline", "book"),

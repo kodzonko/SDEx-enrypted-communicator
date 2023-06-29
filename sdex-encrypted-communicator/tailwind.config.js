@@ -3,7 +3,7 @@ const nativewind = require("nativewind/tailwind/css");
 
 /** @type {import("tailwindcss").Config} */
 module.exports = {
-  content: ["./App.tsx", "./src/**/*.{js,ts,jsx,tsx,html}"],
+  content: ["./src/**/*.{js,ts,jsx,tsx,html}"],
   plugins: [nativewind],
   theme: {
     colors: {

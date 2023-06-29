@@ -1,6 +1,7 @@
 // UI
 export const GENERIC_AUTHORIZATION_ERROR_MSG = "Błąd autoryzacji";
 export const BUTTON_ACCEPT_TEXT = "Okej";
+export const BUTTON_GO_BACK_TEXT = "Powrót";
 export const GENERIC_DB_MISSING_DATA_ERROR_MSG = "Brak danych w bazie.";
 
 // Backend
