@@ -3,10 +3,9 @@ import * as Crypto from "expo-crypto";
 import { EncryptionError } from "../Errors";
 import logger from "../Logger";
 import {
-bytesToString,
-changeTo1IndexedArray,
-mergeUint8Arrays,
-splitMessageIntoBlocks
+  changeTo1IndexedArray,
+  mergeUint8Arrays,
+  splitMessageIntoBlocks,
 } from "../utils/Converters";
 import { xorUintArrays } from "../utils/Math";
 
@@ -70,9 +69,9 @@ export default class SdexCrypto {
     return xorUintArrays(block, hash1, hash2);
   }
 
-  encryptMessage(messagePlainTextByteArray: Uint8Array): Uint8Array {
+  calculateMessage(messageByteArray: Uint8Array): Uint8Array {
     // Message split into blocks with length equal to hashes to facilitate XOR operations
-    const messageSplit = splitMessageIntoBlocks(messagePlainTextByteArray, this.HASH_LENGTH);
+    const messageSplit = splitMessageIntoBlocks(messageByteArray, this.HASH_LENGTH);
     // Array changed to 1-based indexing to follow SDEx algorithm more easily
     const messageBlocks = changeTo1IndexedArray(messageSplit);
 
@@ -82,13 +81,12 @@ export default class SdexCrypto {
     const sessionKeyHash = this.blake3Wrapper(this.sessionKey); // aka hash from initialization vector H(IV)
 
     // First block
-    logger.debug("Encrypting 1st block.");
+    logger.debug("Calculating k=d1 block.");
     // IV++h0
     const sessionKeyAndInitializationHash = mergeUint8Arrays(
       this.sessionKey,
       this.initializationHash,
     );
-
     // H(IV++h0)
     const hashFromSessionKeyAndInitializationHash = this.blake3Wrapper(
       sessionKeyAndInitializationHash,
@@ -109,7 +107,7 @@ export default class SdexCrypto {
     );
 
     // Second block
-    logger.debug("Encrypting 2nd block.");
+    logger.debug("Calculating k=2 block.");
     // C2
     result[2] = SdexCrypto.calculateBlock(
       messageBlocks[2] ?? this.ZEROED_BLOCK,
@@ -143,7 +141,7 @@ export default class SdexCrypto {
           ),
         );
       }
-      logger.debug(`Encrypting k=${k + 1} block.`);
+      logger.debug(`Calculating k=${k + 1} block.`);
       // Odd blocks in 1-based indexing (k=3, 5, 7...)
       result[2 * k + 1] = SdexCrypto.calculateBlock(
         messageBlocks[2 * k + 1] ?? this.ZEROED_BLOCK,
@@ -162,20 +160,47 @@ export default class SdexCrypto {
     return mergeUint8Arrays(...nonEmptyArray);
   }
 
-  decryptMessage(messageCipherTextByteArray: Uint8Array): string {
-    // Message split into blocks with length equal to hashes to facilitate XOR operations
-    const messageSplit = splitMessageIntoBlocks(messageCipherTextByteArray, this.HASH_LENGTH);
-    // Array changed to 1-based indexing to follow SDEx algorithm more easily
-    const messageBlocks = changeTo1IndexedArray(messageSplit);
-
-    const result = <Uint8Array[]>[];
-    const hashIterations = <Uint8Array[]>[]; // h0, h1, ..., hk
-    hashIterations[0] = this.initializationHash; // h0
-    const sessionKeyHash = this.blake3Wrapper(this.sessionKey); // aka hash from initialization vector H(IV)
-
-    // Remove empty element (at 0 index)
-    const nonEmptyArray = result.filter((element) => element);
-    const mergedResult = mergeUint8Arrays(...nonEmptyArray);
-    return bytesToString(mergedResult);
-  }
+  //
+  // decryptMessage(messageCipherTextByteArray: Uint8Array): string {
+  //   // Message split into blocks with length equal to hashes to facilitate XOR operations
+  //   const messageSplit = splitMessageIntoBlocks(messageCipherTextByteArray, this.HASH_LENGTH);
+  //   // Array changed to 1-based indexing to follow SDEx algorithm more easily
+  //   const messageBlocks = changeTo1IndexedArray(messageSplit);
+  //
+  //   const result = <Uint8Array[]>[];
+  //   const hashIterations = <Uint8Array[]>[]; // h0, h1, ..., hk
+  //   hashIterations[0] = this.initializationHash; // h0
+  //   const sessionKeyHash = this.blake3Wrapper(this.sessionKey); // aka hash from initialization vector H(IV)
+  //
+  //   // First block
+  //   logger.debug("Decrypting 1st block.");
+  //   // IV++h0
+  //   const sessionKeyAndInitializationHash = mergeUint8Arrays(
+  //     this.sessionKey,
+  //     this.initializationHash,
+  //   );
+  //   // H(IV++h0)
+  //   const hashFromSessionKeyAndInitializationHash = this.blake3Wrapper(
+  //     sessionKeyAndInitializationHash,
+  //   );
+  //   // M1
+  //   result[1] = SdexCrypto.calculateBlock(
+  //     messageBlocks[1] ?? this.ZEROED_BLOCK,
+  //     sessionKeyHash,
+  //     hashFromSessionKeyAndInitializationHash,
+  //   );
+  //   // h1
+  //   hashIterations[1] = this.blake3Wrapper(
+  //     sessionKeyAndInitializationHash,
+  //     mergeUint8Arrays(
+  //       messageBlocks[0] ?? this.ZEROED_BLOCK,
+  //       messageBlocks[1] ?? this.ZEROED_BLOCK,
+  //     ),
+  //   );
+  //
+  //   // Remove empty element (at 0 index)
+  //   const nonEmptyArray = result.filter((element) => element);
+  //   const mergedResult = mergeUint8Arrays(...nonEmptyArray);
+  //   return bytesToString(mergedResult);
+  // }
 }

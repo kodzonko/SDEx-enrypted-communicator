@@ -1,7 +1,7 @@
 import { blake3 } from "@noble/hashes/blake3";
 import SdexCrypto from "../../../src/crypto/SdexCrypto";
 import { EncryptionError } from "../../../src/Errors";
-import { stringToBytes } from "../../../src/utils/Converters";
+import { bytesToString, stringToBytes } from "../../../src/utils/Converters";
 
 const initializationHash = blake3("test-initialization-hash", { dkLen: 32 });
 const hashFromUserPassword = blake3("test-user-password-hash", { dkLen: 32 });
@@ -43,7 +43,7 @@ test("Calculating a block throws error on mismatching arrays lengths.", () => {
 
 test("Encrypting a message properly.", () => {
   const message = stringToBytes("Hello world!");
-  const result = messageEncryptorDecryptor.encryptMessage(message);
+  const result = messageEncryptorDecryptor.calculateMessage(message);
   const expected = new Uint8Array([
     33, 219, 133, 253, 234, 100, 96, 76, 182, 215, 34, 78, 50, 106, 19, 179, 173, 229, 8, 238, 29,
     117, 182, 204, 171, 238, 138, 5, 127, 84, 88, 172, 81, 109, 231, 222, 197, 40, 214, 110, 117,
@@ -72,7 +72,7 @@ test("Decrypting a message properly.", () => {
     246, 22, 45, 24, 147, 248, 226, 245, 8, 160, 10, 244, 230, 192, 122, 186, 8, 99, 216, 180, 52,
     32, 19, 192, 156,
   ]);
-  const result = messageEncryptorDecryptor.decryptMessage(message);
+  const result = bytesToString(messageEncryptorDecryptor.calculateMessage(message));
   const expected = "Hello world!";
-  expect(result).toEqual(expected);
+  expect(result).toBe(expected);
 });
