@@ -62,7 +62,7 @@ export const splitMessageIntoBlocks = (
   length: number,
 ): Uint8Array[] => {
   const result = <Uint8Array[]>[];
-  for (let i = 0; i < messageByteArray.length; i += length) {
+  for (let i = 0; i < Math.ceil(messageByteArray.length / length); i += length) {
     // this is done to create blocks of equal length. If last block is smaller it will be padded with zeros.
     const block = new Uint8Array(length);
     const slice = messageByteArray.slice(i, i + length);

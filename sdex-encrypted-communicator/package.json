@@ -9,7 +9,7 @@
     "web": "SET NODE_OPTIONS=--openssl-legacy-provider && expo start --web",
     "lint": "eslint --fix --ext .ts --ext .tsx --ext .js --ext .jsx src",
     "format": "prettier --ignore-path ../.gitignore --write \"(src|tests)/**/*.+(js|ts|jsx|tsx|json)\"",
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "jest": {
     "preset": "jest-expo",
