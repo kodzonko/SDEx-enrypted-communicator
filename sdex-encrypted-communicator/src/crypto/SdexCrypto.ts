@@ -63,9 +63,9 @@ export default class SdexCrypto {
    */
   static calculateBlock(block: Uint8Array, hash1: Uint8Array, hash2: Uint8Array): Uint8Array {
     if (block.length !== hash1.length || block.length !== hash2.length) {
-      logger.error(`block length=${block.length}, block=${block}`);
-      logger.error(`hash1 length=${hash1.length}, hash1=${hash1}`);
-      logger.error(`hash2 length=${hash2.length}, hash2=${hash2}`);
+      logger.error(`block length=${block.length}, block=${block.toString()}`);
+      logger.error(`hash1 length=${hash1.length}, hash1=${hash1.toString()}`);
+      logger.error(`hash2 length=${hash2.length}, hash2=${hash2.toString()}`);
       throw new EncryptionError("Invalid block length");
     }
     return xorUintArrays(block, hash1, hash2);
@@ -162,11 +162,13 @@ export default class SdexCrypto {
   }
 
   encryptMessage(message: string): Uint8Array {
+    logger.info("Encrypting message.");
     const messageByteArray = stringToBytes(message);
     return this.calculateMessage(messageByteArray);
   }
 
   decryptMessage(messageCipherTextByteArray: Uint8Array): string {
+    logger.info("Decrypting message.");
     const decryptedByteArray = this.calculateMessage(messageCipherTextByteArray);
     // Remove empty superfluous bytes from the end of the last block
     for (let i = decryptedByteArray.length - 1; i >= 0; i -= 1) {

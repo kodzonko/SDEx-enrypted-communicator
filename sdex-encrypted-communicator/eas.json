@@ -4,6 +4,8 @@
   },
   "build": {
     "development": {
+      "extends": "production",
+      "prebuildCommand": "prebuild --npm",
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
@@ -13,12 +15,14 @@
     },
     "preview": {
       "distribution": "internal",
+      "prebuildCommand": "prebuild --npm",
       "ios": {
         "resourceClass": "m-medium"
       },
       "channel": "preview"
     },
     "production": {
+      "prebuildCommand": "prebuild --npm",
       "ios": {
         "resourceClass": "m-medium"
       },

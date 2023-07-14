@@ -83,7 +83,9 @@ export class ChatRoom {
 export class Message {
   public id?: number;
 
-  public contactId: number;
+  public contactIdFrom: number;
+
+  public contactIdTo: number;
 
   public text: string;
 
@@ -98,7 +100,8 @@ export class Message {
   public audio?: string;
 
   constructor(
-    contactId: number,
+    contactIdFrom: number,
+    contactIdTo: number,
     text: string,
     createdAt: Date,
     unread: boolean,
@@ -108,7 +111,8 @@ export class Message {
     id?: number,
   ) {
     this.id = id;
-    this.contactId = contactId;
+    this.contactIdFrom = contactIdFrom;
+    this.contactIdTo = contactIdTo;
     this.text = text;
     this.createdAt = createdAt;
     this.unread = unread;

@@ -209,7 +209,8 @@ export const getMessagesByContactId = async (
     messages.push(
       new Message(
         /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-        <number>result.fk_contact_id,
+        <number>result.contactIdFrom,
+        <number>result.contactIdTo,
         <string>result.text,
         new Date(<string>result.created_at),
         <number>result.unread === 1,
@@ -241,9 +242,14 @@ export const addMessage = async (
     logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning.`);
     return false;
   }
-  if (!(await getContactById(message.contactId, dbSession))) {
+  if (
+    !(
+      (await getContactById(message.contactIdFrom, dbSession)) ||
+      (await getContactById(message.contactIdFrom, dbSession))
+    )
+  ) {
     logger.error(
-      `Contact with id=${message.contactId} doesn't exist in the database. Message rejected.`,
+      `Contact with id=${message.contactIdFrom} or id=${message.contactIdTo} doesn't exist in the database. Message rejected.`,
     );
     return false;
   }

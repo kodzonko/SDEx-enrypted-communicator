@@ -31,6 +31,7 @@ test("Convert Message into GiftChatMessage", () => {
   const contact = new Contact("Jane", "Doe", "rsa-key-123", "messaging-key-999", 17);
   const message = new Message(
     17,
+    2,
     "Hello world!",
     new Date("2001-11-21T15:38:54.123Z"),
     true,

@@ -28,7 +28,7 @@ export const messageToGiftedChatMessage = (
   video: message.video,
   audio: message.audio,
   user: {
-    _id: message.contactId,
+    _id: message.contactIdFrom,
     name: `${contact.name} ${contact.surname}`,
   },
 });

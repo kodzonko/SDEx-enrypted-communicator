@@ -1,21 +1,20 @@
 import * as DocumentPicker from "expo-document-picker";
 import { Link } from "expo-router";
 import * as React from "react";
-import { Alert, KeyboardAvoidingView, SafeAreaView } from "react-native";
+import { Alert, KeyboardAvoidingView, SafeAreaView, View } from "react-native";
 import { Appbar, Button, Dialog, Portal, Surface, Text, TextInput } from "react-native-paper";
-import { generateKeyPair } from "../../crypto/RsaCrypto";
-import { readFile } from "../../storage/FileOps";
-import styles from "../../Styles";
-
+import QRCode from "react-native-qrcode-svg";
 import { GENERIC_OKAY_DISMISS_BUTTON } from "../../components/Buttons";
 import { useAuthStore } from "../../contexts/Auth";
+import { generateKeyPair } from "../../crypto/RsaCrypto";
 import logger from "../../Logger";
-import { BUTTON_ACCEPT_TEXT } from "../../Messages";
+import { readFile } from "../../storage/FileOps";
 import { mmkvStorage } from "../../storage/MmkvStorageMiddlewares";
 import * as SecureStoreMiddleware from "../../storage/SecureStoreMiddlewares";
+import styles from "../../Styles";
 import { KeyPair } from "../../Types";
 
-export default function SignUp() {
+export default function SignUp(): React.FC {
   const [userPin, setUserPin] = React.useState<string>("");
   const [userPinRepeated, setUserPinRepeated] = React.useState<string>("");
   const [keyPair, setKeyPair] = React.useState<KeyPair>({
@@ -23,24 +22,20 @@ export default function SignUp() {
     privateKey: "",
   });
   const [keyObtainDialogVisible, setKeyObtainDialogVisible] = React.useState(false);
+  const [qrExportDialogVisible, setQrExportDialogVisible] = React.useState(false);
   const signIn = useAuthStore((state) => state.signIn);
+  const qrRef = React.createRef();
 
   const handleSignUp = async () => {
-    const successfulKeyPairWrite = mmkvStorage.setMap("keyPair", keyPair);
-    if (!successfulKeyPairWrite) {
-      logger.error("Failed to save key pair to MMKV storage.");
-      Alert.alert("Błąd zapisu", "Nie udało się zapisać kluczy w bazie danych.", [
-        GENERIC_OKAY_DISMISS_BUTTON,
-      ]);
-    }
+    mmkvStorage.set("privateKey", keyPair.privateKey);
+    mmkvStorage.set("publicKey", keyPair.publicKey);
     const successfulPinWrite = await SecureStoreMiddleware.saveSecure("userPIN", userPin);
     if (!successfulPinWrite) {
       logger.error("Failed to save PIN to SecureStore.");
       Alert.alert("Błąd zapisu", "Nie udało się zapisać PINu w bazie danych.", [
         GENERIC_OKAY_DISMISS_BUTTON,
       ]);
-    }
-    if (successfulKeyPairWrite && successfulPinWrite) {
+    } else {
       logger.info("PIN and key pair saved successfully. Signing in...");
       signIn();
     }
@@ -48,11 +43,25 @@ export default function SignUp() {
 
   const showKeyObtainDialog = () => setKeyObtainDialogVisible(true);
 
-  const hideKeyObtainDialog = () => setKeyObtainDialogVisible(false);
+  const hideKeyObtainDialog = () => {
+    setKeyObtainDialogVisible(false);
+  };
+
+  const showQrExportDialog = () => setQrExportDialogVisible(true);
+
+  const hideQrExportDialog = () => {
+    setQrExportDialogVisible(false);
+  };
+
+  const saveQrImg = () => {
+    console.log(qrRef.current);
+  };
 
   const handleKeysGen = () => {
-    const generatedKeyPair = generateKeyPair();
+    logger.info("Generating key pair.");
+    const generatedKeyPair = generateKeyPair(128);
     setKeyPair(generatedKeyPair);
+    hideKeyObtainDialog();
   };
   const handleKeysImport = async () => {
     let publicKey = "";
@@ -94,8 +103,9 @@ export default function SignUp() {
         Alert.alert("Błąd odczytu", "Nie udało się wczytać kluczy z plików.", [
           GENERIC_OKAY_DISMISS_BUTTON,
         ]);
+      } else {
+        logger.info("Public and private key read successfully. Closing dialog.");
       }
-      logger.info("Public and private key read successfully. Closing dialog.");
       hideKeyObtainDialog();
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
@@ -119,7 +129,7 @@ export default function SignUp() {
       <Portal>
         <Dialog visible={keyObtainDialogVisible} onDismiss={hideKeyObtainDialog}>
           <Dialog.Title style={{ textAlign: "center" }}>Dodaj klucze</Dialog.Title>
-          <Dialog.Content className="flex flex-1 flex-col items-center justify-center">
+          <Dialog.Actions className="flex-col">
             <Button mode="contained" onPress={handleKeysGen} className="mx-2 mb-6 w-40">
               Wygeneruj
             </Button>
@@ -127,10 +137,38 @@ export default function SignUp() {
             <Button mode="contained" onPress={handleKeysImport} className="mx-2 mb-6 w-40">
               Wczytaj
             </Button>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={hideKeyObtainDialog}>{BUTTON_ACCEPT_TEXT}</Button>
           </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
+      <Portal>
+        <Dialog visible={qrExportDialogVisible} onDismiss={hideQrExportDialog}>
+          <Dialog.Title style={{ textAlign: "center" }}>QR z kluczem publicznym</Dialog.Title>
+          <Dialog.Content>
+            <View className="items-center">
+              <QRCode
+                value={keyPair.publicKey}
+                ecl="H"
+                quietZone={10}
+                getRef={(c): void => {
+                  if (c) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+                    c.toDataURL((data: string) => {
+                      qrRef.current = data.replace(/(\r\n|\n|\r)/gm, "");
+                    });
+                  }
+                }}
+              />
+              <Button
+                mode="contained"
+                onPress={saveQrImg}
+                className="mt-6 w-40"
+                disabled={!keyPair.publicKey}
+              >
+                Zachowaj
+              </Button>
+            </View>
+          </Dialog.Content>
         </Dialog>
       </Portal>
 
@@ -177,20 +215,23 @@ export default function SignUp() {
         <Text variant="titleLarge" className="my-4">
           Klucze szyfrujące
         </Text>
-        <Button
-          mode="contained"
-          onPress={showKeyObtainDialog}
-          className="mx-2 mb-6 w-40"
-          disabled={keyPair.privateKey.length > 0 && keyPair.publicKey.length > 0}
-        >
+        <Button mode="contained" onPress={showKeyObtainDialog} className="mx-2 mb-6 w-40">
           Uzyskaj
         </Button>
-        <Text variant="bodyLarge" className="mt-4">
+        <Text variant="bodyLarge" className="mt-2">
           Klucz prywatny: {keyPair.privateKey ? "\u2714" : "\u274C"}
         </Text>
         <Text variant="bodyLarge" className="mt-2">
           Klucz publiczny: {keyPair.publicKey ? "\u2714" : "\u274C"}
         </Text>
+        <Button
+          mode="contained"
+          onPress={showQrExportDialog}
+          className="mx-2 mt-6 w-40"
+          disabled={!keyPair.publicKey}
+        >
+          Wygeneruj QR
+        </Button>
       </Surface>
       <Button
         mode="contained"

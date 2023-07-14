@@ -215,7 +215,7 @@ export const getChatRoomsQuery = async (dbSession: SQLite.WebSQLDatabase): Promi
       await tx.executeSql(
         `SELECT c.contact_id, c.name, c.surname, m.created_at AS last_message_date, SUM(m.unread) AS unread_message_count
        FROM (select * from messages ORDER BY created_at DESC) as m
-       JOIN contacts AS c ON m.fk_contact_id = c.contact_id
+       JOIN contacts AS c ON m.contact_id_from = c.contact_id OR m.contact_id_to = c.contact_id
        GROUP BY c.name, c.surname
        ORDER BY m.created_at DESC;`,
         [],
@@ -246,9 +246,9 @@ export const getMessagesByContactIdQuery = async (
     dbSession.readTransaction(async (tx) => {
       /* eslint-disable-next-line @typescript-eslint/await-thenable */
       await tx.executeSql(
-        `SELECT message_id, fk_contact_id, text, created_at, unread, image, video, audio
+        `SELECT message_id, contact_id_from, contact_id_to, text, created_at, unread, image, video, audio
       FROM messages
-      WHERE fk_contact_id = ?
+      WHERE contact_id_from = ? OR contact_id_to = ?
       ORDER BY created_at;`,
         [contactId],
         (_, { rows: { _array } }) => {
@@ -305,10 +305,11 @@ export const addMessageQuery = async (
     dbSession.transaction(async (tx) => {
       /* eslint-disable-next-line @typescript-eslint/await-thenable */
       await tx.executeSql(
-        `INSERT INTO messages (fk_contact_id, text, created_at, unread, image, video, audio)
-      VALUES(?, ?, ?, ?, ?, ?, ?);`,
+        `INSERT INTO messages (contact_id_from, contact_id_from, text, created_at, unread, image, video, audio)
+      VALUES(?, ?, ?, ?, ?, ?, ?, ?);`,
         [
-          message.contactId,
+          message.contactIdFrom,
+          message.contactIdFrom,
           message.text,
           message.createdAt.toISOString(),
           message.unread ? 1 : 0,

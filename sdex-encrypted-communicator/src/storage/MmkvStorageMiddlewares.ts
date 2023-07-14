@@ -1,5 +1,6 @@
-import { MMKVLoader } from "react-native-mmkv-storage";
+import { MMKV } from "react-native-mmkv";
 
-export const mmkvStorage = new MMKVLoader()
-  .withEncryption() // Generates a random key and stores it securely in Keychain
-  .initialize();
+export const mmkvStorage = new MMKV({
+  id: "global-app-storage",
+  encryptionKey: "LzNQ0CIKlQxng9QWuRrbbDFHXDQvjaBQ",
+});

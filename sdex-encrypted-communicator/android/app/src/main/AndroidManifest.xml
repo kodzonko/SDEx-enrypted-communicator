@@ -26,6 +26,7 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="sdex-encrypted-communicator"/>
         <data android:scheme="pl.janwadolowski.sdexcommunicator"/>
         <data android:scheme="exp+sdex-encrypted-communicator"/>
       </intent-filter>
