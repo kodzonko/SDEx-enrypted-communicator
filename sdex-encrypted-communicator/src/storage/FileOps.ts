@@ -1,5 +1,6 @@
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
 import { Platform } from "react-native";
 import logger from "../Logger";
 
@@ -12,21 +13,65 @@ export const readFile = async (path: string): Promise<string | undefined> => {
   return FileSystem.readAsStringAsync(path);
 };
 
-export const writeFile = async (path: string, value: string): Promise<boolean> => {
+export const saveFile = async (fileName: string, value: string): Promise<boolean> => {
   logger.info("Writing content to a file.");
   if (Platform.OS === "web") {
     logger.info("expo-file-system is not supported on web, returning.");
     return false;
   }
-  logger.debug(`Writing content=${value} to path=${path}`);
+  if (!FileSystem.documentDirectory) {
+    logger.info("FileSystem.documentDirectory cannot be determined.");
+    return false;
+  }
+
+  const path = `${FileSystem.documentDirectory}${fileName}`;
+  logger.debug(`Writing content to path=${path}`);
   return FileSystem.writeAsStringAsync(path, value)
     .then(() => true)
     .catch(() => false);
 };
 
-export const saveImage = (fileName: string): Promise<void> => {
+export const saveImage = async (fileName: string, base64String: string): Promise<boolean> => {
   logger.info("Saving image to the device storage.");
-  throw new Error("Not implemented.");
+  let successFlag = false;
+  if (!FileSystem.documentDirectory) {
+    return false;
+  }
+  const fileUri = FileSystem.documentDirectory + fileName;
+  successFlag = await FileSystem.writeAsStringAsync(fileUri, base64String, {
+    encoding: FileSystem.EncodingType.Base64,
+  })
+    .then(() => {
+      logger.info("Image saved successfully.");
+      return true;
+    })
+    .catch((error) => {
+      if (error instanceof Error) {
+        logger.error(`Failed to save image. Error=${error.message}`);
+      }
+      return false;
+    });
+
+  try {
+    logger.info("Saving image to the device gallery.");
+    const { status } = await MediaLibrary.requestPermissionsAsync();
+    if (status === "granted") {
+      await MediaLibrary.saveToLibraryAsync(fileUri)
+        .then(() => {
+          logger.info("Image saved to the gallery.");
+        })
+        .catch((error) => {
+          if (error instanceof Error) {
+            logger.error(`Failed to save image to the gallery. Error=${error.message}`);
+          }
+        });
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      logger.error(`Error saving image in the gallery. Error=${error.message}.`);
+    }
+  }
+  return successFlag;
 };
 
 export const saveFileToDocumentsDirectory = async (
@@ -44,7 +89,7 @@ export const saveFileToDocumentsDirectory = async (
   }
   const filePath = `${FileSystem.documentDirectory}${fileName}}`;
   logger.debug(`Creating a file at path=${filePath}`);
-  return writeFile(filePath, JSON.stringify(content))
+  return saveFile(filePath, JSON.stringify(content))
     .then(() => true)
     .catch(() => false);
 };
@@ -84,7 +129,7 @@ export const saveFileToCacheDirectory = async (
   }
   const filePath = `${FileSystem.cacheDirectory}${fileName}}`;
   logger.debug(`Creating a file at path=${filePath}`);
-  return writeFile(filePath, JSON.stringify(content))
+  return saveFile(filePath, JSON.stringify(content))
     .then(() => true)
     .catch(() => false);
 };

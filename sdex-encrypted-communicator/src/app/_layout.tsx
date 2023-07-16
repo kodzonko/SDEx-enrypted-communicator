@@ -1,8 +1,11 @@
 import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system";
 import { Stack, useRouter } from "expo-router";
 import * as React from "react";
 import { PaperProvider } from "react-native-paper";
+import { RootSiblingParent } from "react-native-root-siblings";
 import { useAuthStore } from "../contexts/Auth";
+import logger from "../Logger";
 import { theme } from "../Styles";
 
 const test = async () =>
@@ -16,6 +19,7 @@ export default function RootLayout() {
     (async () => {
       // const sth = await test();
       // logger.info(JSON.stringify(sth));
+      logger.info(`documents dir: ${FileSystem.documentDirectory}`);
     })();
     if (!isSignedIn) {
       router.replace("/sign-in");
@@ -26,10 +30,12 @@ export default function RootLayout() {
 
   return (
     <PaperProvider theme={theme}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="(auth)" />
-      </Stack>
+      <RootSiblingParent>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="(auth)" />
+        </Stack>
+      </RootSiblingParent>
     </PaperProvider>
   );
 }

@@ -1,20 +1,21 @@
 import * as DocumentPicker from "expo-document-picker";
 import { Link } from "expo-router";
 import * as React from "react";
-import { Alert, KeyboardAvoidingView, SafeAreaView, View } from "react-native";
+import { Alert, KeyboardAvoidingView, SafeAreaView, ScrollView, View } from "react-native";
 import { Appbar, Button, Dialog, Portal, Surface, Text, TextInput } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
+import Toast from "react-native-root-toast";
 import { GENERIC_OKAY_DISMISS_BUTTON } from "../../components/Buttons";
 import { useAuthStore } from "../../contexts/Auth";
 import { generateKeyPair } from "../../crypto/RsaCrypto";
 import logger from "../../Logger";
-import { readFile } from "../../storage/FileOps";
+import { readFile, saveImage } from "../../storage/FileOps";
 import { mmkvStorage } from "../../storage/MmkvStorageMiddlewares";
 import * as SecureStoreMiddleware from "../../storage/SecureStoreMiddlewares";
 import styles from "../../Styles";
 import { KeyPair } from "../../Types";
 
-export default function SignUp(): React.FC {
+export default function SignUp(): Element {
   const [userPin, setUserPin] = React.useState<string>("");
   const [userPinRepeated, setUserPinRepeated] = React.useState<string>("");
   const [keyPair, setKeyPair] = React.useState<KeyPair>({
@@ -53,8 +54,16 @@ export default function SignUp(): React.FC {
     setQrExportDialogVisible(false);
   };
 
-  const saveQrImg = () => {
-    console.log(qrRef.current);
+  const saveQrImg = async () => {
+    logger.info("Saving QR code to a file.");
+    const result = await saveImage("qr.png", qrRef.current as string);
+    if (!result) {
+      Alert.alert("Błąd zapisu", "Nie udało się zapisać QR kodu.", [GENERIC_OKAY_DISMISS_BUTTON]);
+    } else {
+      Toast.show("Kod QR został zapisany.", {
+        duration: Toast.durations.SHORT,
+      });
+    }
   };
 
   const handleKeysGen = () => {
@@ -161,6 +170,7 @@ export default function SignUp(): React.FC {
               />
               <Button
                 mode="contained"
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 onPress={saveQrImg}
                 className="mt-6 w-40"
                 disabled={!keyPair.publicKey}
@@ -171,87 +181,88 @@ export default function SignUp(): React.FC {
           </Dialog.Content>
         </Dialog>
       </Portal>
-
-      <Surface style={[styles.surface, { marginTop: 30 }]}>
-        <Text variant="titleLarge" className="mb-4">
-          PIN
-        </Text>
-        <TextInput
-          keyboardType="numeric"
-          mode="outlined"
-          style={styles.textInputPin}
-          secureTextEntry
-          autoFocus={false}
-          maxLength={8}
-          placeholder="Utwórz PIN"
-          value={userPin}
-          onChangeText={(value) => setUserPin(value)}
-        />
-        <TextInput
-          className="mt-3"
-          mode="outlined"
-          style={styles.textInputPin}
-          keyboardType="numeric"
-          secureTextEntry
-          autoFocus={false}
-          maxLength={8}
-          placeholder="Powtórz PIN"
-          value={userPinRepeated}
-          onChangeText={(value) => setUserPinRepeated(value)}
-        />
-        <Text variant="bodyLarge" className="mt-2 text-red-600">
-          4-8 cyfr
-        </Text>
-      </Surface>
-      <Surface
-        style={[
-          styles.surface,
-          {
-            marginTop: 30,
-            paddingBottom: 30,
-          },
-        ]}
-      >
-        <Text variant="titleLarge" className="my-4">
-          Klucze szyfrujące
-        </Text>
-        <Button mode="contained" onPress={showKeyObtainDialog} className="mx-2 mb-6 w-40">
-          Uzyskaj
-        </Button>
-        <Text variant="bodyLarge" className="mt-2">
-          Klucz prywatny: {keyPair.privateKey ? "\u2714" : "\u274C"}
-        </Text>
-        <Text variant="bodyLarge" className="mt-2">
-          Klucz publiczny: {keyPair.publicKey ? "\u2714" : "\u274C"}
-        </Text>
-        <Button
-          mode="contained"
-          onPress={showQrExportDialog}
-          className="mx-2 mt-6 w-40"
-          disabled={!keyPair.publicKey}
+      <ScrollView keyboardShouldPersistTaps="never">
+        <Surface style={[styles.surface, { marginTop: 30 }]}>
+          <Text variant="titleLarge" className="mb-4">
+            PIN
+          </Text>
+          <TextInput
+            keyboardType="numeric"
+            mode="outlined"
+            style={styles.textInputPin}
+            secureTextEntry
+            autoFocus={false}
+            maxLength={8}
+            placeholder="Utwórz PIN"
+            value={userPin}
+            onChangeText={(value) => setUserPin(value)}
+          />
+          <TextInput
+            className="mt-3"
+            mode="outlined"
+            style={styles.textInputPin}
+            keyboardType="numeric"
+            secureTextEntry
+            autoFocus={false}
+            maxLength={8}
+            placeholder="Powtórz PIN"
+            value={userPinRepeated}
+            onChangeText={(value) => setUserPinRepeated(value)}
+          />
+          <Text variant="bodyLarge" className="mt-2 text-red-600">
+            4-8 cyfr
+          </Text>
+        </Surface>
+        <Surface
+          style={[
+            styles.surface,
+            {
+              marginTop: 30,
+              paddingBottom: 30,
+            },
+          ]}
         >
-          Wygeneruj QR
-        </Button>
-      </Surface>
-      <Button
-        mode="contained"
-        className="mx-auto mt-5 w-40"
-        /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
-        onPress={handleSignUp}
-        disabled={
-          !keyPair.privateKey ||
-          !keyPair.publicKey ||
-          userPin.length < 4 ||
-          userPin !== userPinRepeated
-        }
-      >
-        Zarejestruj
-      </Button>
-      <KeyboardAvoidingView className="mb-2 mt-auto">
-        <Link href="/sign-in" asChild>
-          <Button mode="text">Masz już konto? Zaloguj się</Button>
-        </Link>
-      </KeyboardAvoidingView>
+          <Text variant="titleLarge" className="my-4">
+            Klucze szyfrujące
+          </Text>
+          <Button mode="contained" onPress={showKeyObtainDialog} className="mx-2 mb-6 w-40">
+            Uzyskaj
+          </Button>
+          <Text variant="bodyLarge" className="mt-2">
+            Klucz prywatny: {keyPair.privateKey ? "\u2714" : "\u274C"}
+          </Text>
+          <Text variant="bodyLarge" className="mt-2">
+            Klucz publiczny: {keyPair.publicKey ? "\u2714" : "\u274C"}
+          </Text>
+          <Button
+            mode="contained"
+            onPress={showQrExportDialog}
+            className="mx-2 mt-6 w-40"
+            disabled={!keyPair.publicKey}
+          >
+            Wygeneruj QR
+          </Button>
+        </Surface>
+        <KeyboardAvoidingView className="mb-2 mt-auto">
+          <Button
+            mode="contained"
+            className="mx-auto mt-5 w-40"
+            /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
+            onPress={handleSignUp}
+            disabled={
+              !keyPair.privateKey ||
+              !keyPair.publicKey ||
+              userPin.length < 4 ||
+              userPin !== userPinRepeated
+            }
+          >
+            Zarejestruj
+          </Button>
+          <Link href="/sign-in" asChild>
+            <Button mode="text">Masz już konto? Zaloguj się</Button>
+          </Link>
+        </KeyboardAvoidingView>
+      </ScrollView>
     </SafeAreaView>
   );
 }
