@@ -66,12 +66,14 @@ export default function SignUp(): Element {
     }
   };
 
-  const handleKeysGen = () => {
+  const handleKeysGen = (): void => {
     logger.info("Generating key pair.");
-    const generatedKeyPair = generateKeyPair(128);
-    setKeyPair(generatedKeyPair);
     hideKeyObtainDialog();
+    void generateKeyPair().then((result) => {
+      setKeyPair(result);
+    });
   };
+
   const handleKeysImport = async () => {
     let publicKey = "";
     let privateKey = "";
