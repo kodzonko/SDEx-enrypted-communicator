@@ -1,3 +1,4 @@
+import { decode as atob, encode as btoa } from "base-64";
 import { IMessage as GiftedChatMessage } from "react-native-gifted-chat/lib/Models";
 import { Contact, Message } from "../Types";
 
@@ -32,6 +33,28 @@ export const messageToGiftedChatMessage = (
     name: `${contact.name} ${contact.surname}`,
   },
 });
+
+/**
+ * Converts object of IMessage (GiftedChatMessage) type to object of type Message.
+ * @param message A message object of IMessage type.
+ * @param contactIdTo Id of contact to receive the message.
+ * @returns An object fulfilling IMessage (GiftedChatMessage) interface.
+ */
+export const giftedChatMessageToMessage = (
+  message: GiftedChatMessage,
+  contactIdTo: number,
+): Message =>
+  new Message(
+    // eslint-disable-next-line no-underscore-dangle
+    Number(message.user._id),
+    contactIdTo,
+    message.text,
+    message.createdAt instanceof Date ? message.createdAt : new Date(message.createdAt),
+    false,
+    message.image,
+    message.video,
+    message.audio,
+  );
 
 /**
  * Merges any number of Uint8Arrays into one.
@@ -72,10 +95,43 @@ export const splitMessageIntoBlocks = (
   return result;
 };
 
+/**
+ * Converts an array of Uint8Arrays to 1-indexed array.
+ * The element at index 0 is left empty.
+ * @param array
+ * @returns A copied input array with the first (0-th) element left empty. Array's length is increased by 1.
+ */
 export const changeTo1IndexedArray = (array: Uint8Array[]): Uint8Array[] => {
   const oneIndexedArray = <Uint8Array[]>[];
   for (let i = 0; i < array.length; i += 1) {
     oneIndexedArray[i + 1] = <Uint8Array>array[i];
   }
   return oneIndexedArray;
+};
+
+/**
+ * Converts Uint8Array to base64 string.
+ * @param array
+ * @returns A base64 string.
+ */
+export const uint8ArrayToBase64String = (array: Uint8Array): string => {
+  let result = "";
+  for (let i = 0; i < array.length; i += 1) {
+    result += String.fromCharCode(array[i] as number);
+  }
+  return btoa(result);
+};
+
+/**
+ * Converts base64 string to Uint8Array.
+ * @param base64String
+ * @returns An Uint8Array.
+ */
+export const base64StringToUint8Array = (base64String: string): Uint8Array => {
+  const binaryString = atob(base64String);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i += 1) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
 };

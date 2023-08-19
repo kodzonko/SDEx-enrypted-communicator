@@ -4,7 +4,9 @@ import { Appbar, Divider, FAB, List } from "react-native-paper";
 
 import { useIsFocused } from "@react-navigation/native";
 import { Link } from "expo-router";
+
 import { useSqlDbSessionStore } from "../../../contexts/DbSession";
+import logger from "../../../Logger";
 import { getContacts } from "../../../storage/DataHandlers";
 import styles from "../../../Styles";
 import { ContactListItem } from "../../../Types";
@@ -29,6 +31,7 @@ export default function Contacts() {
     if (isFocused) {
       (async () => {
         const contactsFromStorage: ContactListItem[] = await getContacts(sqlDbSession);
+        logger.info(`Contacts from storage: ${JSON.stringify(contactsFromStorage)}`);
         setContacts(contactsFromStorage);
       })();
     }

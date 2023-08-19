@@ -1,36 +1,65 @@
-from fastapi import WebSocket, WebSocketDisconnect
+from loguru import logger
 
+from api.payload_sanitizers import validate_user_register_payload
+from database.models import User
 from main import app, db_manager, socket_manager
 
 
-@app.get("/users/{public_key}")
-async def check_user_public_key(public_key: str) -> bool:
-    """Validate the public_key is still valid."""
-    return db_manager.check_public_key(public_key)
+@socket_manager.on("check_key")
+async def check_user_public_key(sid, data):
+    """Validate the public_key exists in server."""
+    result = db_manager.check_public_key(data["public_key"])
+    await socket_manager.emit("check_key", result)
 
 
-# @app.post("/messages")
-# async def send_message(message: MessageIn) -> bool:
-#     """Ingest message to deliver to the recipient."""
-#     user = db_manager.get_user_by_public_key(message.recipient_public_key)
-#     if not user:
-#         return False
-#     else:
-#         return True
+@socket_manager.on("register")
+async def handle_register(sid, data):
+    # Check by public key if user already exists
+    result = db_manager.check_public_key(data["public_key"])
+    if result:
+        await socket_manager.emit(
+            "register",
+            {"status": "error", "message": "User with that public key already exists"},
+        )
+        return
+    # Validate
+    if not validate_user_register_payload(data):
+        await socket_manager.emit(
+            "register",
+            {"status": "error", "message": "Invalid payload"},
+        )
+        return
+    # Registration
+    registration_status = db_manager.add_user(**data)
+    if registration_status is False:
+        await socket_manager.emit(
+            "register",
+            {"status": "error", "message": "Failed to save user data"},
+        )
+        return
+    await socket_manager.emit("register", "User registered")
 
 
-@app.websocket("/api/chat")
-async def send_message(websocket: WebSocket):
-    sender = websocket.cookies.get("X-Authorization")
-    if sender:
-        await socket_manager.connect(websocket, sender)
-        response = {"sender": sender, "message": "got connected"}
-        await socket_manager.forward_message(response)
-        try:
-            while True:
-                data = await websocket.receive_json()
-                await socket_manager.forward_message(data)
-        except WebSocketDisconnect:
-            socket_manager.disconnect(websocket, sender)
-            response["message"] = "left"
-            await socket_manager.forward_message(response)
+@socket_manager.on("connect")
+async def handle_connect(sid, data):
+    # await socket_manager.save_session(sid, {"public_rsa": data["public_rsa"]})
+    logger.info(f"User connected sid={sid}, data received={data}.")
+    await socket_manager.emit("connection", "User connected")
+
+
+@socket_manager.on("disconnect")
+async def handle_disconnect(sid, data):
+    logger.info(f"User disconnected sid={sid}, data received={data}.")
+    await socket_manager.emit("disconnect", "User disconnected")
+
+
+@socket_manager.on("message")
+async def handle_message(sid, data):
+    await socket_manager.emit("message")
+
+
+@socket_manager.on("test")
+async def handle_test(sid, data):
+    logger.info(f"sid={sid}, data received={data}")
+    print("test works")
+    await socket_manager.emit("test", {"message": f"sid={sid}, data received={data}"})

@@ -1,44 +1,82 @@
-import * as DocumentPicker from "expo-document-picker";
 import { Link } from "expo-router";
 import * as React from "react";
-import { Alert, KeyboardAvoidingView, SafeAreaView, ScrollView, View } from "react-native";
-import { Appbar, Button, Dialog, Portal, Surface, Text, TextInput } from "react-native-paper";
-import QRCode from "react-native-qrcode-svg";
-import Toast from "react-native-root-toast";
-import { GENERIC_OKAY_DISMISS_BUTTON } from "../../components/Buttons";
+import { Alert, KeyboardAvoidingView, SafeAreaView, ScrollView } from "react-native";
+import { Appbar, Button, Surface, Text, TextInput } from "react-native-paper";
+import { GENERIC_OKAY_DISMISS_ALERT_BUTTON } from "../../components/Buttons";
+import QrCodeDialog from "../../components/QrCodeDialog";
+import RsaKeysCreatorDialog from "../../components/RsaKeysCreatorDialog";
 import { useAuthStore } from "../../contexts/Auth";
-import { generateKeyPair } from "../../crypto/RsaCrypto";
+import { useKeyPairStore } from "../../contexts/KeyPair";
+import generateMessagingKey from "../../crypto/MessagingKeyCrypto";
 import logger from "../../Logger";
-import { readFile, saveImage } from "../../storage/FileOps";
+import { GENERIC_WRITE_ERROR_TITLE } from "../../Messages";
+import { addContact } from "../../storage/DataHandlers";
 import { mmkvStorage } from "../../storage/MmkvStorageMiddlewares";
 import * as SecureStoreMiddleware from "../../storage/SecureStoreMiddlewares";
+import { createDb, createDbSession } from "../../storage/SqlStorageMiddlewares";
 import styles from "../../Styles";
-import { KeyPair } from "../../Types";
+import { Contact } from "../../Types";
+import { uint8ArrayToBase64String } from "../../utils/Converters";
 
 export default function SignUp(): Element {
   const [userPin, setUserPin] = React.useState<string>("");
   const [userPinRepeated, setUserPinRepeated] = React.useState<string>("");
-  const [keyPair, setKeyPair] = React.useState<KeyPair>({
-    publicKey: "",
-    privateKey: "",
-  });
   const [keyObtainDialogVisible, setKeyObtainDialogVisible] = React.useState(false);
   const [qrExportDialogVisible, setQrExportDialogVisible] = React.useState(false);
   const signIn = useAuthStore((state) => state.signIn);
-  const qrRef = React.createRef();
+  const publicKey = useKeyPairStore((state) => state.publicKey);
+  const privateKey = useKeyPairStore((state) => state.privateKey);
+  // const setSqlDbSession = useSqlDbSessionStore((state) => state.setSqlDbSession);
+  // const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
+
+  // React.useEffect(() => {
+  //   if (sqlDbSession && publicKey) {
+  //     (async () => {
+  //       const messagingKey = uint8ArrayToBase64String(generateMessagingKey());
+  //       const yourContact = new Contact("Twój profil", "", publicKey, messagingKey);
+  //       await addContact(yourContact, sqlDbSession).then(() => {
+  //         logger.info("Your contact added to the database.");
+  //         logger.info("PIN and key pair saved successfully. Signing in...");
+  //         signIn();
+  //       });
+  //     })();
+  //   }
+  // }, [sqlDbSession]);
 
   const handleSignUp = async () => {
-    mmkvStorage.set("privateKey", keyPair.privateKey);
-    mmkvStorage.set("publicKey", keyPair.publicKey);
+    mmkvStorage.set("privateKey", privateKey);
+    mmkvStorage.set("publicKey", publicKey);
     const successfulPinWrite = await SecureStoreMiddleware.saveSecure("userPIN", userPin);
     if (!successfulPinWrite) {
       logger.error("Failed to save PIN to SecureStore.");
-      Alert.alert("Błąd zapisu", "Nie udało się zapisać PINu w bazie danych.", [
-        GENERIC_OKAY_DISMISS_BUTTON,
+      Alert.alert(GENERIC_WRITE_ERROR_TITLE, "Nie udało się zapisać PINu w bazie danych.", [
+        GENERIC_OKAY_DISMISS_ALERT_BUTTON,
       ]);
     } else {
-      logger.info("PIN and key pair saved successfully. Signing in...");
-      signIn();
+      logger.info("SignUp successful. Creating a new app database.");
+      await createDb();
+      const dbSession = await createDbSession();
+      const messagingKey = uint8ArrayToBase64String(generateMessagingKey());
+      const yourContact = new Contact("Twój profil", "", publicKey, messagingKey, 0);
+      logger.info(`contact: ${JSON.stringify(yourContact)}`);
+      addContact(yourContact, dbSession)
+        .then(() => {
+          logger.info("Your was contact added to the database.");
+          logger.info("PIN and key pair saved successfully. Signing in...");
+          signIn();
+        })
+        .catch((error) => {
+          if (error instanceof Error) {
+            logger.error(
+              `An error occurred when trying to save user's contact to database=${JSON.stringify(
+                error,
+              )}`,
+            );
+            Alert.alert(GENERIC_WRITE_ERROR_TITLE, "Nie udało się zapisać twojego kontaktu.", [
+              GENERIC_OKAY_DISMISS_ALERT_BUTTON,
+            ]);
+          }
+        });
     }
   };
 
@@ -54,80 +92,6 @@ export default function SignUp(): Element {
     setQrExportDialogVisible(false);
   };
 
-  const saveQrImg = async () => {
-    logger.info("Saving QR code to a file.");
-    const result = await saveImage("qr.png", qrRef.current as string);
-    if (!result) {
-      Alert.alert("Błąd zapisu", "Nie udało się zapisać QR kodu.", [GENERIC_OKAY_DISMISS_BUTTON]);
-    } else {
-      Toast.show("Kod QR został zapisany.", {
-        duration: Toast.durations.SHORT,
-      });
-    }
-  };
-
-  const handleKeysGen = (): void => {
-    logger.info("Generating key pair.");
-    hideKeyObtainDialog();
-    void generateKeyPair().then((result) => {
-      setKeyPair(result);
-    });
-  };
-
-  const handleKeysImport = async () => {
-    let publicKey = "";
-    let privateKey = "";
-    try {
-      logger.info("Picking a file with public key..");
-      const documentPublic = await DocumentPicker.getDocumentAsync({
-        type: "text/plain",
-      });
-      if (documentPublic.type === "success") {
-        logger.info("Reading public key from a file.");
-        publicKey = (await readFile(documentPublic.uri)) ?? "";
-        setKeyPair({
-          ...keyPair,
-          publicKey,
-        });
-        logger.info("Public key read from file and assigned.");
-      } else {
-        logger.info("Public key file picking cancelled.");
-      }
-
-      logger.info("Picking a file with private key..");
-      const documentPrivate = await DocumentPicker.getDocumentAsync({
-        type: "text/plain",
-      });
-      if (documentPrivate.type === "success") {
-        logger.info("Reading private key from a file.");
-        privateKey = (await readFile(documentPrivate.uri)) ?? "";
-        setKeyPair({
-          ...keyPair,
-          privateKey,
-        });
-        logger.info("Private key read from file and assigned.");
-      } else {
-        logger.info("Private key file picking cancelled.");
-      }
-      if (keyPair.publicKey === "" || keyPair.privateKey === "") {
-        logger.error("Failed to read key(s) from a file.");
-        Alert.alert("Błąd odczytu", "Nie udało się wczytać kluczy z plików.", [
-          GENERIC_OKAY_DISMISS_BUTTON,
-        ]);
-      } else {
-        logger.info("Public and private key read successfully. Closing dialog.");
-      }
-      hideKeyObtainDialog();
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    } catch (error: any) {
-      /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions */
-      logger.error(`Failed to read key(s) from a file. ${error.message}`);
-      Alert.alert("Błąd odczytu", "Nie udało się wczytać kluczy z plików.", [
-        GENERIC_OKAY_DISMISS_BUTTON,
-      ]);
-    }
-  };
-
   return (
     <SafeAreaView className="flex flex-1 flex-col">
       <Appbar.Header style={styles.appBarHeader}>
@@ -137,52 +101,14 @@ export default function SignUp(): Element {
         </Link>
       </Appbar.Header>
 
-      <Portal>
-        <Dialog visible={keyObtainDialogVisible} onDismiss={hideKeyObtainDialog}>
-          <Dialog.Title style={{ textAlign: "center" }}>Dodaj klucze</Dialog.Title>
-          <Dialog.Actions className="flex-col">
-            <Button mode="contained" onPress={handleKeysGen} className="mx-2 mb-6 w-40">
-              Wygeneruj
-            </Button>
-            {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-            <Button mode="contained" onPress={handleKeysImport} className="mx-2 mb-6 w-40">
-              Wczytaj
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+      <RsaKeysCreatorDialog visible={keyObtainDialogVisible} hideFunc={hideKeyObtainDialog} />
 
-      <Portal>
-        <Dialog visible={qrExportDialogVisible} onDismiss={hideQrExportDialog}>
-          <Dialog.Title style={{ textAlign: "center" }}>QR z kluczem publicznym</Dialog.Title>
-          <Dialog.Content>
-            <View className="items-center">
-              <QRCode
-                value={keyPair.publicKey}
-                ecl="H"
-                quietZone={10}
-                getRef={(c): void => {
-                  if (c) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-                    c.toDataURL((data: string) => {
-                      qrRef.current = data.replace(/(\r\n|\n|\r)/gm, "");
-                    });
-                  }
-                }}
-              />
-              <Button
-                mode="contained"
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                onPress={saveQrImg}
-                className="mt-6 w-40"
-                disabled={!keyPair.publicKey}
-              >
-                Zachowaj
-              </Button>
-            </View>
-          </Dialog.Content>
-        </Dialog>
-      </Portal>
+      <QrCodeDialog
+        visible={qrExportDialogVisible}
+        hideFunc={hideQrExportDialog}
+        content={publicKey}
+      />
+
       <ScrollView keyboardShouldPersistTaps="never">
         <Surface style={[styles.surface, { marginTop: 30 }]}>
           <Text variant="titleLarge" className="mb-4">
@@ -231,16 +157,16 @@ export default function SignUp(): Element {
             Uzyskaj
           </Button>
           <Text variant="bodyLarge" className="mt-2">
-            Klucz prywatny: {keyPair.privateKey ? "\u2714" : "\u274C"}
+            Klucz prywatny: {privateKey ? "\u2714" : "\u274C"}
           </Text>
           <Text variant="bodyLarge" className="mt-2">
-            Klucz publiczny: {keyPair.publicKey ? "\u2714" : "\u274C"}
+            Klucz publiczny: {publicKey ? "\u2714" : "\u274C"}
           </Text>
           <Button
             mode="contained"
             onPress={showQrExportDialog}
             className="mx-2 mt-6 w-40"
-            disabled={!keyPair.publicKey}
+            disabled={!publicKey}
           >
             Wygeneruj QR
           </Button>
@@ -248,14 +174,11 @@ export default function SignUp(): Element {
         <KeyboardAvoidingView className="mb-2 mt-auto">
           <Button
             mode="contained"
-            className="mx-auto mt-5 w-40"
-            /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
+            className="mx-auto mb-3 mt-5 w-40"
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onPress={handleSignUp}
             disabled={
-              !keyPair.privateKey ||
-              !keyPair.publicKey ||
-              userPin.length < 4 ||
-              userPin !== userPinRepeated
+              !privateKey || !publicKey || userPin.length < 4 || userPin !== userPinRepeated
             }
           >
             Zarejestruj

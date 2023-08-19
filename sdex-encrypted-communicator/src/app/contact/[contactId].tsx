@@ -5,7 +5,7 @@ import { Appbar, Button, Text, TextInput } from "react-native-paper";
 
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/Ionicons";
-import { GENERIC_OKAY_DISMISS_BUTTON } from "../../components/Buttons";
+import { GENERIC_OKAY_DISMISS_ALERT_BUTTON } from "../../components/Buttons";
 import { useSqlDbSessionStore } from "../../contexts/DbSession";
 import logger from "../../Logger";
 import {
@@ -17,7 +17,7 @@ import {
 import styles from "../../Styles";
 import { Contact } from "../../Types";
 
-export default function Profile() {
+export default function ContactView() {
   const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
   const [contact, setContact] = React.useState<Contact | undefined>(undefined);
   const [updateMode, setUpdateMode] = React.useState<boolean>(false);
@@ -120,7 +120,7 @@ export default function Profile() {
         Alert.alert(
           "Błąd",
           "Nie udało się zapisać kontaktu. Błąd bazy danych.",
-          [GENERIC_OKAY_DISMISS_BUTTON],
+          [GENERIC_OKAY_DISMISS_ALERT_BUTTON],
           { cancelable: true },
         );
       } else {
@@ -131,7 +131,7 @@ export default function Profile() {
     Alert.alert(
       "Błąd",
       "Nie zapisano kontaktu. Sprawdź poprawność danych.",
-      [GENERIC_OKAY_DISMISS_BUTTON],
+      [GENERIC_OKAY_DISMISS_ALERT_BUTTON],
       { cancelable: true },
     );
   };
@@ -146,6 +146,7 @@ export default function Profile() {
     logger.info("Selected RSA key file.");
     contactBuilder.publicKey = rsaKey;
   };
+
   return (
     <SafeAreaView className="flex-1">
       <Appbar.Header style={styles.appBarHeader}>

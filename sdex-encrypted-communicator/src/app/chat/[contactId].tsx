@@ -7,10 +7,10 @@ import { Appbar } from "react-native-paper";
 import { Link, useLocalSearchParams } from "expo-router";
 import { useSqlDbSessionStore } from "../../contexts/DbSession";
 import logger from "../../Logger";
-import { getContactById, getMessagesByContactId } from "../../storage/DataHandlers";
+import { addMessage, getContactById, getMessagesByContactId } from "../../storage/DataHandlers";
 import styles from "../../Styles";
 import { Contact } from "../../Types";
-import { messageToGiftedChatMessage } from "../../utils/Converters";
+import { giftedChatMessageToMessage, messageToGiftedChatMessage } from "../../utils/Converters";
 
 export default function Chat() {
   const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
@@ -49,6 +49,19 @@ export default function Chat() {
 
   const onSend = React.useCallback((newMessages: GiftedChatMessage[] = []) => {
     setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
+    newMessages.forEach((msg) => {
+      if (contact && contact.id) {
+        const message = giftedChatMessageToMessage(msg, contact.id);
+        logger.info(`Saving message to storage: ${JSON.stringify(message)}`);
+        (async () => addMessage(message, sqlDbSession))();
+      } else {
+        logger.error(
+          `Failed to save message to storage. Missing contact or id. Contact=${JSON.stringify(
+            contact,
+          )}}`,
+        );
+      }
+    });
   }, []);
 
   // const { width, height } = Dimensions.get("window");

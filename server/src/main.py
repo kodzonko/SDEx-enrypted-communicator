@@ -1,13 +1,23 @@
-import sys
+from pathlib import Path
 
-sys.path.append("src")
+from fastapi import FastAPI
+from fastapi_socketio import SocketManager
 
-from fastapi import FastAPI  # noqa: E402
+from database.database import DatabaseManager
+from settings import HOST_ADDRESS, HOST_PORT, SQLITE_DB_PATH
 
-from database.database import DatabaseManager  # noqa: E402
-from socket_manager import SocketManager  # noqa: E402
+db_manager = DatabaseManager(SQLITE_DB_PATH)
 
-db_manager = DatabaseManager()
-socket_manager = SocketManager(db_manager)
 
-app = FastAPI()
+app = FastAPI(title="SDEx communicator server")
+socket_manager = SocketManager(app=app)
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        f"{Path(__file__).stem}:app",
+        host=HOST_ADDRESS,
+        port=HOST_PORT,
+        reload=True,
+    )

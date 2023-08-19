@@ -8,12 +8,11 @@ authors = ["Jan Wadolowski <189539@edu.p.lodz.pl>"]
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = "^0.92.0"
-uvicorn = "^0.20.0"
+uvicorn = {extras = ["standard"], version = "^0.23.2"}
 pydantic = "^1.10.5"
-pymongo = { extras = ["srv"], version = "^4.3.3" }
 python-dotenv = "^0.21.1"
-pydantic-mongo = "^1.0.1"
 loguru = "^0.6.0"
+fastapi-socketio = "^0.0.10"
 
 [tool.poetry.group.dev.dependencies]
 mockito = "^1.4.0"
@@ -29,7 +28,6 @@ pytest-asyncio = "^0.20.3"
 pytest-cov = "^4.0.0"
 freezegun = "^1.2.2"
 ruff = "^0.0.269"
-pycodestyle = "^2.10.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -39,14 +37,25 @@ build-backend = "poetry.core.masonry.api"
 python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
-ignore_missing_imports = true
+ignore_missing_imports_per_module = true
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+src_paths = ["src", "tests"]
 
 [tool.ruff]
 ignore-init-module-imports = true
+line-length = 88
 fix = true
 src = ["src", "tests"]
 target-version = "py310"
 task-tags = ["TODO"]
+ignore = ["D100", "D107"]
 
 [tool.ruff.pydocstyle]
 convention = "google"

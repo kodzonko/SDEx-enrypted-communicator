@@ -1,21 +1,30 @@
 import * as React from "react";
 
-import { Button, Divider, List, Modal, Portal, TouchableRipple } from "react-native-paper";
-
 import { useRouter } from "expo-router";
 import { StyleProp, ViewStyle } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
+import {
+  Button,
+  Dialog,
+  Divider,
+  List,
+  Modal,
+  Portal,
+  Text,
+  TouchableRipple,
+} from "react-native-paper";
 import { useSqlDbSessionStore } from "../contexts/DbSession";
 import logger from "../Logger";
 import { getContacts } from "../storage/DataHandlers";
 import { ContactListItem } from "../Types";
+import { GENERIC_OKAY_DISMISS_BUTTON } from "./Buttons";
 
 export default function AddChatRoomModal({
   visible,
-  hideModalFunction,
+  hideFunction: hideModalFunction,
 }: {
   visible: boolean;
-  hideModalFunction: () => void;
+  hideFunction: () => void;
 }) {
   const [contactId, setContactId] = React.useState<number | undefined>(undefined);
   const [contacts, setContacts] = React.useState<ContactListItem[]>([]);
@@ -52,31 +61,42 @@ export default function AddChatRoomModal({
 
   return (
     <Portal>
-      <Modal visible={visible} onDismiss={hideModalFunction} dismissable>
-        <FlatList
-          data={contacts}
-          className="flex bg-white opacity-70"
-          keyExtractor={(item) => item.id.toString()}
-          ItemSeparatorComponent={divider}
-          renderItem={({ item }) => (
-            <TouchableRipple>
-              <List.Item
-                className="mx-auto my-2 flex"
-                title={`${item.name} ${item.surname}`}
-                left={leftIcon}
-                style={{ rowGap: 0 }}
-                titleNumberOfLines={1}
-                onPress={() => {
-                  setContactId(item.id);
-                }}
-              />
-            </TouchableRipple>
-          )}
-        />
-        <Button onPress={goToChatRoom} className="rounded-none bg-white opacity-70">
-          Rozmawiaj
-        </Button>
-      </Modal>
+      {contacts.length > 0 ? (
+        <Modal visible={visible} onDismiss={hideModalFunction} dismissable>
+          <FlatList
+            data={contacts}
+            className="flex bg-white opacity-70"
+            keyExtractor={(item) => item.id.toString()}
+            ItemSeparatorComponent={divider}
+            renderItem={({ item }) => (
+              <TouchableRipple>
+                <List.Item
+                  className="mx-auto my-2 flex"
+                  title={`${item.name} ${item.surname}`}
+                  left={leftIcon}
+                  style={{ rowGap: 0 }}
+                  titleNumberOfLines={1}
+                  onPress={() => {
+                    setContactId(item.id);
+                  }}
+                />
+              </TouchableRipple>
+            )}
+          />
+          <Button onPress={goToChatRoom} className="rounded-none bg-white opacity-70">
+            Rozmawiaj
+          </Button>
+          )
+        </Modal>
+      ) : (
+        <Dialog visible={visible} onDismiss={hideModalFunction}>
+          <Dialog.Title style={{ textAlign: "center" }}>Brak kontaktów</Dialog.Title>
+          <Dialog.Content className="flex items-center">
+            <Text>Aby móc rozmawiać najpierw dodaj kontakt.</Text>
+            <GENERIC_OKAY_DISMISS_BUTTON dismissFunc={hideModalFunction} />
+          </Dialog.Content>
+        </Dialog>
+      )}
     </Portal>
   );
 }

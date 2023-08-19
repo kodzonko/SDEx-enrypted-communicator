@@ -10,6 +10,39 @@ import {
 } from "../Messages";
 import { Contact, Message } from "../Types";
 
+const DEFAULT_SQLITE_DB_FILE_NAME = "SQLite-unencrypted.db";
+
+export async function createDb(fileName = DEFAULT_SQLITE_DB_FILE_NAME): Promise<boolean> {
+  if (!FileSystem.documentDirectory) {
+    logger.info("FileSystem.documentDirectory cannot be determined.");
+    return false;
+  }
+  if (!(await FileSystem.getInfoAsync(`${FileSystem.documentDirectory}SQLite`)).exists) {
+    await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}SQLite`);
+  }
+  const targetPath = `${FileSystem.documentDirectory}SQLite/${fileName}`;
+  logger.info("Copying a template SQL database to documents directory.");
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-var-requires, global-require
+  const sqlTemplateAsset = (await Asset.loadAsync(require("../../assets/SqlDbTemplate.db")))[0];
+  if (!sqlTemplateAsset || !sqlTemplateAsset.localUri) {
+    logger.error("Failed to load the SQL database template.");
+    return false;
+  }
+
+  return FileSystem.copyAsync({
+    from: sqlTemplateAsset.localUri,
+    to: targetPath,
+  })
+    .then(() => {
+      logger.info(`Successfully copied the SQL database template to: ${targetPath}`);
+      return true;
+    })
+    .catch((error) => {
+      logger.error(`Failed to copy the SQL database template. Error=${error.message}`);
+      return false;
+    });
+}
+
 /**
  * Opens a connection to SQLite database.
  * @param fileName The name of the database file.
@@ -17,7 +50,8 @@ import { Contact, Message } from "../Types";
  *          supported or an error has occurred when establishing connection.
  */
 export async function createDbSession(
-  fileName = "SqlDbTemplate.db",
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  fileName = DEFAULT_SQLITE_DB_FILE_NAME,
 ): Promise<SQLite.WebSQLDatabase | undefined> {
   logger.info("Opening SQL database connection.");
   if (Platform.OS === "web") {
@@ -28,26 +62,23 @@ export async function createDbSession(
     logger.info("FileSystem.documentDirectory cannot be determined.");
     return undefined;
   }
-  const targetPath = `${FileSystem.documentDirectory}/SQLite/${fileName}`;
-  if (!(await FileSystem.getInfoAsync(targetPath)).exists) {
-    logger.info(`File ${targetPath} not found.`);
-    logger.info(
-      `Copying a template SQL database to documents directory (${`${FileSystem.documentDirectory}/SQLite/`}).`,
-    );
-    /* eslint-disable-next-line global-require, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-var-requires */
-    const sqlTemplateAsset = (await Asset.loadAsync(require("../../assets/SqlDbTemplate.db")))[0];
-    if (!sqlTemplateAsset || !sqlTemplateAsset.localUri) {
-      logger.error("Failed to load the SQL database template.");
-      return undefined;
-    }
-    await FileSystem.copyAsync({
-      from: sqlTemplateAsset.localUri,
-      to: targetPath,
-    });
-    logger.info(`Successfully copied the SQL database template to ${targetPath}.`);
+  const filePath = `${FileSystem.documentDirectory}SQLite/${fileName}`;
+  if (!(await FileSystem.getInfoAsync(filePath)).exists) {
+    logger.info(`File=${FileSystem.documentDirectory}SQLite/${fileName} not found.`);
+    return undefined;
   }
-  logger.info(`Opening SQL database connection to ${targetPath}.`);
-  return SQLite.openDatabase(fileName);
+  logger.info(`Opening SQL database connection to: ${filePath}`);
+  // Cannot pass a **path** to session constructor. It only accepts **file name** and opens/creates db file under: ${FileSystem.documentDirectory}SQLite/<fileName>
+  const session = SQLite.openDatabase(fileName);
+  session.exec([{ sql: "PRAGMA foreign_keys = ON;", args: [] }], false, (error, result) => {
+    if (error) {
+      logger.error(
+        `Error occurred when activating foreign keys in the db. Error: ${error.message}`,
+      );
+    }
+    logger.info("Foreign keys turned on");
+  });
+  return session;
 }
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -114,15 +145,27 @@ export const addContactQuery = async (
   dbSession: SQLite.WebSQLDatabase,
 ): Promise<SQLite.SQLResultSet> => {
   logger.info("Executing a query to insert a contact to SQL database.");
+  const query = `INSERT INTO contacts (name, surname, public_key, messaging_key${
+    contact.id ? ", contact_id" : ""
+  })
+  VALUES(?, ?, ?, ?${contact.id ? ", ?" : ""});`;
+  const args: (string | number)[] = [
+    contact.name,
+    contact.surname,
+    contact.publicKey,
+    contact.messagingKey,
+  ];
+  if (contact.id) {
+    args.push(contact.id);
+  }
   /* eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor, @typescript-eslint/require-await */
   return new Promise(async (resolve, reject) =>
     /* eslint-disable-next-line no-promise-executor-return, @typescript-eslint/no-misused-promises */
     dbSession.transaction(async (tx) => {
       /* eslint-disable-next-line @typescript-eslint/await-thenable */
       await tx.executeSql(
-        `INSERT INTO contacts (name, surname, public_key, messaging_key)
-      VALUES(?, ?, ?, ?);`,
-        [contact.name, contact.surname, contact.publicKey, contact.messagingKey],
+        query,
+        args,
         (_, resultSet) => {
           logger.info(GENERIC_LOCAL_STORAGE_SQL_QUERY_SUCCESS_MSG);
           logger.debug(`Query results: ${JSON.stringify(resultSet)}`);

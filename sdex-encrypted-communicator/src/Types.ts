@@ -138,3 +138,8 @@ export type KeyPair = {
   publicKey: string;
   privateKey: string;
 };
+
+export type KeyPairState = KeyPair & {
+  setPublicKey: (publicKey: string) => void;
+  setPrivateKey: (privateKey: string) => void;
+};

@@ -8,7 +8,7 @@ import { KeyPair } from "../Types";
  * @param bits The number of bits to use in the key pair (default is 2048).
  * @returns The generated key pair.
  */
-export const generateKeyPair = async (bits = 4096): Promise<KeyPair> =>
+export const generateKeyPair = async (bits = 2048): Promise<KeyPair> =>
   RSA.generateKeys(bits).then((keyPair) => ({
     publicKey: keyPair.public,
     privateKey: keyPair.private,

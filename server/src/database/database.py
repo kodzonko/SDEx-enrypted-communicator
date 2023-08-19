@@ -1,88 +1,127 @@
+import sqlite3
 from pathlib import Path
 
 from loguru import logger
-from pydantic_mongo import AbstractRepository
-from pymongo import MongoClient
-from pymongo.errors import ConnectionFailure
-from pymongo.server_api import ServerApi
 
 import settings
 from database.models import User
-from exceptions import GENERIC_DB_CONN_ERROR, DBConnectionError
-
-
-class UserRepository(AbstractRepository[User]):
-    class Meta:
-        collection_name = "users"
+from exceptions import DBConnectionError
 
 
 class DatabaseManager:
-    def __init__(
-        self, cert_key_path: Path | str = settings.MONGO_AUTH_CERT_PATH
-    ) -> None:
-        if not isinstance(cert_key_path, str):
-            cert_key_path = str(cert_key_path)
+    def __init__(self, db_path: Path | str) -> None:
         try:
-            self.client: MongoClient = MongoClient(
-                settings.CONNECTION_STRING,
-                tls=True,
-                tlsCertificateKeyFile=cert_key_path,
-                server_api=ServerApi("1"),
-            )
-            self.user_repository: UserRepository = UserRepository(database=self.client)
-        except ConnectionFailure as e:
-            raise DBConnectionError("Failed to connect to the database: %s" % e)
-
-    def get_user_by_id(self, user_id: str) -> User | None:
-        """Fetch user data from the database by id."""
-        logger.info("Fetching user data from the database by id")
-        try:
-            output = self.user_repository.find_one_by_id(user_id)
-            log_msg = "User data fetched successfully." if output else "User not found."
-            logger.info(log_msg)
-            return output
-        except Exception:
-            raise DBConnectionError(GENERIC_DB_CONN_ERROR)
+            self.client: sqlite3.Connection = sqlite3.connect(db_path)
+        except Exception as e:
+            raise DBConnectionError(e)
 
     def get_user_by_public_key(self, public_key: str) -> User | None:
         """Get user data from the database by public key."""
         try:
-            output = self.user_repository.find_one_by({"public_key": public_key})
-            log_msg = "User data fetched successfully." if output else "User not found."
+            cursor: sqlite3.Cursor = self.client.execute(
+                """
+                SELECT id, public_rsa, private_rsa_hash, salt
+                FROM Users
+                WHERE public_rsa = :rsa_key;
+                """,
+                {"rsa_key": public_key},
+            )
+            output = cursor.fetchone()
+            if not output:
+                log_msg = "User not found."
+                logger.error(log_msg)
+                return None
+            user = User(
+                id=output[0],
+                public_rsa=output[1],
+                private_rsa_hash=output[2],
+                salt=output[3],
+            )
+            log_msg = "User data fetched successfully."
             logger.info(log_msg)
-            return output
-        except Exception:
-            raise DBConnectionError(GENERIC_DB_CONN_ERROR)
+            return user
+        except Exception as e:
+            raise DBConnectionError(e)
 
     def check_public_key(self, public_key: str) -> bool:
         """Check if public key exists in the database."""
         try:
-            output = (
-                self.user_repository.find_one_by({"public_key": public_key}) is not None
+            cursor: sqlite3.Cursor = self.client.execute(
+                "SELECT * FROM Users WHERE public_rsa = :public_key;",
+                {"public_key": public_key},
             )
+            output = cursor.fetchone()
             log_msg = "Public key exists." if output else "Public key does not exist."
             logger.info(log_msg)
             return True if output else False
-        except Exception:
-            raise DBConnectionError(GENERIC_DB_CONN_ERROR)
+        except Exception as e:
+            raise DBConnectionError(e)
 
-    def update_user_public_key(self, host: str, public_key: str) -> bool:
+    def update_user(self, previous_rsa: str, user_new_data: User) -> bool:
         """Update user public key in the database."""
         try:
-            user = self.user_repository.find_one_by({"host": host})
+            find_user_cursor: sqlite3.Cursor = self.client.execute(
+                """
+                SELECT *
+                FROM Users
+                WHERE public_rsa = :rsa;
+                """,
+                {"rsa": previous_rsa},
+            )
+            user = find_user_cursor.fetchone()
             if not user:
                 return False
             else:
-                user.public_key = public_key
-                self.user_repository.save(user)
-                return True
-        except Exception:
-            raise DBConnectionError(GENERIC_DB_CONN_ERROR)
+                self.client.execute(
+                    """
+                    UPDATE Users
+                    SET public_rsa = :public_rsa,
+                        private_rsa_hash = :private_rsa_hash,
+                        salt = :salt
+                    WHERE public_rsa = :previous_rsa;
+                    """,
+                    {
+                        "public_rsa": user_new_data.public_rsa,
+                        "private_rsa_hash": user_new_data.private_rsa_hash,
+                        "salt": user_new_data.salt,
+                        "previous_rsa": previous_rsa,
+                    },
+                )
+                self.client.commit()
+                return self.client.total_changes > 0
+        except Exception as e:
+            raise DBConnectionError(e)
 
-    def add_user(self, host: str, public_key: str) -> bool:
+    def add_user(self, user: User) -> bool:
         """Add new user to the database."""
         try:
-            self.user_repository.save(User(host=host, public_key=public_key))
-            return True
-        except Exception:
-            raise DBConnectionError(GENERIC_DB_CONN_ERROR)
+            self.client.execute(
+                """
+                INSERT INTO Users (public_rsa, private_rsa_hash, salt)
+                VALUES (:public_rsa, :private_rsa_hash, :salt);
+                """,
+                {
+                    "public_rsa": user.public_rsa,
+                    "private_rsa_hash": user.private_rsa_hash,
+                    "salt": user.salt,
+                },
+            )
+            self.client.commit()
+            return self.client.total_changes > 0
+        except Exception as e:
+            raise DBConnectionError(e)
+
+    def remove_user(self, public_key: str) -> bool:
+        """Add new user to the database."""
+        try:
+            self.client.execute(
+                """
+                DELETE FROM Users
+                WHERE public_rsa = :rsa;
+                """,
+                {"rsa": public_key},
+            )
+            self.client.commit()
+            return self.client.total_changes > 0
+        except Exception as e:
+            raise DBConnectionError(e)

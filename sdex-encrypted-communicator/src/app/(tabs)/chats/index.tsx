@@ -107,7 +107,7 @@ export default function ChatRooms() {
           />
         </>
       )}
-      <AddChatRoomModal visible={addChatRoomModalVisible} hideModalFunction={hideModal} />
+      <AddChatRoomModal visible={addChatRoomModalVisible} hideFunction={hideModal} />
       {!addChatRoomModalVisible && (
         <FAB icon="plus" style={styles.fab} onPress={() => showModal()} />
       )}

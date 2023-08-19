@@ -36,13 +36,7 @@ export default function TabsLayout() {
       logger.info("This platform supports expo-sqlite, establishing SQL database session.");
       setSqlDbSession();
     }
-    // (async () => {
-    //   if (Platform.OS !== "web" && !sqlDbSession) {
-    //     logger.info("This platform supports expo-sqlite, establishing SQL database session.");
-    //     setSqlDbSession();
-    //   }
-    // })();
-  }, [sqlDbSession]);
+  }, []);
 
   return (
     <Tabs

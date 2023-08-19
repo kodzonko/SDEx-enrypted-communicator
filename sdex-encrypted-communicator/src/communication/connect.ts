@@ -1,50 +1,31 @@
-import NetInfo from "@react-native-community/netinfo";
-import { Buffer } from "buffer";
-import TcpSocket from "react-native-tcp";
-import { TLSSocket } from "tls";
+import { Alert } from "react-native";
+import Toast from "react-native-root-toast";
+import { io } from "socket.io-client";
+import logger from "../Logger";
 
-const serverHost = "your-server-host";
-const serverPort = 1234;
-const tlsOptions: TLSSocket.TlsOptions = {
-  host: serverHost,
-  port: serverPort,
-  rejectUnauthorized: false, // Set to `true` to verify the server's TLS certificate
-};
+const SERVER_ADDRESS = "ws://10.0.2.2:3000";
 
-const connectToServer = async () => {
-  // Check if the device has an internet connection
-  const netInfo = await NetInfo.fetch();
-  if (!netInfo.isConnected) {
-    console.log("No internet connection");
-    return;
-  }
+const socket = io(
+  SERVER_ADDRESS,
+  {
+    path: "/ws/socket.io/",
+    timeout: 10000,
+    transports: ["websocket", "polling"],
+  } /* { auth: { token: "test" } } */,
+);
 
-  // Create a TCP socket
-  const socket = TcpSocket.createConnection({ port: serverPort, host: serverHost }, () => {
-    // Connection successful
-    console.log("Socket connected");
-
-    // Create a TLS socket using the TCP socket
-    const tlsSocket = new TLSSocket(socket, tlsOptions);
-
-    // Handle data received from the server
-    tlsSocket.on("data", (data: Buffer) => {
-      console.log("Received data:", data.toString());
-    });
-
-    // Handle errors
-    tlsSocket.on("error", (error: Error) => {
-      console.log("Socket error:", error);
-    });
-
-    // Send data to the server
-    tlsSocket.write("Hello, server!");
+socket.on("connect", () => {
+  Toast.show("Połączono z serwerem.", {
+    duration: Toast.durations.SHORT,
   });
+});
 
-  // Handle socket errors
-  socket.on("error", (error: Error) => {
-    console.log("Socket error:", error);
-  });
-};
+socket.on("disconnect", (reason) => {
+  Alert.alert("Utracono połączenie z serwerem", reason);
+});
 
-connectToServer();
+socket.on("test", (data) => {
+  logger.info(`data=${data}`);
+});
+
+export default socket;

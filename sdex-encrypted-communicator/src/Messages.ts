@@ -5,6 +5,8 @@ export const BUTTON_CANCEL_TEXT = "Anuluj";
 export const BUTTON_GO_BACK_TEXT = "Powrót";
 export const GENERIC_DB_MISSING_DATA_ERROR_MSG = "Brak danych w bazie.";
 
+export const GENERIC_WRITE_ERROR_TITLE = "Błąd zapisu";
+
 // Backend
 export const MISSING_SQL_DB_SESSION_FAILURE_MSG = "Database session not available.";
 export const GENERIC_LOCAL_STORAGE_SQL_QUERY_FAILURE_MSG = "SQL query executed with error.";

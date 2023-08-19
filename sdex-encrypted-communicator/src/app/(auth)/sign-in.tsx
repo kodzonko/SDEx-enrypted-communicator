@@ -2,7 +2,7 @@ import { Link } from "expo-router";
 import * as React from "react";
 import { Alert, KeyboardAvoidingView, SafeAreaView, View } from "react-native";
 import { Appbar, Button, TextInput } from "react-native-paper";
-import { GENERIC_OKAY_DISMISS_BUTTON } from "../../components/Buttons";
+import { GENERIC_OKAY_DISMISS_ALERT_BUTTON } from "../../components/Buttons";
 import { useAuthStore } from "../../contexts/Auth";
 import logger from "../../Logger";
 import { GENERIC_AUTHORIZATION_ERROR_MSG } from "../../Messages";
@@ -30,10 +30,10 @@ export default function SignIn() {
   }, []);
 
   const handleSignIn = (): void => {
-    logger.debug("Verifying user PIN.");
+    logger.info("Verifying user PIN.");
     if (userActualPIN === "") {
       Alert.alert(GENERIC_AUTHORIZATION_ERROR_MSG, "Brak PINu, uwierzytelnienie jest niemożliwe.", [
-        GENERIC_OKAY_DISMISS_BUTTON,
+        GENERIC_OKAY_DISMISS_ALERT_BUTTON,
       ]);
     }
     if (userInputPIN.trim().length >= 4 && userInputPIN.trim().length <= 8) {
@@ -43,13 +43,13 @@ export default function SignIn() {
       } else {
         logger.info("PIN verified as incorrect.");
         Alert.alert(GENERIC_AUTHORIZATION_ERROR_MSG, "PIN jest niepoprawny", [
-          GENERIC_OKAY_DISMISS_BUTTON,
+          GENERIC_OKAY_DISMISS_ALERT_BUTTON,
         ]);
       }
     } else {
-      logger.debug("PIN length incorrect. Skipped secure storage verification.");
+      logger.info("PIN length incorrect. Skipped secure storage verification.");
       Alert.alert(GENERIC_AUTHORIZATION_ERROR_MSG, "Podaj PIN aby się zalogować (4-8 cyfr).", [
-        GENERIC_OKAY_DISMISS_BUTTON,
+        GENERIC_OKAY_DISMISS_ALERT_BUTTON,
       ]);
     }
   };
