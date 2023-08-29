@@ -131,46 +131,6 @@ export const readFileFromDocumentsDirectory = async (
   return parsedContent;
 };
 
-export const saveFileToCacheDirectory = async (
-  fileName: string,
-  content: object | string,
-): Promise<boolean> => {
-  logger.info("Saving a file to cache directory.");
-  if (Platform.OS === "web") {
-    logger.info("expo-file-system is not supported on web, returning false.");
-    return false;
-  }
-  if (!FileSystem.cacheDirectory) {
-    logger.info("FileSystem.cacheDirectory cannot be determined.");
-    return false;
-  }
-  const filePath = `${FileSystem.cacheDirectory}${fileName}}`;
-  logger.debug(`Creating a file at path=${filePath}`);
-  return saveFile(filePath, JSON.stringify(content))
-    .then(() => true)
-    .catch(() => false);
-};
-
-export const readFileFromCacheDirectory = async (
-  fileName: string,
-): Promise<object | string | undefined> => {
-  logger.info("Reading a file from cache directory.");
-  if (Platform.OS === "web") {
-    logger.info("expo-file-system is not supported on web, returning.");
-    return undefined;
-  }
-  if (!FileSystem.cacheDirectory) {
-    logger.info("FileSystem.cacheDirectory cannot be determined, returning.");
-    return undefined;
-  }
-  const filePath = `${FileSystem.cacheDirectory}${fileName}}`;
-  logger.debug(`Reading a file from path=${filePath}`);
-  const content = await readFile(filePath);
-  const parsedContent = content ? <object | string>JSON.parse(content) : undefined;
-  logger.debug(`Returning content=${JSON.stringify(parsedContent)}`);
-  return parsedContent;
-};
-
 /**
  *Selects a file from the device storage.
  * @param mimeType The mime type of the file to select.
