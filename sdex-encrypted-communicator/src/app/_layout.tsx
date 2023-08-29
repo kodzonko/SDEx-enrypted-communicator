@@ -3,19 +3,19 @@ import * as React from "react";
 import { PaperProvider } from "react-native-paper";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { useAuthStore } from "../contexts/Auth";
+import "../Globals";
 import { theme } from "../Styles";
-
-const test = async () => {};
 
 export default function RootLayout() {
   const isSignedIn = useAuthStore((state) => state.isSignedIn);
-  // const isSignedIn = true;
   const router = useRouter();
+
   React.useEffect(() => {
-    (async () => {
-      // const sth = await test();
-      // logger.info(JSON.stringify(sth));
-    })();
+    // Connect to backend server
+    // socket.connect();
+  }, []);
+
+  React.useEffect(() => {
     if (!isSignedIn) {
       router.replace("/sign-in");
     } else {

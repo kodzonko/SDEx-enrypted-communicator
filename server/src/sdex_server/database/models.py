@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class User(BaseModel):
-    id: Optional[int]
-    public_rsa: str
-    private_rsa_hash: str
+    public_key: str
+    private_key_hash: str
     salt: str
+    id: Optional[int] = None

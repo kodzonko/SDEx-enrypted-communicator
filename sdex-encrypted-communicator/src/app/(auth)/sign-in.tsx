@@ -2,10 +2,17 @@ import { Link } from "expo-router";
 import * as React from "react";
 import { Alert, KeyboardAvoidingView, SafeAreaView, View } from "react-native";
 import { Appbar, Button, TextInput } from "react-native-paper";
+import { checkRegistered } from "../../communication/sockets";
 import { GENERIC_OKAY_DISMISS_ALERT_BUTTON } from "../../components/Buttons";
 import { useAuthStore } from "../../contexts/Auth";
+import { useCryptoContextStore } from "../../contexts/CryptoContext";
+import {
+  generateHashFromUserPassword,
+  generateInitializationHash,
+} from "../../crypto/cryptoHelpers";
 import logger from "../../Logger";
 import { GENERIC_AUTHORIZATION_ERROR_MSG } from "../../Messages";
+import { mmkvStorage } from "../../storage/MmkvStorageMiddlewares";
 import { getSecure } from "../../storage/SecureStoreMiddlewares";
 import styles from "../../Styles";
 
@@ -13,6 +20,7 @@ export default function SignIn() {
   const [userInputPIN, setUserInputPIN] = React.useState("");
   const [userActualPIN, setUserActualPIN] = React.useState("");
   const signIn = useAuthStore((state) => state.signIn);
+  const setMyCryptoContext = useCryptoContextStore((state) => state.setMyCryptoContext);
 
   React.useEffect((): void => {
     (async () => {
@@ -26,6 +34,9 @@ export default function SignIn() {
         setUserActualPIN(actualPinFromDb);
         logger.info("PIN successfully fetched from SecureStore.");
       }
+      const initializationHash = generateInitializationHash();
+      const hashFromUserPassword = await generateHashFromUserPassword();
+      setMyCryptoContext(initializationHash, hashFromUserPassword);
     })();
   }, []);
 
@@ -35,10 +46,13 @@ export default function SignIn() {
       Alert.alert(GENERIC_AUTHORIZATION_ERROR_MSG, "Brak PINu, uwierzytelnienie jest niemożliwe.", [
         GENERIC_OKAY_DISMISS_ALERT_BUTTON,
       ]);
+      return;
     }
     if (userInputPIN.trim().length >= 4 && userInputPIN.trim().length <= 8) {
       if (userInputPIN.trim() === userActualPIN) {
         logger.info("PIN verified, signing in.");
+        const publicKey = mmkvStorage.getString("publicKey") as string;
+        checkRegistered(publicKey);
         signIn();
       } else {
         logger.info("PIN verified as incorrect.");

@@ -26,6 +26,7 @@ export default function ChatRooms() {
   const chatRooms = useChatRoomsStore((state) => state.chatRooms);
   const setChatRooms = useChatRoomsStore((state) => state.setChatRooms);
   const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
+  const setSqlDbSession = useSqlDbSessionStore((state) => state.setSqlDbSession);
 
   const divider = () => <Divider />;
   const leftIcon = (props: { color: string; style?: StyleProp<ViewStyle> }) => (
@@ -40,6 +41,10 @@ export default function ChatRooms() {
         const sortedChatRooms = sortChatRoomsDescendingByDate(chatRoomsFromDb);
         setChatRooms(sortedChatRooms);
       })();
+    }
+    if (!sqlDbSession) {
+      logger.info("sqlDbSession is undefined. Creating a new one.");
+      setSqlDbSession();
     }
   }, [sqlDbSession, isFocused]);
 

@@ -3,7 +3,7 @@ SRC := $(PROJECT_ROOT)src
 TESTS := $(PROJECT_ROOT)tests
 
 run:
-	poetry run python $(SRC)/main.py
+	poetry run python $(SRC)/sdex_server/main.py
 
 lint:
 	poetry run ruff $(SRC)

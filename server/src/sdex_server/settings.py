@@ -3,7 +3,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
+load_dotenv(dotenv_path=Path(__file__).parent.parent.parent / ".env")
 
 _env_path = os.getenv("SQLITE_DB_PATH")
 if not _env_path:

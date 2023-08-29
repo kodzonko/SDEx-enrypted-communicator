@@ -5,9 +5,9 @@ import { SqlDbSessionStoreType } from "../Types";
 export const useSqlDbSessionStore = create<SqlDbSessionStoreType>((set) => ({
   sqlDbSession: undefined,
   /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
-  setSqlDbSession: async (filePath?) => {
+  setSqlDbSession: async (fileName?) => {
     set({
-      sqlDbSession: await createDbSession(filePath),
+      sqlDbSession: await createDbSession(fileName),
     });
   },
 }));

@@ -1,6 +1,6 @@
 import { decode as atob, encode as btoa } from "base-64";
 import { IMessage as GiftedChatMessage } from "react-native-gifted-chat/lib/Models";
-import { Contact, Message } from "../Types";
+import { Contact, Message, TransportedMessage } from "../Types";
 
 export const stringToBytes = (str: string): Uint8Array => {
   const utf8Encode = new TextEncoder();
@@ -135,3 +135,20 @@ export const base64StringToUint8Array = (base64String: string): Uint8Array => {
   }
   return bytes;
 };
+
+export function messageToTransportedMessage(
+  message: Message,
+  publicKeyFrom: string,
+  publicKeyTo: string,
+): TransportedMessage {
+  const result = {
+    publicKeyTo,
+    publicKeyFrom,
+    text: message.text,
+    createdAt: message.createdAt,
+    image: message.image,
+    video: message.video,
+    audio: message.audio,
+  };
+  return result;
+}

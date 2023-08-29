@@ -1,9 +1,17 @@
 import * as SQLite from "expo-sqlite";
+import { Socket } from "socket.io-client";
+import { DisconnectDescription } from "socket.io-client/build/esm/socket";
 
 export interface AuthState {
   isSignedIn: boolean;
   signIn: () => void;
   signOut: () => void;
+}
+
+export interface ServerState {
+  isRegistered: boolean;
+  setRegistered: () => void;
+  setUnregistered: () => void;
 }
 
 export class Contact {
@@ -15,13 +23,10 @@ export class Contact {
 
   public publicKey: string;
 
-  public messagingKey: string;
-
-  constructor(name: string, surname: string, publicKey: string, messagingKey: string, id?: number) {
+  constructor(name: string, surname: string, publicKey: string, id?: number) {
     this.name = name;
     this.surname = surname;
     this.publicKey = publicKey;
-    this.messagingKey = messagingKey;
     this.id = id;
   }
 
@@ -122,6 +127,16 @@ export class Message {
   }
 }
 
+export type TransportedMessage = {
+  publicKeyTo: string;
+  publicKeyFrom: string;
+  text: string;
+  createdAt: Date;
+  image?: string;
+  video?: string;
+  audio?: string;
+};
+
 export type ChatRoomsStoreChatRoomList = { chatRooms: ChatRoom[] };
 
 export type ChatRoomsStoreChatRoomAction = {
@@ -143,3 +158,71 @@ export type KeyPairState = KeyPair & {
   setPublicKey: (publicKey: string) => void;
   setPrivateKey: (privateKey: string) => void;
 };
+
+export type QrScannedStoreType = {
+  publicKey: string;
+  setPublicKey: (publicKey: string) => void;
+};
+
+export type MessageBufferStoreType = {
+  newMessage?: TransportedMessage;
+  addNewMessage: (message: TransportedMessage) => void;
+  cleanBuffer: () => void;
+};
+
+export type PersonalSdexEngineContext = {
+  initializationHash?: Uint8Array;
+  hashFromUserPassword?: Uint8Array;
+};
+
+export type CryptoContextState = {
+  myCryptoContext: PersonalSdexEngineContext | undefined;
+  othersCryptoContexts: Map<string, PersonalSdexEngineContext & { sessionKey: Uint8Array }>;
+  setMyCryptoContext: (initializationHash: Uint8Array, hashFromUserPassword: Uint8Array) => void;
+  addOthersCryptoContext: (
+    publicKey: string,
+    sessionKey: Uint8Array,
+    initializationHash?: Uint8Array,
+    hashFromUserPassword?: Uint8Array,
+  ) => void;
+};
+
+export type StatusResponse = "success" | "error";
+
+type RegisterFollowUpPayload = {
+  publicKey: string;
+  privateKeyHash: string;
+  salt: string;
+};
+
+export type ChatInitPayload = {
+  publicKeyFrom: string;
+  publicKeyTo: string;
+  initializationHash: Uint8Array;
+  hashFromUserPassword: Uint8Array;
+  sessionKey?: Uint8Array;
+};
+
+export interface ServerToClientEvents {
+  connect: () => void;
+  disconnect: (
+    reason: Socket.DisconnectReason,
+    description?: DisconnectDescription | undefined,
+  ) => void;
+  connect_error: (error: Error) => void;
+  registerInit: (salt: string) => void;
+  registerFollowUp: (status: StatusResponse) => void;
+  chatInit: (data: ChatInitPayload, callback: (sessionKey?: Uint8Array) => void) => void;
+  chat: (message: TransportedMessage) => void;
+}
+
+export interface ClientToServerEvents {
+  registerInit: () => void;
+  registerFollowUp: (
+    payload: RegisterFollowUpPayload,
+    callback: (status: StatusResponse) => void,
+  ) => void;
+  chatInit: (data: ChatInitPayload, callback: (sessionKey?: Uint8Array) => void) => void;
+  chat: (message: TransportedMessage, callback: (status: StatusResponse) => void) => void;
+  checkKey: (publicKey: string, callback: (response: boolean) => void) => void;
+}

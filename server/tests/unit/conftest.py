@@ -9,7 +9,7 @@ def awaited_return() -> Callable[[Any], asyncio.Future]:
     """Helper function to return awaited value for async functions."""
 
     def inner(value: Any = None):
-        f = asyncio.Future()
+        f = asyncio.Future()  # type: ignore
         f.set_result(value)
         return f
 

@@ -2,11 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { BottomTabBar, BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Tabs } from "expo-router";
 import * as React from "react";
-import { Platform } from "react-native";
 import { useTheme } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useSqlDbSessionStore } from "../../contexts/DbSession";
-import logger from "../../Logger";
 
 function makeIcon(
   icon: keyof typeof Ionicons.glyphMap,
@@ -32,8 +30,7 @@ export default function TabsLayout() {
   const theme = useTheme();
 
   React.useEffect(() => {
-    if (Platform.OS !== "web" && !sqlDbSession) {
-      logger.info("This platform supports expo-sqlite, establishing SQL database session.");
+    if (!sqlDbSession) {
       setSqlDbSession();
     }
   }, []);

@@ -1,5 +1,4 @@
 import { blake3 } from "@noble/hashes/blake3";
-import * as Crypto from "expo-crypto";
 import { EncryptionError } from "../Errors";
 import logger from "../Logger";
 import {
@@ -12,9 +11,9 @@ import {
 import { xorUintArrays } from "../utils/Math";
 
 export default class SdexCrypto {
-  HASH_LENGTH: number;
+  #HASH_LENGTH: number;
 
-  ZEROED_BLOCK: Uint8Array;
+  #ZEROED_BLOCK: Uint8Array;
 
   initializationHash: Uint8Array;
 
@@ -25,34 +24,21 @@ export default class SdexCrypto {
   constructor(
     initializationHash: Uint8Array,
     hashFromUserPassword: Uint8Array,
-    sessionKey?: Uint8Array,
+    sessionKey: Uint8Array,
     hashLength = 32,
   ) {
     this.initializationHash = initializationHash;
     this.hashFromUserPassword = hashFromUserPassword;
-    this.HASH_LENGTH = hashLength;
-    this.ZEROED_BLOCK = new Uint8Array(this.HASH_LENGTH);
-    this.sessionKey = sessionKey ?? SdexCrypto.generateSessionKey(this.HASH_LENGTH);
+    this.#HASH_LENGTH = hashLength;
+    this.#ZEROED_BLOCK = new Uint8Array(this.#HASH_LENGTH);
+    this.sessionKey = sessionKey;
   }
 
-  blake3Wrapper(message: Uint8Array | string, context?: Uint8Array | string) {
+  #blake3Wrapper(message: Uint8Array | string, context?: Uint8Array | string) {
     return blake3(message, {
-      dkLen: this.HASH_LENGTH,
+      dkLen: this.#HASH_LENGTH,
       context,
     });
-  }
-
-  /**
-   * Generates a unique session key for the SDEx encryption process.
-   * The session key is exchanged between both clients participating in the communication process.
-   * Key length should be 128 bits minimum (hence the default 32 bytes == 256 bits.)
-   * @param senderMessagingKey
-   * @param recipientMessagingKey
-   * @throws PreconditionError If the keys are not of equal length.
-   * @returns The generated session key.
-   */
-  static generateSessionKey(byteCount: number): Uint8Array {
-    return Crypto.getRandomBytes(byteCount);
   }
 
   /**
@@ -61,7 +47,11 @@ export default class SdexCrypto {
    * @param hash1 First hash block needed for encryption.
    * @param hash2 Second hash block needed for encryption.
    */
-  static calculateBlock(block: Uint8Array, hash1: Uint8Array, hash2: Uint8Array): Uint8Array {
+  private static calculateBlock(
+    block: Uint8Array,
+    hash1: Uint8Array,
+    hash2: Uint8Array,
+  ): Uint8Array {
     if (block.length !== hash1.length || block.length !== hash2.length) {
       logger.error(`block length=${block.length}, block=${block.toString()}`);
       logger.error(`hash1 length=${hash1.length}, hash1=${hash1.toString()}`);
@@ -71,15 +61,15 @@ export default class SdexCrypto {
     return xorUintArrays(block, hash1, hash2);
   }
 
-  calculateMessage(messageByteArray: Uint8Array): Uint8Array {
+  private calculateMessage(messageByteArray: Uint8Array): Uint8Array {
     // Message split into blocks with length equal to hashes to facilitate XOR operations
-    const messageSplit = splitMessageIntoBlocks(messageByteArray, this.HASH_LENGTH);
+    const messageSplit = splitMessageIntoBlocks(messageByteArray, this.#HASH_LENGTH);
     // Array changed to 1-based indexing to follow SDEx algorithm more easily
     const messageBlocks = changeTo1IndexedArray(messageSplit);
     const result = <Uint8Array[]>[];
     const hashIterations = <Uint8Array[]>[]; // h0, h1, ..., hk
     hashIterations[0] = this.initializationHash; // h0
-    const sessionKeyHash = this.blake3Wrapper(this.sessionKey); // aka hash from initialization vector H(IV)
+    const sessionKeyHash = this.#blake3Wrapper(this.sessionKey); // aka hash from initialization vector H(IV)
     // First block
     logger.debug("Calculating k=1 block.");
     // IV++h0
@@ -88,7 +78,7 @@ export default class SdexCrypto {
       this.initializationHash,
     );
     // H(IV++h0)
-    const hashFromSessionKeyAndInitializationHash = this.blake3Wrapper(
+    const hashFromSessionKeyAndInitializationHash = this.#blake3Wrapper(
       sessionKeyAndInitializationHash,
     );
     // C1
@@ -98,9 +88,9 @@ export default class SdexCrypto {
       hashFromSessionKeyAndInitializationHash,
     );
     // h1
-    hashIterations[1] = this.blake3Wrapper(
+    hashIterations[1] = this.#blake3Wrapper(
       sessionKeyAndInitializationHash,
-      mergeUint8Arrays(messageBlocks[1] as Uint8Array, messageBlocks[2] ?? this.ZEROED_BLOCK),
+      mergeUint8Arrays(messageBlocks[1] as Uint8Array, messageBlocks[2] ?? this.#ZEROED_BLOCK),
     );
 
     // Second block
@@ -113,14 +103,14 @@ export default class SdexCrypto {
         sessionKeyHash,
       );
       // h2
-      hashIterations[2] = this.blake3Wrapper(
+      hashIterations[2] = this.#blake3Wrapper(
         xorUintArrays(
-          hashIterations[0] ?? this.ZEROED_BLOCK,
+          hashIterations[0] ?? this.#ZEROED_BLOCK,
           hashFromSessionKeyAndInitializationHash,
         ),
         mergeUint8Arrays(
-          messageBlocks[3] ?? this.ZEROED_BLOCK,
-          messageBlocks[4] ?? this.ZEROED_BLOCK,
+          messageBlocks[3] ?? this.#ZEROED_BLOCK,
+          messageBlocks[4] ?? this.#ZEROED_BLOCK,
         ),
       );
     }
@@ -129,28 +119,28 @@ export default class SdexCrypto {
       // k-th hash iteration
       if (k >= 3) {
         logger.debug(`Calculating hash iteration k=${k}.`);
-        hashIterations[k] = this.blake3Wrapper(
+        hashIterations[k] = this.#blake3Wrapper(
           xorUintArrays(
-            hashIterations[k - 1] ?? this.ZEROED_BLOCK,
-            hashIterations[k - 2] ?? this.ZEROED_BLOCK,
+            hashIterations[k - 1] ?? this.#ZEROED_BLOCK,
+            hashIterations[k - 2] ?? this.#ZEROED_BLOCK,
           ),
           mergeUint8Arrays(
-            messageBlocks[2 * k - 1] ?? this.ZEROED_BLOCK,
-            messageBlocks[2 * k] ?? this.ZEROED_BLOCK,
+            messageBlocks[2 * k - 1] ?? this.#ZEROED_BLOCK,
+            messageBlocks[2 * k] ?? this.#ZEROED_BLOCK,
           ),
         );
         logger.debug(`Calculating k=${k + 1} block.`);
         // Odd blocks in 1-based indexing (k=3, 5, 7...)
         result[2 * k + 1] = SdexCrypto.calculateBlock(
-          messageBlocks[2 * k + 1] ?? this.ZEROED_BLOCK,
-          hashIterations[k] ?? this.ZEROED_BLOCK,
-          hashIterations[k - 1] ?? this.ZEROED_BLOCK,
+          messageBlocks[2 * k + 1] ?? this.#ZEROED_BLOCK,
+          hashIterations[k] ?? this.#ZEROED_BLOCK,
+          hashIterations[k - 1] ?? this.#ZEROED_BLOCK,
         );
         // Even blocks in 1-based indexing (k=4, 6, 8...)
         result[2 * k + 2] = SdexCrypto.calculateBlock(
-          messageBlocks[2 * k] ?? this.ZEROED_BLOCK,
+          messageBlocks[2 * k] ?? this.#ZEROED_BLOCK,
           this.hashFromUserPassword,
-          hashIterations[k] ?? this.ZEROED_BLOCK,
+          hashIterations[k] ?? this.#ZEROED_BLOCK,
         );
       }
     }

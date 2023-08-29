@@ -2,21 +2,22 @@ import { Link } from "expo-router";
 import * as React from "react";
 import { Alert, KeyboardAvoidingView, SafeAreaView, ScrollView } from "react-native";
 import { Appbar, Button, Surface, Text, TextInput } from "react-native-paper";
+import socket from "../../communication/sockets";
 import { GENERIC_OKAY_DISMISS_ALERT_BUTTON } from "../../components/Buttons";
 import QrCodeDialog from "../../components/QrCodeDialog";
 import RsaKeysCreatorDialog from "../../components/RsaKeysCreatorDialog";
 import { useAuthStore } from "../../contexts/Auth";
+import { useSqlDbSessionStore } from "../../contexts/DbSession";
 import { useKeyPairStore } from "../../contexts/KeyPair";
-import generateMessagingKey from "../../crypto/MessagingKeyCrypto";
+import { useServerStore } from "../../contexts/Server";
 import logger from "../../Logger";
 import { GENERIC_WRITE_ERROR_TITLE } from "../../Messages";
 import { addContact } from "../../storage/DataHandlers";
 import { mmkvStorage } from "../../storage/MmkvStorageMiddlewares";
 import * as SecureStoreMiddleware from "../../storage/SecureStoreMiddlewares";
-import { createDb, createDbSession } from "../../storage/SqlStorageMiddlewares";
+import { createDb } from "../../storage/SqlStorageMiddlewares";
 import styles from "../../Styles";
 import { Contact } from "../../Types";
-import { uint8ArrayToBase64String } from "../../utils/Converters";
 
 export default function SignUp(): Element {
   const [userPin, setUserPin] = React.useState<string>("");
@@ -26,58 +27,62 @@ export default function SignUp(): Element {
   const signIn = useAuthStore((state) => state.signIn);
   const publicKey = useKeyPairStore((state) => state.publicKey);
   const privateKey = useKeyPairStore((state) => state.privateKey);
-  // const setSqlDbSession = useSqlDbSessionStore((state) => state.setSqlDbSession);
-  // const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
-
-  // React.useEffect(() => {
-  //   if (sqlDbSession && publicKey) {
-  //     (async () => {
-  //       const messagingKey = uint8ArrayToBase64String(generateMessagingKey());
-  //       const yourContact = new Contact("Twój profil", "", publicKey, messagingKey);
-  //       await addContact(yourContact, sqlDbSession).then(() => {
-  //         logger.info("Your contact added to the database.");
-  //         logger.info("PIN and key pair saved successfully. Signing in...");
-  //         signIn();
-  //       });
-  //     })();
-  //   }
-  // }, [sqlDbSession]);
+  const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
+  const setSqlDbSession = useSqlDbSessionStore((state) => state.setSqlDbSession);
+  const setUnregistered = useServerStore((state) => state.setUnregistered);
 
   const handleSignUp = async () => {
+    // Clear registered flag. Once registered button is pressed, previous registration data (is present) is no longer valid.
+    setUnregistered();
+    // Store RSA key pair in MMKV storage
     mmkvStorage.set("privateKey", privateKey);
     mmkvStorage.set("publicKey", publicKey);
+    // Store PIN in SecureStore
     const successfulPinWrite = await SecureStoreMiddleware.saveSecure("userPIN", userPin);
     if (!successfulPinWrite) {
       logger.error("Failed to save PIN to SecureStore.");
       Alert.alert(GENERIC_WRITE_ERROR_TITLE, "Nie udało się zapisać PINu w bazie danych.", [
         GENERIC_OKAY_DISMISS_ALERT_BUTTON,
       ]);
-    } else {
-      logger.info("SignUp successful. Creating a new app database.");
-      await createDb();
-      const dbSession = await createDbSession();
-      const messagingKey = uint8ArrayToBase64String(generateMessagingKey());
-      const yourContact = new Contact("Twój profil", "", publicKey, messagingKey, 0);
-      logger.info(`contact: ${JSON.stringify(yourContact)}`);
-      addContact(yourContact, dbSession)
-        .then(() => {
-          logger.info("Your was contact added to the database.");
-          logger.info("PIN and key pair saved successfully. Signing in...");
-          signIn();
-        })
-        .catch((error) => {
-          if (error instanceof Error) {
-            logger.error(
-              `An error occurred when trying to save user's contact to database=${JSON.stringify(
-                error,
-              )}`,
-            );
-            Alert.alert(GENERIC_WRITE_ERROR_TITLE, "Nie udało się zapisać twojego kontaktu.", [
-              GENERIC_OKAY_DISMISS_ALERT_BUTTON,
-            ]);
-          }
-        });
+      return;
     }
+    logger.info("PIN and key pair saved successfully.");
+    // Creating fresh sql db file from template. Creating a new session.
+    logger.info("SignUp successful. Creating a new app database.");
+    await createDb()
+      .then(() => {
+        setSqlDbSession();
+      })
+      .catch((error) => {
+        logger.error(`Failed to create a new app database: ${JSON.stringify(error)}`);
+        Alert.alert(GENERIC_WRITE_ERROR_TITLE, "Nie udało się utworzyć nowej bazy danych.", [
+          GENERIC_OKAY_DISMISS_ALERT_BUTTON,
+        ]);
+      });
+    // Adding your contact to the database
+    const yourContact = new Contact("Twój profil", "", publicKey, 0);
+    logger.info(`contact: ${JSON.stringify(yourContact)}`);
+    addContact(yourContact, sqlDbSession)
+      .then(() => {
+        logger.info("Your contact has been added to the database.");
+        logger.info("Registering client on the server...");
+        socket.emit("registerInit");
+        logger.info("Signing in...");
+        // Signing in to the app
+        signIn();
+      })
+      .catch((error) => {
+        if (error instanceof Error) {
+          logger.error(
+            `An error occurred when trying to save user's contact to database=${JSON.stringify(
+              error,
+            )}`,
+          );
+          Alert.alert(GENERIC_WRITE_ERROR_TITLE, "Nie udało się zapisać twojego kontaktu.", [
+            GENERIC_OKAY_DISMISS_ALERT_BUTTON,
+          ]);
+        }
+      });
   };
 
   const showKeyObtainDialog = () => setKeyObtainDialogVisible(true);

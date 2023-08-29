@@ -2,6 +2,7 @@ import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
 import { Platform } from "react-native";
+import RNFS from "react-native-fs";
 import logger from "../Logger";
 
 export const readFile = async (path: string): Promise<string | undefined> => {
@@ -11,6 +12,22 @@ export const readFile = async (path: string): Promise<string | undefined> => {
     return undefined;
   }
   return FileSystem.readAsStringAsync(path);
+};
+
+export const saveFileToUsersDocumentsDirectory = (fileName: string, value: string): void => {
+  logger.info("Writing content to a file.");
+  if (Platform.OS === "web") {
+    logger.info("expo-file-system is not supported on web, returning.");
+    return;
+  }
+  const path = `${RNFS.ExternalStorageDirectoryPath}/Documents/${fileName}`;
+  RNFS.writeFile(path, value, "utf8")
+    .then((success) => {
+      logger.info(`Wrote content to file at uri=${path}`);
+    })
+    .catch((error) => {
+      logger.error(`Error writing content to file: ${error}`);
+    });
 };
 
 export const saveFile = async (fileName: string, value: string): Promise<boolean> => {

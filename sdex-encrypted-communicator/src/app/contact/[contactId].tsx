@@ -7,6 +7,7 @@ import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/Ionicons";
 import { GENERIC_OKAY_DISMISS_ALERT_BUTTON } from "../../components/Buttons";
 import { useSqlDbSessionStore } from "../../contexts/DbSession";
+import { useQrScannedStore } from "../../contexts/QrScannedData";
 import logger from "../../Logger";
 import {
   addContact,
@@ -25,8 +26,9 @@ export default function ContactView() {
     name: "",
     surname: "",
     publicKey: "",
-    messagingKey: "",
   });
+
+  const publicKey = useQrScannedStore((state) => state.publicKey);
 
   const params = useLocalSearchParams();
   const { contactId } = params;
@@ -58,18 +60,26 @@ export default function ContactView() {
         name: contact.name,
         surname: contact.surname,
         publicKey: contact.publicKey,
-        messagingKey: contact.messagingKey,
       });
       setUpdateMode(true);
     }
   }, [contact]);
 
+  React.useEffect(() => {
+    if (publicKey) {
+      logger.info("Updating form with scanned RSA key.");
+      setContactBuilder({
+        ...contactBuilder,
+        publicKey,
+      });
+    }
+  }, [publicKey]);
+
   const verifyContactBuilder = (): boolean => {
     if (
       typeof contactBuilder.name !== "string" ||
       typeof contactBuilder.surname !== "string" ||
-      typeof contactBuilder.publicKey !== "string" ||
-      typeof contactBuilder.messagingKey !== "string"
+      typeof contactBuilder.publicKey !== "string"
     ) {
       logger.error("Contact builder verification unsuccessful. Some fields are not strings.");
       return false;
@@ -77,8 +87,7 @@ export default function ContactView() {
     if (
       contactBuilder.name.length < 1 ||
       contactBuilder.surname.length < 1 ||
-      contactBuilder.publicKey.length < 1 ||
-      contactBuilder.messagingKey.length < 1
+      contactBuilder.publicKey.length < 1
     ) {
       logger.error("Contact builder verification unsuccessful. Some fields are empty strings.");
       return false;
@@ -103,7 +112,6 @@ export default function ContactView() {
         contactBuilder.name,
         contactBuilder.surname,
         contactBuilder.publicKey,
-        contactBuilder.messagingKey,
       );
       let dbQueryResult = false;
       if (updateMode) {
@@ -136,7 +144,7 @@ export default function ContactView() {
     );
   };
 
-  const handleImportRsaKey = async (): Promise<void> => {
+  const handleImportRsaKey = React.useCallback(async () => {
     logger.info('Handling RSA key import from "contacts/[contactId]" route.');
     const rsaKey = await selectRsaKeyFile();
     if (!rsaKey) {
@@ -145,7 +153,7 @@ export default function ContactView() {
     }
     logger.info("Selected RSA key file.");
     contactBuilder.publicKey = rsaKey;
-  };
+  }, []);
 
   return (
     <SafeAreaView className="flex-1">
@@ -165,7 +173,6 @@ export default function ContactView() {
         <TextInput
           className="mt-2"
           mode="outlined"
-          // style={styles.textInputPin}
           defaultValue={contactBuilder.name}
           value={contactBuilder.name}
           onChangeText={(value) => {
@@ -178,7 +185,6 @@ export default function ContactView() {
         <TextInput
           className="mt-2"
           mode="outlined"
-          // style={styles.textInputPin}
           defaultValue={contactBuilder.surname}
           value={contactBuilder.surname}
           onChangeText={(value) => {
@@ -191,16 +197,20 @@ export default function ContactView() {
         <View className="mt-2 flex-row items-center">
           <TextInput
             mode="outlined"
-            className="mr-6 basis-10/12"
-            // style={styles.textInputPin}
+            className="mr-7 basis-8/12"
             defaultValue={contactBuilder.publicKey}
             value={contactBuilder.publicKey}
             onChangeText={(value) => {
               setContactBuilder({ ...contactBuilder, publicKey: value });
             }}
           />
-          {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-          <Icon name="folder-open-outline" size={40} onPress={handleImportRsaKey} />
+          <View className="mt-2 flex-row items-center space-x-6">
+            {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+            <Icon name="folder-open-outline" size={40} onPress={handleImportRsaKey} />
+            <Link href="/qrScanner" asChild>
+              <Icon name="qr-code-outline" size={40} />
+            </Link>
+          </View>
         </View>
         {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
         <Button mode="contained" className="mx-auto my-7 w-40" onPress={handleContactSave}>

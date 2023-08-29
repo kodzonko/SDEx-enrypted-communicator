@@ -5,7 +5,11 @@ import { GiftedChat, IMessage as GiftedChatMessage } from "react-native-gifted-c
 import { Appbar } from "react-native-paper";
 
 import { Link, useLocalSearchParams } from "expo-router";
+import socket, { initializeChat } from "../../communication/sockets";
+import { useCryptoContextStore } from "../../contexts/CryptoContext";
 import { useSqlDbSessionStore } from "../../contexts/DbSession";
+import { useMessagesBufferStore } from "../../contexts/MessagesBuffer";
+import { useServerStore } from "../../contexts/Server";
 import logger from "../../Logger";
 import { addMessage, getContactById, getMessagesByContactId } from "../../storage/DataHandlers";
 import styles from "../../Styles";
@@ -13,14 +17,22 @@ import { Contact } from "../../Types";
 import { giftedChatMessageToMessage, messageToGiftedChatMessage } from "../../utils/Converters";
 
 export default function Chat() {
-  const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
   const [messages, setMessages] = React.useState<GiftedChatMessage[]>([]);
   const [contact, setContact] = React.useState<Contact | undefined>(undefined);
+  const [bannerOfflineVisible, setBannerOfflineVisible] = React.useState<boolean>(false);
+
+  const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
+  const myCryptoContext = useCryptoContextStore((state) => state.myCryptoContext);
+  const othersCryptoContexts = useCryptoContextStore((state) => state.othersCryptoContexts);
+  const addOthersCryptoContext = useCryptoContextStore((state) => state.addOthersCryptoContext);
+  const newMessage = useMessagesBufferStore((state) => state.newMessage);
+  const isRegistered = useServerStore((state) => state.isRegistered);
 
   const params = useLocalSearchParams();
   const { contactId } = params;
 
   React.useEffect(() => {
+    // Get current contact info from the db
     (async () => {
       if (contactId) {
         logger.info(`Fetching contact info for contactId=${JSON.stringify(contactId)}.`);
@@ -35,6 +47,7 @@ export default function Chat() {
   }, [contactId]);
 
   React.useEffect(() => {
+    // Fetch archived messages from the db for the current contact
     if (contact) {
       (async () => {
         const messagesFromStorage = await getMessagesByContactId(Number(contactId), sqlDbSession);
@@ -44,8 +57,33 @@ export default function Chat() {
         });
         setMessages(giftedChatMessages);
       })();
+      initializeChat(contact.publicKey);
     }
   }, [contact]);
+
+  React.useEffect(() => {
+    if (!socket.connected) {
+      setBannerOfflineVisible(true);
+    } else if (!isRegistered) {
+      setBannerOfflineVisible(true);
+    } else {
+      setBannerOfflineVisible(false);
+    }
+  }, [socket.connected, isRegistered]);
+
+  // React.useEffect(() => {
+  //   // Monitor new messages from the buffer
+  //   if (contact && newMessage) {
+  //     (async () => {
+  //       const messagesFromStorage = await getMessagesByContactId(Number(contactId), sqlDbSession);
+  //       const giftedChatMessages: GiftedChatMessage[] = [];
+  //       messagesFromStorage.forEach((message) => {
+  //         giftedChatMessages.push(messageToGiftedChatMessage(message, contact));
+  //       });
+  //       setMessages(giftedChatMessages);
+  //     })();
+  //   }
+  // }, [newMessage]);
 
   const onSend = React.useCallback((newMessages: GiftedChatMessage[] = []) => {
     setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));

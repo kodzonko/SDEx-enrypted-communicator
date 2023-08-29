@@ -5,6 +5,13 @@ export class EncryptionError extends Error {
   }
 }
 
+export class DecryptionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "DecryptionError";
+  }
+}
+
 export class PreconditionError extends Error {
   constructor(message: string) {
     super(message);
@@ -37,5 +44,12 @@ export class DataHandlerError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "DataHandlerError";
+  }
+}
+
+export class RsaGenerationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "RsaGenerationError";
   }
 }

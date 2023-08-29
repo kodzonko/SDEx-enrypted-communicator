@@ -121,7 +121,7 @@ export const getContactByIdQuery = async (
     dbSession.readTransaction(async (tx) => {
       /* eslint-disable-next-line @typescript-eslint/await-thenable */
       await tx.executeSql(
-        `SELECT contact_id, name, surname, public_key, messaging_key
+        `SELECT name, surname, public_key
       FROM contacts
       WHERE contact_id = ?;`,
         [contactId],
@@ -145,16 +145,9 @@ export const addContactQuery = async (
   dbSession: SQLite.WebSQLDatabase,
 ): Promise<SQLite.SQLResultSet> => {
   logger.info("Executing a query to insert a contact to SQL database.");
-  const query = `INSERT INTO contacts (name, surname, public_key, messaging_key${
-    contact.id ? ", contact_id" : ""
-  })
+  const query = `INSERT INTO contacts (name, surname, public_key${contact.id ? ", contact_id" : ""})
   VALUES(?, ?, ?, ?${contact.id ? ", ?" : ""});`;
-  const args: (string | number)[] = [
-    contact.name,
-    contact.surname,
-    contact.publicKey,
-    contact.messagingKey,
-  ];
+  const args: (string | number)[] = [contact.name, contact.surname, contact.publicKey];
   if (contact.id) {
     args.push(contact.id);
   }
@@ -193,16 +186,10 @@ export const updateContactQuery = async (
       /* eslint-disable-next-line @typescript-eslint/await-thenable */
       await tx.executeSql(
         `UPDATE contacts
-        SET name = ?, surname = ?, public_key = ?, messaging_key = ?
+        SET name = ?, surname = ?, public_key = ?
         WHERE contact_id = ?
       ;`,
-        [
-          contact.name,
-          contact.surname,
-          contact.publicKey,
-          contact.messagingKey,
-          <number>contact.id,
-        ],
+        [contact.name, contact.surname, contact.publicKey, <number>contact.id],
         (_, resultSet) => {
           logger.info(GENERIC_LOCAL_STORAGE_SQL_QUERY_SUCCESS_MSG);
           logger.debug(`Query results: ${JSON.stringify(resultSet)}`);

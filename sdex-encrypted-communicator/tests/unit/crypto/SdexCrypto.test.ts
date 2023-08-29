@@ -1,4 +1,5 @@
 import { blake3 } from "@noble/hashes/blake3";
+import { generateSessionKey } from "../../../src/crypto/cryptoHelpers";
 import SdexCrypto from "../../../src/crypto/SdexCrypto";
 import { EncryptionError } from "../../../src/Errors";
 
@@ -8,6 +9,7 @@ const sessionKey = new Uint8Array([
   199, 182, 158, 16, 28, 191, 237, 76, 143, 157, 160, 176, 212, 216, 69, 149, 116, 80, 98, 155, 212,
   183, 228, 53, 100, 16, 112, 89, 150, 82, 0, 116,
 ]);
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const messageEncryptorDecryptor = new SdexCrypto(
   initializationHash,
   hashFromUserPassword,
@@ -16,7 +18,7 @@ const messageEncryptorDecryptor = new SdexCrypto(
 );
 
 test("Generating a session key.", () => {
-  const newSessionKey = SdexCrypto.generateSessionKey(32);
+  const newSessionKey = generateSessionKey(32);
   expect(newSessionKey.length).toBe(32);
 });
 

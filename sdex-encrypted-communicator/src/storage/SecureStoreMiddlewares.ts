@@ -27,7 +27,7 @@ export const saveSecure = async (key: string, value: object | string): Promise<b
 export const getSecure = async (key: string): Promise<object | string | undefined> => {
   logger.info("Getting data from SecureStore.");
   const value = await SecureStore.getItemAsync(key);
-  logger.debug(`Retrieved from SecureStore; value=${JSON.stringify(value)}`);
+  logger.debug(`Value retrieved from SecureStore: ${JSON.stringify(value)}`);
   return value !== null ? <object | string>JSON.parse(value) : undefined;
 };
 

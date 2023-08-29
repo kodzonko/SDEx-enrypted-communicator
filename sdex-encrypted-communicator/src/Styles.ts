@@ -94,6 +94,22 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
+  cameraOuterContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "black",
+  },
+  cameraInnerContainer: {
+    width: "80%",
+    aspectRatio: 0.75,
+    overflow: "hidden",
+    borderRadius: 30,
+    marginBottom: 40,
+  },
+  cameraScanner: {
+    flex: 1,
+  },
 });
 
 export default styles;

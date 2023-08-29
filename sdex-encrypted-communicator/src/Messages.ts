@@ -5,6 +5,8 @@ export const BUTTON_CANCEL_TEXT = "Anuluj";
 export const BUTTON_GO_BACK_TEXT = "Powrót";
 export const GENERIC_DB_MISSING_DATA_ERROR_MSG = "Brak danych w bazie.";
 
+export const FAILED_TO_REGISTER_USER_ALERT_MSG = "Nie udało się zarejestrować na serwerze.";
+
 export const GENERIC_WRITE_ERROR_TITLE = "Błąd zapisu";
 
 // Backend

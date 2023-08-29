@@ -15,6 +15,11 @@ module.exports = function (api) {
         plugins: ["react-native-paper/babel"],
       },
     },
-    plugins: ["nativewind/babel", require.resolve("expo-router/babel")],
+    plugins: [
+      "inline-dotenv",
+      "nativewind/babel",
+      require.resolve("expo-router/babel"),
+      ["@babel/plugin-transform-private-methods", { loose: true }],
+    ],
   };
 };

@@ -2,8 +2,8 @@ import pathlib
 
 import pytest
 
-from database.database import DatabaseManager
-from database.models import User
+from sdex_server.database.database import DatabaseManager
+from sdex_server.database.models import User
 
 
 @pytest.fixture
@@ -16,40 +16,40 @@ def db_manager() -> DatabaseManager:
 @pytest.fixture
 def user() -> User:
     return User(
-        id=123, public_rsa="rsa-test", private_rsa_hash="test-hash", salt="salt"
+        id=123, public_key="rsa-test", private_key_hash="test-hash", salt="salt"
     )
 
 
 @pytest.fixture
 def updating_user(db_manager: DatabaseManager) -> bool:
     previous_user = User(
-        public_rsa="old-rsa", private_rsa_hash="old-test-hash", salt="old-salt"
+        public_key="old-rsa", private_key_hash="old-test-hash", salt="old-salt"
     )
     new_user = User(
-        public_rsa="new-rsa", private_rsa_hash="new-test-hash", salt="new-salt"
+        public_key="new-rsa", private_key_hash="new-test-hash", salt="new-salt"
     )
-    yield db_manager.update_user(previous_user.public_rsa, new_user)  # type: ignore
-    db_manager.update_user(new_user.public_rsa, previous_user)
+    yield db_manager.update_user(previous_user.public_key, new_user)  # type: ignore
+    db_manager.update_user(new_user.public_key, previous_user)
 
 
 @pytest.fixture
 def adding_user(db_manager: DatabaseManager) -> bool:
     user_to_add = User(
         id=987,
-        public_rsa="added-user-rsa",
-        private_rsa_hash="added-user-rsa-hash",
+        public_key="added-user-rsa",
+        private_key_hash="added-user-rsa-hash",
         salt="added-salt55",
     )
     yield db_manager.add_user(user_to_add)  # type: ignore
-    db_manager.remove_user(user_to_add.public_rsa)
+    db_manager.remove_user(user_to_add.public_key)
 
 
 @pytest.fixture
 def deleting_user(db_manager: DatabaseManager) -> bool:
     user_to_delete = User(
-        id=1111, public_rsa="test", private_rsa_hash="test-priv-hash", salt="salt123"
+        id=1111, public_key="test", private_key_hash="test-priv-hash", salt="salt123"
     )
-    yield db_manager.remove_user(user_to_delete.public_rsa)  # type: ignore
+    yield db_manager.remove_user(user_to_delete.public_key)  # type: ignore
     db_manager.add_user(user_to_delete)
 
 

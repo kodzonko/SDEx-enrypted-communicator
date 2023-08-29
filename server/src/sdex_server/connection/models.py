@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class MessageIn(BaseModel):
-    """Payload schema."""
+    """Payload schema for incoming message."""
 
     source_public_key: str
     target_public_key: str
@@ -13,9 +13,17 @@ class MessageIn(BaseModel):
 
 
 class MessageOut(BaseModel):
-    """Response schema."""
+    """Response schema for outgoing message."""
 
     source_public_key: str
     target_public_key: str
     message: list[int]
     sent_date: datetime
+
+
+class RegisterUserFollowUpIn(BaseModel):
+    """Request schema for user registration follow-up."""
+
+    public_key: str
+    private_key_hash: str
+    salt: str

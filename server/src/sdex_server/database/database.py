@@ -3,9 +3,8 @@ from pathlib import Path
 
 from loguru import logger
 
-import settings
-from database.models import User
-from exceptions import DBConnectionError
+from sdex_server.database.models import User
+from sdex_server.exceptions import DBConnectionError
 
 
 class DatabaseManager:
@@ -20,21 +19,21 @@ class DatabaseManager:
         try:
             cursor: sqlite3.Cursor = self.client.execute(
                 """
-                SELECT id, public_rsa, private_rsa_hash, salt
-                FROM Users
-                WHERE public_rsa = :rsa_key;
+                SELECT id, public_key, private_key_hash, salt
+                FROM users
+                WHERE public_key = :rsa_key;
                 """,
                 {"rsa_key": public_key},
             )
             output = cursor.fetchone()
             if not output:
                 log_msg = "User not found."
-                logger.error(log_msg)
+                logger.info(log_msg)
                 return None
             user = User(
                 id=output[0],
-                public_rsa=output[1],
-                private_rsa_hash=output[2],
+                public_key=output[1],
+                private_key_hash=output[2],
                 salt=output[3],
             )
             log_msg = "User data fetched successfully."
@@ -47,8 +46,8 @@ class DatabaseManager:
         """Check if public key exists in the database."""
         try:
             cursor: sqlite3.Cursor = self.client.execute(
-                "SELECT * FROM Users WHERE public_rsa = :public_key;",
-                {"public_key": public_key},
+                "SELECT * FROM users WHERE public_key = :key;",
+                {"key": public_key},
             )
             output = cursor.fetchone()
             log_msg = "Public key exists." if output else "Public key does not exist."
@@ -63,8 +62,8 @@ class DatabaseManager:
             find_user_cursor: sqlite3.Cursor = self.client.execute(
                 """
                 SELECT *
-                FROM Users
-                WHERE public_rsa = :rsa;
+                FROM users
+                WHERE public_key = :rsa;
                 """,
                 {"rsa": previous_rsa},
             )
@@ -74,15 +73,15 @@ class DatabaseManager:
             else:
                 self.client.execute(
                     """
-                    UPDATE Users
-                    SET public_rsa = :public_rsa,
-                        private_rsa_hash = :private_rsa_hash,
+                    UPDATE users
+                    SET public_key = :public_rsa,
+                        private_key_hash = :private_rsa_hash,
                         salt = :salt
-                    WHERE public_rsa = :previous_rsa;
+                    WHERE public_key = :previous_rsa;
                     """,
                     {
-                        "public_rsa": user_new_data.public_rsa,
-                        "private_rsa_hash": user_new_data.private_rsa_hash,
+                        "public_rsa": user_new_data.public_key,
+                        "private_rsa_hash": user_new_data.private_key_hash,
                         "salt": user_new_data.salt,
                         "previous_rsa": previous_rsa,
                     },
@@ -97,12 +96,12 @@ class DatabaseManager:
         try:
             self.client.execute(
                 """
-                INSERT INTO Users (public_rsa, private_rsa_hash, salt)
+                INSERT INTO users (public_key, private_key_hash, salt)
                 VALUES (:public_rsa, :private_rsa_hash, :salt);
                 """,
                 {
-                    "public_rsa": user.public_rsa,
-                    "private_rsa_hash": user.private_rsa_hash,
+                    "public_rsa": user.public_key,
+                    "private_rsa_hash": user.private_key_hash,
                     "salt": user.salt,
                 },
             )
@@ -116,8 +115,8 @@ class DatabaseManager:
         try:
             self.client.execute(
                 """
-                DELETE FROM Users
-                WHERE public_rsa = :rsa;
+                DELETE FROM users
+                WHERE public_key = :rsa;
                 """,
                 {"rsa": public_key},
             )

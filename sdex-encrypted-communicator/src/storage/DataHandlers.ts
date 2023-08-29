@@ -72,9 +72,8 @@ export const getContactById = async (
     <string>result.name,
     <string>result.surname,
     <string>result.public_key,
-    <string>result.messaging_key,
-    <number>result.contact_id,
     /* eslint-enable @typescript-eslint/no-unsafe-member-access */
+    contactId,
   );
   logger.debug(`Result converted to Contact: ${JSON.stringify(contact)}`);
   logger.info("Returning contact.");
