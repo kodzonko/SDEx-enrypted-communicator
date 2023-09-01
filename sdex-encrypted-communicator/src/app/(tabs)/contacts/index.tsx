@@ -28,7 +28,7 @@ export default function Contacts() {
   );
 
   React.useEffect(() => {
-    if (isFocused) {
+    if (isFocused && sqlDbSession) {
       (async () => {
         const contactsFromStorage: ContactListItem[] = await getContacts(sqlDbSession);
         logger.info(`Contacts from storage: ${JSON.stringify(contactsFromStorage)}`);
@@ -47,7 +47,7 @@ export default function Contacts() {
       </Appbar.Header>
       <FlatList
         data={contacts}
-        keyExtractor={(item, index) => (item.id ? item.id.toString() : index.toString())}
+        keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={divider}
         renderItem={({ item }) => (
           <Link

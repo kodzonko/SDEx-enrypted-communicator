@@ -3,7 +3,6 @@ import * as Crypto from "expo-crypto";
 import { useCryptoContextStore } from "../contexts/CryptoContext";
 import { mmkvStorage } from "../storage/MmkvStorageMiddlewares";
 import { getSecure } from "../storage/SecureStoreMiddlewares";
-import { PersonalSdexEngineContext } from "../Types";
 
 export async function generateHashFromUserPassword(): Promise<Uint8Array> {
   const userPin = await getSecure("userPIN");
@@ -43,9 +42,17 @@ export function chooseSdexCryptoContext(
   hashFromUserPassword: Uint8Array;
   sessionKey: Uint8Array;
 } {
-  const myPublicKey = mmkvStorage.getString("publicKey");
-  const context: PersonalSdexEngineContext & { sessionKey: Uint8Array } = {};
-  if (publicKeyFrom === myPublicKey) {
+  const context: {
+    initializationHash: Uint8Array;
+    hashFromUserPassword: Uint8Array;
+    sessionKey: Uint8Array;
+  } = {
+    initializationHash: new Uint8Array(),
+    hashFromUserPassword: new Uint8Array(),
+    sessionKey: new Uint8Array(),
+  };
+  const firstPartyPublicKey = mmkvStorage.getString("publicKey");
+  if (publicKeyFrom === firstPartyPublicKey) {
     // You are the sender. Taking your own crypto context.
     const myInitializationHash =
       useCryptoContextStore.getState().myCryptoContext?.initializationHash;
@@ -61,7 +68,11 @@ export function chooseSdexCryptoContext(
     const thirdPartyContext = useCryptoContextStore
       .getState()
       .othersCryptoContexts.get(publicKeyFrom);
-    if (!thirdPartyContext) {
+    if (
+      !thirdPartyContext ||
+      !thirdPartyContext.initializationHash ||
+      !thirdPartyContext.hashFromUserPassword
+    ) {
       throw new Error("Third party's crypto context is not set.");
     }
     context.hashFromUserPassword = thirdPartyContext.initializationHash;
@@ -74,7 +85,7 @@ export function chooseSdexCryptoContext(
     context.sessionKey = newSessionKey;
     useCryptoContextStore.getState().addOthersCryptoContext(
       // Key must be the other party's key, not yours.
-      publicKeyFrom !== myPublicKey ? publicKeyFrom : publicKeyTo,
+      publicKeyFrom !== firstPartyPublicKey ? publicKeyFrom : publicKeyTo,
       newSessionKey,
     );
   }

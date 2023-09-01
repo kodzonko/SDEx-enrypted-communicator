@@ -47,7 +47,7 @@ export default function QrScanner() {
   }
 
   return (
-    <View /* style={styles.container} */ className="flex-1 items-center justify-between bg-black">
+    <View className="flex-1 items-center justify-between bg-black">
       <Text variant="headlineSmall" className="mb-10 mt-20 font-semibold color-white">
         Zeskanuj kod QR znajomego
       </Text>

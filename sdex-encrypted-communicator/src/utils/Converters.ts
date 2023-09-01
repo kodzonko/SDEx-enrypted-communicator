@@ -1,26 +1,28 @@
-import { decode as atob, encode as btoa } from "base-64";
 import { IMessage as GiftedChatMessage } from "react-native-gifted-chat/lib/Models";
+import { TextEncoder } from "text-encoding";
 import { Contact, Message, TransportedMessage } from "../Types";
 
-export const stringToBytes = (str: string): Uint8Array => {
-  const utf8Encode = new TextEncoder();
-  return utf8Encode.encode(str);
-};
-
-export const bytesToString = (bytes: Uint8Array): string => {
-  const utf8Decode = new TextDecoder();
-  return utf8Decode.decode(bytes);
+const firstOrThirdPartyName = (
+  contactIdFrom: number,
+  firstParty: Contact,
+  thirdParty: Contact,
+): string => {
+  if (contactIdFrom === 0) {
+    return firstParty.getFullName();
+  }
+  return thirdParty.getFullName();
 };
 
 /**
  * Converts object of Message type to object of IMessage (GiftedChatMessage) type.
  * @param message A message object of Message type.
- * @param contact A contact object of Contact type; Author of the message.
+ * @param contactFrom A contact object of Contact type; Author of the message.
  * @returns An object fulfilling IMessage (GiftedChatMessage) interface.
  */
 export const messageToGiftedChatMessage = (
   message: Message,
-  contact: Contact,
+  contactFrom: Contact,
+  firstPartyContact: Contact,
 ): GiftedChatMessage => ({
   _id: message.id ? message.id : -1,
   text: message.text,
@@ -30,7 +32,7 @@ export const messageToGiftedChatMessage = (
   audio: message.audio,
   user: {
     _id: message.contactIdFrom,
-    name: `${contact.name} ${contact.surname}`,
+    name: firstOrThirdPartyName(message.contactIdFrom, firstPartyContact, contactFrom),
   },
 });
 
@@ -110,30 +112,23 @@ export const changeTo1IndexedArray = (array: Uint8Array[]): Uint8Array[] => {
 };
 
 /**
- * Converts Uint8Array to base64 string.
+ * Converts Uint8Array to utf-8 string.
  * @param array
- * @returns A base64 string.
+ * @returns An utf-8 string.
  */
-export const uint8ArrayToBase64String = (array: Uint8Array): string => {
-  let result = "";
-  for (let i = 0; i < array.length; i += 1) {
-    result += String.fromCharCode(array[i] as number);
-  }
-  return btoa(result);
+export const bytesToString = (array: Uint8Array): string => {
+  const text = new TextDecoder().decode(array);
+  return text;
 };
 
 /**
- * Converts base64 string to Uint8Array.
- * @param base64String
+ * Converts a string to Uint8Array.
+ * @param text
  * @returns An Uint8Array.
  */
-export const base64StringToUint8Array = (base64String: string): Uint8Array => {
-  const binaryString = atob(base64String);
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i += 1) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes;
+export const stringToBytes = (text: string): Uint8Array => {
+  const array = new TextEncoder().encode(text);
+  return array;
 };
 
 export function messageToTransportedMessage(
@@ -151,4 +146,21 @@ export function messageToTransportedMessage(
     audio: message.audio,
   };
   return result;
+}
+
+export function transportedMessageToMessage(
+  message: TransportedMessage,
+  contactIdFrom: number,
+  contactIdTo: number,
+): Message {
+  return new Message(
+    contactIdFrom,
+    contactIdTo,
+    message.text,
+    message.createdAt,
+    true,
+    message.image,
+    message.video,
+    message.audio,
+  );
 }

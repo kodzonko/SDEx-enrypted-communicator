@@ -2,6 +2,7 @@ import * as DocumentPicker from "expo-document-picker";
 import * as React from "react";
 import { Alert } from "react-native";
 import { Button, Dialog, Portal } from "react-native-paper";
+import Toast from "react-native-root-toast";
 import { useKeyPairStore } from "../contexts/KeyPair";
 import { generateKeyPair } from "../crypto/RsaCrypto";
 import logger from "../Logger";
@@ -32,10 +33,11 @@ export default function RsaKeysCreatorDialog({
 
   const handleKeysImport = async () => {
     try {
-      logger.info("Picking a file with public key..");
-      const documentPublic = await DocumentPicker.getDocumentAsync({
-        type: "text/plain",
+      Toast.show("Wybierz plik z kluczem publicznym, a następnie prywatnym.", {
+        duration: Toast.durations.SHORT,
       });
+      logger.info("Picking a file with public key..");
+      const documentPublic = await DocumentPicker.getDocumentAsync();
       if (documentPublic.type === "success") {
         logger.info("Reading public key from a file.");
         const publicKeyImported = await readFile(documentPublic.uri);
@@ -48,9 +50,7 @@ export default function RsaKeysCreatorDialog({
       }
 
       logger.info("Picking a file with private key..");
-      const documentPrivate = await DocumentPicker.getDocumentAsync({
-        type: "text/plain",
-      });
+      const documentPrivate = await DocumentPicker.getDocumentAsync({});
       if (documentPrivate.type === "success") {
         logger.info("Reading private key from a file.");
         const privateKeyImported = await readFile(documentPrivate.uri);

@@ -1,18 +1,9 @@
 import * as React from "react";
 
+import { useIsFocused } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { StyleProp, ViewStyle } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import {
-  Button,
-  Dialog,
-  Divider,
-  List,
-  Modal,
-  Portal,
-  Text,
-  TouchableRipple,
-} from "react-native-paper";
+import { FlatList, StyleProp, ViewStyle } from "react-native";
+import { Dialog, Divider, List, Modal, Portal, Text, TouchableRipple } from "react-native-paper";
 import { useSqlDbSessionStore } from "../contexts/DbSession";
 import logger from "../Logger";
 import { getContacts } from "../storage/DataHandlers";
@@ -32,13 +23,17 @@ export default function AddChatRoomModal({
   const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
 
   const router = useRouter();
+  const isFocused = useIsFocused();
 
   React.useEffect(() => {
-    (async () => {
-      const contactsFromStorage: ContactListItem[] = await getContacts(sqlDbSession);
-      setContacts(contactsFromStorage);
-    })();
-  }, [sqlDbSession, setContacts]);
+    if (isFocused && sqlDbSession) {
+      (async () => {
+        const contactsFromStorage: ContactListItem[] = await getContacts(sqlDbSession);
+        logger.info(`Contacts from storage: ${JSON.stringify(contactsFromStorage)}`);
+        setContacts(contactsFromStorage);
+      })();
+    }
+  }, [sqlDbSession, isFocused]);
 
   const goToChatRoom = () => {
     if (contactId) {
@@ -48,6 +43,7 @@ export default function AddChatRoomModal({
         pathname: "/chat/[contactId]",
         params: { contactId },
       });
+      setContactId(undefined);
     } else {
       logger.error(`Ignoring button press. contactId=${JSON.stringify(contactId)}`);
     }
@@ -83,10 +79,16 @@ export default function AddChatRoomModal({
               </TouchableRipple>
             )}
           />
-          <Button onPress={goToChatRoom} className="rounded-none bg-white opacity-70">
-            Rozmawiaj
-          </Button>
-          )
+          <Divider />
+          <TouchableRipple
+            disabled={!contactId}
+            onPress={goToChatRoom}
+            className="flex bg-white opacity-70"
+          >
+            <Text variant="titleLarge" className="mx-auto my-4 font-semibold text-blue-600">
+              Rozmawiaj
+            </Text>
+          </TouchableRipple>
         </Modal>
       ) : (
         <Dialog visible={visible} onDismiss={hideModalFunction}>

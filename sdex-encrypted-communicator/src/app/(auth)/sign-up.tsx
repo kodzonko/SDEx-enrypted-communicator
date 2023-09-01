@@ -2,7 +2,7 @@ import { Link } from "expo-router";
 import * as React from "react";
 import { Alert, KeyboardAvoidingView, SafeAreaView, ScrollView } from "react-native";
 import { Appbar, Button, Surface, Text, TextInput } from "react-native-paper";
-import socket from "../../communication/sockets";
+import { requestRegister } from "../../communication/Sockets";
 import { GENERIC_OKAY_DISMISS_ALERT_BUTTON } from "../../components/Buttons";
 import QrCodeDialog from "../../components/QrCodeDialog";
 import RsaKeysCreatorDialog from "../../components/RsaKeysCreatorDialog";
@@ -24,6 +24,8 @@ export default function SignUp(): Element {
   const [userPinRepeated, setUserPinRepeated] = React.useState<string>("");
   const [keyObtainDialogVisible, setKeyObtainDialogVisible] = React.useState(false);
   const [qrExportDialogVisible, setQrExportDialogVisible] = React.useState(false);
+  const [firstPartyContact, setFirstPartyContact] = React.useState<Contact | null>(null);
+
   const signIn = useAuthStore((state) => state.signIn);
   const publicKey = useKeyPairStore((state) => state.publicKey);
   const privateKey = useKeyPairStore((state) => state.privateKey);
@@ -31,7 +33,37 @@ export default function SignUp(): Element {
   const setSqlDbSession = useSqlDbSessionStore((state) => state.setSqlDbSession);
   const setUnregistered = useServerStore((state) => state.setUnregistered);
 
-  const handleSignUp = async () => {
+  React.useEffect(() => {
+    // Adding your contact to the database
+    // and handles actual signing in process
+    if (sqlDbSession && firstPartyContact) {
+      (async () => {
+        const result = await addContact(firstPartyContact, sqlDbSession);
+        if (result) {
+          logger.info("Your contact has been added to the database.");
+          logger.info("Registering client on the server...");
+          requestRegister();
+          logger.info("Signing in...");
+          // Signing in to the app
+          signIn();
+        } else {
+          logger.error("An error occurred when trying to save user's contact to database.");
+          Alert.alert(GENERIC_WRITE_ERROR_TITLE, "Nie udało się zapisać twojego kontaktu.", [
+            GENERIC_OKAY_DISMISS_ALERT_BUTTON,
+          ]);
+        }
+      })();
+    }
+  }, [sqlDbSession, firstPartyContact]);
+
+  /**
+   * Handles signing in process.
+   * - Saves first party's key pair in mmkv encrypted storage
+   * - Creates first party's profile in contacts book,
+   * - Switches isSignedIn flag to redirect expo router to authenticated stack (similar to sign-in screen)
+   * - Parts of this function are executed in useEffect hook.
+   */
+  const handleSignUp = async (): Promise<void> => {
     // Clear registered flag. Once registered button is pressed, previous registration data (is present) is no longer valid.
     setUnregistered();
     // Store RSA key pair in MMKV storage
@@ -50,38 +82,15 @@ export default function SignUp(): Element {
     // Creating fresh sql db file from template. Creating a new session.
     logger.info("SignUp successful. Creating a new app database.");
     await createDb()
-      .then(() => {
-        setSqlDbSession();
+      .then(async () => {
+        await setSqlDbSession();
+        setFirstPartyContact(new Contact("Twój profil", "", publicKey, 0));
       })
-      .catch((error) => {
-        logger.error(`Failed to create a new app database: ${JSON.stringify(error)}`);
+      .catch((error: Error) => {
+        logger.error(`Failed to create a new app database: ${error.message})`);
         Alert.alert(GENERIC_WRITE_ERROR_TITLE, "Nie udało się utworzyć nowej bazy danych.", [
           GENERIC_OKAY_DISMISS_ALERT_BUTTON,
         ]);
-      });
-    // Adding your contact to the database
-    const yourContact = new Contact("Twój profil", "", publicKey, 0);
-    logger.info(`contact: ${JSON.stringify(yourContact)}`);
-    addContact(yourContact, sqlDbSession)
-      .then(() => {
-        logger.info("Your contact has been added to the database.");
-        logger.info("Registering client on the server...");
-        socket.emit("registerInit");
-        logger.info("Signing in...");
-        // Signing in to the app
-        signIn();
-      })
-      .catch((error) => {
-        if (error instanceof Error) {
-          logger.error(
-            `An error occurred when trying to save user's contact to database=${JSON.stringify(
-              error,
-            )}`,
-          );
-          Alert.alert(GENERIC_WRITE_ERROR_TITLE, "Nie udało się zapisać twojego kontaktu.", [
-            GENERIC_OKAY_DISMISS_ALERT_BUTTON,
-          ]);
-        }
       });
   };
 

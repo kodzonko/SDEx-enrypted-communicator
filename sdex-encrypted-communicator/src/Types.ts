@@ -146,7 +146,7 @@ export type ChatRoomsStoreChatRoomAction = {
 
 export type SqlDbSessionStoreType = {
   sqlDbSession?: SQLite.WebSQLDatabase;
-  setSqlDbSession: (name?: string) => void;
+  setSqlDbSession: (fileName?: string) => Promise<void>;
 };
 
 export type KeyPair = {
@@ -165,9 +165,9 @@ export type QrScannedStoreType = {
 };
 
 export type MessageBufferStoreType = {
-  newMessage?: TransportedMessage;
-  addNewMessage: (message: TransportedMessage) => void;
-  cleanBuffer: () => void;
+  newMessage?: Message;
+  addNewMessage: (message: Message) => void;
+  clearBuffer: () => void;
 };
 
 export type PersonalSdexEngineContext = {
@@ -198,9 +198,14 @@ type RegisterFollowUpPayload = {
 export type ChatInitPayload = {
   publicKeyFrom: string;
   publicKeyTo: string;
-  initializationHash: Uint8Array;
-  hashFromUserPassword: Uint8Array;
-  sessionKey?: Uint8Array;
+  initializationHashEncrypted: string;
+  hashFromUserPasswordEncrypted: string;
+  sessionKeyEncrypted: string;
+};
+
+export type ChatInitFollowUpPayload = {
+  sessionKeyEncrypted: string;
+  publicKeyFrom: string;
 };
 
 export interface ServerToClientEvents {
@@ -212,17 +217,20 @@ export interface ServerToClientEvents {
   connect_error: (error: Error) => void;
   registerInit: (salt: string) => void;
   registerFollowUp: (status: StatusResponse) => void;
-  chatInit: (data: ChatInitPayload, callback: (sessionKey?: Uint8Array) => void) => void;
+  chatInit: (data: ChatInitPayload) => void;
+  chatInitFollowUp: (data: ChatInitFollowUpPayload) => void;
   chat: (message: TransportedMessage) => void;
 }
 
 export interface ClientToServerEvents {
-  registerInit: () => void;
+  registerInit: (publicKey: string) => void;
   registerFollowUp: (
     payload: RegisterFollowUpPayload,
     callback: (status: StatusResponse) => void,
   ) => void;
-  chatInit: (data: ChatInitPayload, callback: (sessionKey?: Uint8Array) => void) => void;
+  chatInit: (data: ChatInitPayload) => void;
+  chatInitFollowUp: (data: ChatInitFollowUpPayload) => void;
   chat: (message: TransportedMessage, callback: (status: StatusResponse) => void) => void;
   checkKey: (publicKey: string, callback: (response: boolean) => void) => void;
+  checkOnline: (publicKey: string, callback: (response: boolean) => void) => void;
 }

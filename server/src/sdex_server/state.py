@@ -6,8 +6,8 @@ Stuff related to connections, authentication, etc.
 #   keys are: public RSA keys
 #   values are: socket ids
 from bidict import bidict
-from sdex_server.type_definitions import PublicKeysSidsMappingType
 
+from sdex_server.type_definitions import PublicKeysSidsMappingType
 
 PUBLIC_KEYS_SIDS_MAPPING: PublicKeysSidsMappingType = bidict()
 # Set of authenticated users' sids

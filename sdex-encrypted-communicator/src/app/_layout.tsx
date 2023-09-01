@@ -11,11 +11,6 @@ export default function RootLayout() {
   const router = useRouter();
 
   React.useEffect(() => {
-    // Connect to backend server
-    // socket.connect();
-  }, []);
-
-  React.useEffect(() => {
     if (!isSignedIn) {
       router.replace("/sign-in");
     } else {

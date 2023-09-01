@@ -1,9 +1,10 @@
+import * as FileSystem from "expo-file-system";
 import { useRouter } from "expo-router";
 import * as React from "react";
 import { Alert, FlatList, SafeAreaView, StyleProp, ViewStyle } from "react-native";
 import { Appbar, Dialog, Divider, List, Portal, Text } from "react-native-paper";
 import Toast from "react-native-root-toast";
-import socket, { requestRegister } from "../../communication/sockets";
+import socket, { requestRegister, socketConnect } from "../../communication/Sockets";
 import {
   GENERIC_OKAY_DISMISS_ALERT_BUTTON,
   GENERIC_OKAY_DISMISS_BUTTON,
@@ -14,6 +15,7 @@ import { useKeyPairStore } from "../../contexts/KeyPair";
 import { useServerStore } from "../../contexts/Server";
 import { exportKeyPair } from "../../crypto/RsaCrypto";
 import logger from "../../Logger";
+import { shareFile } from "../../storage/FileOps";
 import { mmkvStorage } from "../../storage/MmkvStorageMiddlewares";
 import styles from "../../Styles";
 
@@ -22,12 +24,13 @@ export default function Settings() {
   const signOut = useAuthStore((state) => state.signOut);
   const [qrDialogVisible, setQrDialogVisible] = React.useState(false);
   const [aboutAppDialogVisible, setAboutAppDialogVisible] = React.useState(false);
-  const publicKey = useKeyPairStore((state) => state.publicKey);
+  const isRegistered = useServerStore((state) => state.isRegistered);
+  const setUnregistered = useServerStore((state) => state.setUnregistered);
   const setPublicKey = useKeyPairStore((state) => state.setPublicKey);
   const setPrivateKey = useKeyPairStore((state) => state.setPrivateKey);
-  const isRegistered = useServerStore((state) => state.isRegistered);
 
   const showQrDialog = () => {
+    logger.info(`Showing QR code dialog.`);
     setQrDialogVisible(true);
   };
   const hideQrDialog = () => {
@@ -45,10 +48,9 @@ export default function Settings() {
     setPrivateKey("");
     signOut();
   };
-  const attemptConnectionWithServer = () => {
-    socket.connect();
-  };
+
   const disconnectFromServer = () => {
+    setUnregistered();
     socket.disconnect();
   };
   const handleExportKeys = async () => {
@@ -59,19 +61,40 @@ export default function Settings() {
         GENERIC_OKAY_DISMISS_ALERT_BUTTON,
       ]);
     } else {
-      await exportKeyPair({ privateKey, publicKey: pubKey })
-        .then(() => {
-          Toast.show("Klucze wyeksportowane do plików. Znajdują się w Dokumentach.", {
-            duration: Toast.durations.SHORT,
-          });
-        })
-        .catch((error) => {
-          logger.error(`Error while exporting key pair: ${JSON.stringify(error)}`);
-          Alert.alert("Błąd zapisu", "Nie udało się zapisać kluczy do plików.", [
-            GENERIC_OKAY_DISMISS_ALERT_BUTTON,
-          ]);
+      await exportKeyPair({ privateKey, publicKey: pubKey });
+      if (!FileSystem.documentDirectory) {
+        throw new Error("Document directory not found");
+      }
+      const publicKeyUri = `${FileSystem.documentDirectory}id_rsa.pub.txt`;
+      const privateKeyUri = `${FileSystem.documentDirectory}id_rsa.txt`;
+      const successPublic = await shareFile(publicKeyUri);
+      if (successPublic) {
+        Toast.show("Klucz publiczny wyeksportowany", {
+          duration: Toast.durations.SHORT,
         });
+      } else {
+        logger.error(`Error while exporting public key.`);
+        Alert.alert("Błąd zapisu", "Nie udało się wyeksportować klucza publicznego", [
+          GENERIC_OKAY_DISMISS_ALERT_BUTTON,
+        ]);
+      }
+      const successPrivate = await shareFile(privateKeyUri);
+      if (successPrivate) {
+        Toast.show("Klucz prywatny wyeksportowany", {
+          duration: Toast.durations.SHORT,
+        });
+      } else {
+        logger.error(`Error while exporting private key.`);
+        Alert.alert("Błąd zapisu", "Nie udało się wyeksportować klucza prywatnego", [
+          GENERIC_OKAY_DISMISS_ALERT_BUTTON,
+        ]);
+      }
     }
+  };
+
+  const handleConnect = () => {
+    socketConnect();
+    requestRegister();
   };
 
   const settingsItems = [
@@ -88,7 +111,7 @@ export default function Settings() {
     if (!socket.connected) {
       settingsItems.push({
         title: "Połącz z serwerem",
-        func: attemptConnectionWithServer,
+        func: handleConnect,
       });
     } else if (!isRegistered) {
       settingsItems.push({ title: "Zarejestruj na serwerze", func: requestRegister });
@@ -109,11 +132,11 @@ export default function Settings() {
         <Appbar.Content title="Ustawienia" titleStyle={styles.appBarTitle} />
         <Appbar.BackAction onPress={router.back} iconColor={styles.appBarIcons.color} />
       </Appbar.Header>
-
-      {publicKey && (
-        <QrCodeDialog visible={qrDialogVisible} hideFunc={hideQrDialog} content={publicKey} />
-      )}
-
+      <QrCodeDialog
+        visible={qrDialogVisible}
+        hideFunc={hideQrDialog}
+        content={mmkvStorage.getString("publicKey") as string}
+      />
       <Portal>
         <Dialog visible={aboutAppDialogVisible} onDismiss={hideAboutAppDialog}>
           <Dialog.Title style={{ textAlign: "center" }}>O aplikacji</Dialog.Title>

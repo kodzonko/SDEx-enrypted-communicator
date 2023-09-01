@@ -16,10 +16,11 @@ module.exports = function (api) {
       },
     },
     plugins: [
+      "@babel/plugin-transform-flow-strip-types",
+      "@babel/plugin-proposal-class-properties",
       "inline-dotenv",
       "nativewind/babel",
       require.resolve("expo-router/babel"),
-      ["@babel/plugin-transform-private-methods", { loose: true }],
     ],
   };
 };

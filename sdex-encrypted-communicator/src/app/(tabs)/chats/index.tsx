@@ -35,16 +35,22 @@ export default function ChatRooms() {
   );
 
   React.useEffect(() => {
-    if (isFocused) {
+    if (isFocused && sqlDbSession) {
       (async () => {
         const chatRoomsFromDb = await getChatRooms(sqlDbSession);
         const sortedChatRooms = sortChatRoomsDescendingByDate(chatRoomsFromDb);
         setChatRooms(sortedChatRooms);
       })();
-    }
-    if (!sqlDbSession) {
+    } else if (!sqlDbSession) {
       logger.info("sqlDbSession is undefined. Creating a new one.");
-      setSqlDbSession();
+      (async () => {
+        await setSqlDbSession();
+      })();
+      (async () => {
+        const chatRoomsFromDb = await getChatRooms(sqlDbSession);
+        const sortedChatRooms = sortChatRoomsDescendingByDate(chatRoomsFromDb);
+        setChatRooms(sortedChatRooms);
+      })();
     }
   }, [sqlDbSession, isFocused]);
 
@@ -65,6 +71,7 @@ export default function ChatRooms() {
     logger.info("Showing AddChatRoomModal.");
     setAddChatRoomModalVisible(true);
   };
+
   const hideModal = () => setAddChatRoomModalVisible(false);
 
   return (
@@ -103,7 +110,7 @@ export default function ChatRooms() {
       />
       {addChatRoomModalVisible && (
         <>
-          <FAB icon="plus" style={styles.fab} onPress={() => showModal()} />
+          <FAB icon="plus" style={styles.fab} onPress={showModal} />
           <BlurView
             style={styles.blurView}
             blurType="light"
@@ -113,9 +120,7 @@ export default function ChatRooms() {
         </>
       )}
       <AddChatRoomModal visible={addChatRoomModalVisible} hideFunction={hideModal} />
-      {!addChatRoomModalVisible && (
-        <FAB icon="plus" style={styles.fab} onPress={() => showModal()} />
-      )}
+      {!addChatRoomModalVisible && <FAB icon="plus" style={styles.fab} onPress={showModal} />}
     </SafeAreaView>
   );
 }
