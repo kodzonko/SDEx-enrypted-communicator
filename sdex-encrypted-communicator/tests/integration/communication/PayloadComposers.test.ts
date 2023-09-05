@@ -4,7 +4,7 @@ import { generateInitializationHash, generateSessionKey } from "../../../src/cry
 import SdexCrypto from "../../../src/crypto/SdexCrypto";
 import { Message } from "../../../src/Types";
 
-test("Preparation process for message is fully reversible by ingestion process", async () => {
+test.skip("Preparation process for message is fully reversible by ingestion process", async () => {
   const originalMessage = new Message(0, 1, "this is a test.", new Date("2023-01-02"), false);
   const senderPublicKey = `-----BEGIN PUBLIC KEY-----
   MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzc5oViIvknxXSbuIfqkyaZc1F

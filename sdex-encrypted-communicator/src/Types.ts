@@ -170,16 +170,25 @@ export type MessageBufferStoreType = {
   clearBuffer: () => void;
 };
 
-export type PersonalSdexEngineContext = {
+export type FirstPartySdexEngineContext = {
   initializationHash?: Uint8Array;
   hashFromUserPassword?: Uint8Array;
 };
 
+export type ThirdPartySdexEngineContext = {
+  initializationHash?: Uint8Array;
+  hashFromUserPassword?: Uint8Array;
+  sessionKey?: Uint8Array;
+};
+
 export type CryptoContextState = {
-  myCryptoContext: PersonalSdexEngineContext | undefined;
-  othersCryptoContexts: Map<string, PersonalSdexEngineContext & { sessionKey: Uint8Array }>;
-  setMyCryptoContext: (initializationHash: Uint8Array, hashFromUserPassword: Uint8Array) => void;
-  addOthersCryptoContext: (
+  firstPartyCryptoContext: FirstPartySdexEngineContext | undefined;
+  thirdPartyCryptoContextsMap: Map<string, ThirdPartySdexEngineContext>;
+  setFirstPartyCryptoContext: (
+    initializationHash: Uint8Array,
+    hashFromUserPassword: Uint8Array,
+  ) => void;
+  addThirdPartyCryptoContext: (
     publicKey: string,
     sessionKey: Uint8Array,
     initializationHash?: Uint8Array,
@@ -223,7 +232,7 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
-  registerInit: (publicKey: string) => void;
+  registerInit: (publicKey: { publicKey: string }) => void;
   registerFollowUp: (
     payload: RegisterFollowUpPayload,
     callback: (status: StatusResponse) => void,
@@ -231,6 +240,6 @@ export interface ClientToServerEvents {
   chatInit: (data: ChatInitPayload) => void;
   chatInitFollowUp: (data: ChatInitFollowUpPayload) => void;
   chat: (message: TransportedMessage, callback: (status: StatusResponse) => void) => void;
-  checkKey: (publicKey: string, callback: (response: boolean) => void) => void;
-  checkOnline: (publicKey: string, callback: (response: boolean) => void) => void;
+  checkKey: (publicKey: { publicKey: string }, callback: (response: boolean) => void) => void;
+  checkOnline: (publicKey: { publicKey: string }, callback: (response: boolean) => void) => void;
 }

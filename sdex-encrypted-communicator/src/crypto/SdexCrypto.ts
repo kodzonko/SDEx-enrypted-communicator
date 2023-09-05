@@ -1,5 +1,5 @@
 import { blake3 } from "@noble/hashes/blake3";
-import { EncryptionError } from "../Errors";
+import { SdexEncryptionError } from "../Errors";
 import logger from "../Logger";
 import {
   bytesToString,
@@ -52,7 +52,7 @@ export default class SdexCrypto {
       logger.error(`block length=${block.length}, block=${block.toString()}`);
       logger.error(`hash1 length=${hash1.length}, hash1=${hash1.toString()}`);
       logger.error(`hash2 length=${hash2.length}, hash2=${hash2.toString()}`);
-      throw new EncryptionError("Invalid block length");
+      throw new SdexEncryptionError("Invalid block length");
     }
     return xorUintArrays(block, hash1, hash2);
   }
@@ -150,7 +150,9 @@ export default class SdexCrypto {
   encryptMessage(message: string): Uint8Array {
     logger.info("Encrypting message.");
     const messageByteArray = stringToBytes(message);
-    return this.calculateMessage(messageByteArray);
+    const encrypted = this.calculateMessage(messageByteArray);
+    logger.debug(`(SDEx) Encrypted message: ${JSON.stringify(encrypted)}`);
+    return encrypted;
   }
 
   decryptMessage(messageCipherTextByteArray: Uint8Array): string {
@@ -159,7 +161,9 @@ export default class SdexCrypto {
     // Remove empty superfluous bytes from the end of the last block
     for (let i = decryptedByteArray.length - 1; i >= 0; i -= 1) {
       if (decryptedByteArray[i] !== 0) {
-        return bytesToString(decryptedByteArray.slice(0, i + 1));
+        const decrypted = bytesToString(decryptedByteArray.slice(0, i + 1));
+        logger.debug(`(SDEx) Decrypted message: ${decrypted}`);
+        return decrypted;
       }
     }
     // All bytes are empty

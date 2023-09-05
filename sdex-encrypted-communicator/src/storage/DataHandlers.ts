@@ -1,4 +1,5 @@
 import { WebSQLDatabase } from "expo-sqlite";
+import { DataHandlerError, PreconditionError } from "../Errors";
 import logger from "../Logger";
 import { MISSING_SQL_DB_SESSION_FAILURE_MSG } from "../Messages";
 import { ChatRoom, Contact, ContactListItem, Message } from "../Types";
@@ -270,8 +271,8 @@ export const addMessage = async (
 ): Promise<boolean> => {
   logger.info("Saving a message.");
   if (!dbSession) {
-    logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning.`);
-    return false;
+    logger.error(MISSING_SQL_DB_SESSION_FAILURE_MSG);
+    throw new PreconditionError("Cannot save a message. Database session is missing.");
   }
   if (
     !(
@@ -279,10 +280,14 @@ export const addMessage = async (
       (await getContactById(message.contactIdFrom, dbSession))
     )
   ) {
-    logger.error(
-      `Contact with id=${message.contactIdFrom} or id=${message.contactIdTo} doesn't exist in the database. Message rejected.`,
-    );
-    return false;
+    logger.debug(`contactIdFrom=${message.contactIdFrom}, contactIdTo=${message.contactIdTo}`);
+    if (!message.contactIdFrom) {
+      logger.error("Sender's contact id not found in the database");
+    }
+    if (!message.contactIdTo) {
+      logger.error("Receiver's contact id not found in the database");
+    }
+    throw new DataHandlerError("Failed to save a message in the database.");
   }
   const results = await addMessageQuery(message, dbSession);
   if (results.rowsAffected === 1 && results.insertId) {
@@ -305,56 +310,49 @@ export const addMessage = async (
 export const getUnreadCount = async (dbSession?: WebSQLDatabase): Promise<number> => {
   logger.info("Getting a number of unread messages from SQL database.");
   if (!dbSession) {
-    logger.error("Failed to open db session. Returning 0.");
+    logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning count=0.`);
     return 0;
   }
-  logger.info("Dispatching SQL middleware.");
   const results = await getUnreadCountQuery(dbSession);
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
   const parsedResult: number = <number>results[0].count;
   logger.debug(`Parsed result=${parsedResult}`);
-  logger.info("Returning unread count.");
   return parsedResult;
 };
 
 export const selectRsaKeyFile = async (): Promise<string | undefined> => {
   logger.info("Selecting RSA key file.");
-  const uri = await selectFile("text/plain");
+  const uri = await selectFile();
   if (!uri) {
     logger.error("Failed to select RSA key file.");
     return undefined;
   }
   logger.info(`Returning content of the file=${uri}`);
   const fileContent = await readFile(uri);
+  if (fileContent === undefined) {
+    logger.error("Failed to read RSA key file or file is empty.");
+  } else if (fileContent.length === 0) {
+    logger.error("File is empty.");
+  }
   logger.debug(`File content=${JSON.stringify(fileContent)}`);
   return fileContent;
 };
 
 export const markMessagesAsRead = async (
-  messages: Message[],
+  thirdPartyContactId: number,
   dbSession?: WebSQLDatabase,
 ): Promise<boolean> => {
-  logger.info("Updating a contact.");
+  logger.info("Marking all messages to and from a given contact id as read.");
   if (!dbSession) {
-    logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning false.`);
+    logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG}`);
     return false;
   }
-  const ids: number[] = [];
-  let unreadCount = 0;
-  messages.forEach((message) => {
-    // Count unread messages for verification of update success.
-    // Add message id to the list of ids to update.
-    if (message.id !== undefined && message.unread) {
-      ids.push(message.id);
-      unreadCount += 1;
-    }
-  });
-  const results = await markMessagesAsReadQuery(ids, dbSession);
-  if (results.rowsAffected === unreadCount) {
-    logger.info(`Messages updated successfully`);
-    /* eslint-disable-next-line no-param-reassign */
-    return true;
+
+  try {
+    return await markMessagesAsReadQuery(thirdPartyContactId, dbSession);
+  } catch (error: any) {
+    logger.error("Failed to mark messages as read.");
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    throw new DataHandlerError(`Failed to mark messages as read: ${JSON.stringify(error.message)}`);
   }
-  logger.error("Failed to update messages.");
-  return false;
 };

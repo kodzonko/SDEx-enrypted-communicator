@@ -11,6 +11,7 @@ import { useServerStore } from "../contexts/Server";
 import { chooseSdexCryptoContext, generateSessionKey } from "../crypto/cryptoHelpers";
 import { decryptRsa, encryptRsa } from "../crypto/RsaCrypto";
 import SdexCrypto from "../crypto/SdexCrypto";
+import { CommunicationError, PreconditionError } from "../Errors";
 import logger from "../Logger";
 import { FAILED_TO_REGISTER_USER_ALERT_MSG } from "../Messages";
 import { addMessage, getContactByPublicKey } from "../storage/DataHandlers";
@@ -45,7 +46,10 @@ export function requestRegister(): void {
   if (!publicKey) {
     throw new Error("Public key not found. Cannot register client on server.");
   }
-  socket.emit("registerInit", publicKey);
+  // socket.emit("registerInit", `backslash:
+  // <koniec`);
+  // socket.emit("registerInit", `backslash w obiekcie: ${publicKey}`);
+  socket.emit("registerInit", { publicKey });
 }
 
 export function socketConnect(): void {
@@ -83,8 +87,7 @@ socket.on("disconnect", (reason, description): void => {
  * Private key is used as a password to authenticate client on server.
  */
 socket.on("registerInit", (salt: string): void => {
-  logger.info('Received "registerInit" event from server.');
-  logger.debug(`Salt received=${salt}`);
+  logger.info('Received "registerInit" event from server with salt.');
   const publicKey = mmkvStorage.getString("publicKey");
   const privateKey = mmkvStorage.getString("privateKey");
   if (!publicKey || !privateKey) {
@@ -120,21 +123,22 @@ socket.on("registerInit", (salt: string): void => {
 
 /**
  * Function handling actual sending of a message to the server.
- * @param message Object containing encrypted message and all relevant metadata safe to send to a server.
  */
-function executeSendMessage(message: TransportedMessage): boolean {
+function executeSendMessage(
+  transportedMessage: TransportedMessage,
+  message: Message,
+  sqlDbSession: WebSQLDatabase,
+): void {
   logger.info(`Emitting "chat" event.`);
-  let result = false;
-  socket.emit("chat", message, (status: StatusResponse): void => {
+  socket.emit("chat", transportedMessage, async (status: StatusResponse): Promise<void> => {
     if (status === "success") {
       logger.info("Message delivered successfully.");
-      result = true;
+      logger.info("Saving delivered message to the local database.");
+      await addMessage(message, sqlDbSession);
     } else {
-      logger.error("Failed to deliver a message.");
-      result = false;
+      logger.error("Failed to deliver a message. Not saving it to the local database.");
     }
   });
-  return result;
 }
 
 /**
@@ -165,16 +169,16 @@ export async function sendMessage(
     publicKeyTo,
     sdexEngine,
   );
-  const sentSuccessfully: boolean = executeSendMessage(transportReadyMessage);
-  if (sentSuccessfully) {
-    logger.info("Saving delivered message to the local database.");
-    await addMessage(message, sqlDbSession);
-  } else {
-    logger.error("Failed to deliver a message. Not saving it to the local database.");
-  }
+  executeSendMessage(transportReadyMessage, message, sqlDbSession);
 }
 
-export function sendChatInitFollowUp(data: ChatInitFollowUpPayload) {
+/**
+ * Sends a follow-up message to the server after receiving a "chatInit" event.
+ * This event is only fired when session keys collide.
+ * The third will accept the received session key and use it for future encryption and decryption.
+ * @param data Payload containing sender's public key (for identification) and session key.
+ */
+export function sendChatInitFollowUp(data: ChatInitFollowUpPayload): void {
   logger.info('Emitting "chatInitFollowUp" event.');
   socket.emit("chatInitFollowUp", data);
 }
@@ -183,18 +187,28 @@ socket.on("chatInit", async (data: ChatInitPayload): Promise<void> => {
   logger.info('Received "chatInit" event from server.');
   const thirdPartyContext = useCryptoContextStore
     .getState()
-    .othersCryptoContexts.get(data.publicKeyFrom);
+    .thirdPartyCryptoContextsMap.get(data.publicKeyFrom);
 
   const myPublicKey = mmkvStorage.getString("publicKey");
   const myPrivateKey = mmkvStorage.getString("privateKey");
   if (!myPublicKey || !myPrivateKey) {
-    throw new Error("Missing first party key pair.");
+    throw new PreconditionError("Missing first party key pair.");
+  }
+  if (data.publicKeyTo !== myPublicKey) {
+    logger.error("Received public key doesn't match first party's actual public key.");
+    logger.debug(
+      `first party public key received: ${JSON.stringify(stringToBytes(data.publicKeyTo))}`,
+    );
+    logger.debug(`first party actual public key: "${JSON.stringify(stringToBytes(myPublicKey))}"`);
+    throw new CommunicationError(
+      "Receiver public key from server doesn't match first party's public key.",
+    );
   }
 
+  logger.info("Decrypting crypto context received.");
   const decryptedInitializationHash = stringToBytes(
     await decryptRsa(myPrivateKey, data.initializationHashEncrypted),
   );
-
   const decryptedHashFromUserPassword = stringToBytes(
     await decryptRsa(myPrivateKey, data.hashFromUserPasswordEncrypted),
   );
@@ -203,26 +217,34 @@ socket.on("chatInit", async (data: ChatInitPayload): Promise<void> => {
   );
 
   const existingSessionKey = thirdPartyContext?.sessionKey;
-  // If there's no existing session key saved for the contact of if the received one is the same as existing
   if ((existingSessionKey && existingSessionKey === decryptedSessionKey) || !existingSessionKey) {
+    logger.info("No session key collision. Saving user's context to the mapping.");
     useCryptoContextStore
       .getState()
-      .addOthersCryptoContext(
+      .addThirdPartyCryptoContext(
         data.publicKeyFrom,
         decryptedSessionKey,
         decryptedInitializationHash,
         decryptedHashFromUserPassword,
       );
+    logger.debug(
+      `Third party's crypto context after update: ${JSON.stringify(
+        useCryptoContextStore.getState().thirdPartyCryptoContextsMap.get(data.publicKeyFrom),
+      )}`,
+    );
   } else {
-    // Session keys collide. Save other context data but send back the existing session key.
+    logger.info(
+      "Session keys collide. Sending back the existing session key (but saving the rest of third party's crypto context to the mapping anyway).",
+    );
     useCryptoContextStore
       .getState()
-      .addOthersCryptoContext(
+      .addThirdPartyCryptoContext(
         data.publicKeyFrom,
         existingSessionKey,
         decryptedInitializationHash,
         decryptedHashFromUserPassword,
       );
+    logger.info("Encrypting existing session key.");
     const encryptedExistingSessionKey = await encryptRsa(
       data.publicKeyFrom,
       bytesToString(existingSessionKey),
@@ -235,51 +257,67 @@ socket.on("chatInit", async (data: ChatInitPayload): Promise<void> => {
 });
 
 /**
- * Send data that's needed for message receiver to decrypt the message.
+ * Send first party's crypto context needed for SDEx decryption of their messages
+ * @param publicKeyTo Receiver's public key
  */
-export async function initializeChat(publicKeyTo: string): Promise<void> {
-  logger.info('Emitting "chatInit" event.');
-  const myPublicKey = mmkvStorage.getString("publicKey");
-  const myPrivateKey = mmkvStorage.getString("privateKey");
-  const myContext = useCryptoContextStore.getState().myCryptoContext;
+export async function initiateChat(publicKeyTo: string): Promise<void> {
+  logger.info("Initiating chat.");
+  const firstPartyPublicKey = mmkvStorage.getString("publicKey");
+  const firstPartyPrivateKey = mmkvStorage.getString("privateKey");
+  const { firstPartyCryptoContext } = useCryptoContextStore.getState();
+
+  // Checking preconditions
   if (
-    !myPublicKey ||
-    !myPrivateKey ||
-    !myContext?.initializationHash ||
-    !myContext?.hashFromUserPassword
+    !firstPartyPublicKey ||
+    !firstPartyPrivateKey ||
+    !firstPartyCryptoContext?.initializationHash ||
+    !firstPartyCryptoContext?.hashFromUserPassword
   ) {
-    logger.error("Public key or your crypto context not found. Cannot initialize chat.");
     logger.debug(
-      `myPublicKey=${JSON.stringify(myPublicKey)}, myContext=${JSON.stringify(myContext)}`,
+      `myPublicKey=${JSON.stringify(firstPartyPublicKey)}, myContext=${JSON.stringify(
+        firstPartyCryptoContext,
+      )}`,
     );
-    throw new Error("Public key or your crypto context not found. Cannot initialize chat.");
+    throw new PreconditionError(
+      "Public key or first party's crypto context not found. Cannot initiate chat.",
+    );
   }
+
+  const existingSessionKey = useCryptoContextStore
+    .getState()
+    .thirdPartyCryptoContextsMap.get(publicKeyTo)?.sessionKey;
+  if (!existingSessionKey) {
+    logger.info("No existing session key for this third party. Generating a new one.");
+  } else {
+    logger.info("Existing session key found. Sending it to the third party.");
+  }
+  const existingOrGeneratedSessionKey = existingSessionKey || generateSessionKey();
+
+  // If crypto context is found encrypting it and sending it to the server
+  logger.info("(RSA) Encrypting first party's crypto context before sending it to third party.");
   const initializationHashEncrypted = await encryptRsa(
     publicKeyTo,
-    bytesToString(myContext.initializationHash),
+    bytesToString(firstPartyCryptoContext.initializationHash),
   );
 
   const hashFromUserPasswordEncrypted = await encryptRsa(
     publicKeyTo,
-    bytesToString(myContext.hashFromUserPassword),
+    bytesToString(firstPartyCryptoContext.hashFromUserPassword),
   );
-
-  const existingSessionKey = useCryptoContextStore
-    .getState()
-    .othersCryptoContexts.get(publicKeyTo)?.sessionKey;
-  const existingOrGeneratedSessionKey = existingSessionKey || generateSessionKey();
 
   const sessionKeyEncrypted = await encryptRsa(
     publicKeyTo,
     bytesToString(existingOrGeneratedSessionKey),
   );
 
+  logger.info("Saving generated session to third party crypto context mapping.");
   useCryptoContextStore
     .getState()
-    .addOthersCryptoContext(publicKeyTo, existingOrGeneratedSessionKey);
+    .addThirdPartyCryptoContext(publicKeyTo, existingOrGeneratedSessionKey);
 
+  logger.info('Emitting "chatInit" event.');
   socket.emit("chatInit", {
-    publicKeyFrom: myPublicKey,
+    publicKeyFrom: firstPartyPublicKey,
     publicKeyTo,
     initializationHashEncrypted,
     hashFromUserPasswordEncrypted,
@@ -292,42 +330,53 @@ socket.on("chatInitFollowUp", async (data: ChatInitFollowUpPayload): Promise<voi
   const myPublicKey = mmkvStorage.getString("publicKey");
   const myPrivateKey = mmkvStorage.getString("privateKey");
   if (!myPublicKey || !myPrivateKey) {
-    throw new Error("Missing first party key pair.");
+    throw new PreconditionError("Missing first party key pair.");
   }
+  logger.info("Decrypting session key.");
   const sessionKey = stringToBytes(await decryptRsa(myPrivateKey, data.sessionKeyEncrypted));
-
-  const existingSessionKey = useCryptoContextStore
-    .getState()
-    .othersCryptoContexts.get(data.publicKeyFrom)?.sessionKey;
-  if (!existingSessionKey) {
-    useCryptoContextStore.getState().addOthersCryptoContext(data.publicKeyFrom, sessionKey);
-    return;
-  }
-  if (existingSessionKey !== sessionKey) {
-    const encryptedExistingSessionKey = await encryptRsa(
-      data.publicKeyFrom,
-      bytesToString(existingSessionKey),
-    );
-    sendChatInitFollowUp({
-      sessionKeyEncrypted: encryptedExistingSessionKey,
-      publicKeyFrom: myPublicKey,
-    });
-  }
+  logger.info("Saving session key to third party's crypto context mapping.");
+  useCryptoContextStore.getState().addThirdPartyCryptoContext(data.publicKeyFrom, sessionKey);
+  logger.debug(
+    `Third party's crypto context=${JSON.stringify(
+      useCryptoContextStore.getState().thirdPartyCryptoContextsMap.get(data.publicKeyFrom),
+    )}`,
+  );
 });
 
 socket.on("chat", async (message: TransportedMessage): Promise<void> => {
   logger.info('Received "chat" event from server.');
-  const context = chooseSdexCryptoContext(message.publicKeyFrom, message.publicKeyTo);
-  const sdexEngine = new SdexCrypto(
+  logger.info("Getting context for SDEx engine.");
+  const { firstPartyCryptoContext } = useCryptoContextStore.getState();
+  const thirdPartyCryptoContext = useCryptoContextStore
+    .getState()
+    .thirdPartyCryptoContextsMap.get(message.publicKeyFrom);
+  if (!firstPartyCryptoContext || !thirdPartyCryptoContext) {
+    logger.debug(
+      `firstPartyCryptoContext=${JSON.stringify(
+        firstPartyCryptoContext,
+      )}, thirdPartyCryptoContext=${JSON.stringify(thirdPartyCryptoContext)}`,
+    );
+    throw new PreconditionError("Crypto context not found. Cannot decrypt message.");
+  }
+  const context = chooseSdexCryptoContext(
+    message.publicKeyFrom,
+    firstPartyCryptoContext,
+    thirdPartyCryptoContext,
+  );
+  logger.debug(`context=${JSON.stringify(context)}`);
+
+  const sdexEngineIn = new SdexCrypto(
     context.initializationHash,
     context.hashFromUserPassword,
     context.sessionKey,
   );
+
   const firstPartyPrivateKey = mmkvStorage.getString("privateKey");
   if (!firstPartyPrivateKey) {
     logger.error("First party private key not found. Cannot decrypt message.");
     return;
   }
+
   const { sqlDbSession } = useSqlDbSessionStore.getState();
   if (!sqlDbSession) {
     logger.error("Database session not found. Cannot ingest a new message.");
@@ -338,18 +387,20 @@ socket.on("chat", async (message: TransportedMessage): Promise<void> => {
     logger.error("Contact not found. Cannot ingest a new message.");
     return;
   }
+
+  logger.info("Decrypting message.");
   const decryptedMessage = await prepareToIngest(
     message,
-    sdexEngine,
+    sdexEngineIn,
     firstPartyPrivateKey,
     contactFrom.id as number, // if it's fetched from db we know it has an id
   );
+  logger.debug(`Decrypted message=${JSON.stringify(decryptedMessage)}`);
 
   await addMessage(decryptedMessage, sqlDbSession);
   logger.info("Message ingested successfully.");
   logger.info("Adding message to the buffer.");
-  const addNewMessage = useMessagesBufferStore((state) => state.addNewMessage);
-  addNewMessage(decryptedMessage);
+  useMessagesBufferStore.getState().addNewMessage(decryptedMessage);
 });
 
 /**
@@ -360,7 +411,7 @@ socket.on("chat", async (message: TransportedMessage): Promise<void> => {
  * @returns true if public key is registered on the server, false otherwise
  */
 export function checkKey(publicKey: string): void {
-  socket.emit("checkKey", publicKey, (response: boolean) => {
+  socket.emit("checkKey", { publicKey }, (response: boolean) => {
     logger.info('Sending "checkKey" event to server.');
     logger.debug(`Response from server=${JSON.stringify(response)}.`);
     if (response) {
@@ -372,7 +423,7 @@ export function checkKey(publicKey: string): void {
 
 export function checkOnline(publicKey: string): boolean {
   let result = false;
-  socket.emit("checkOnline", publicKey, (response: boolean) => {
+  socket.emit("checkOnline", { publicKey }, (response: boolean) => {
     logger.info('Sending "checkOnline" event to server.');
     logger.debug(`Response from server=${JSON.stringify(response)}.`);
     logger.debug(`response=${JSON.stringify(response)}`);

@@ -7,11 +7,12 @@ import { Appbar, Banner } from "react-native-paper";
 import { Link, useLocalSearchParams } from "expo-router";
 import socket, {
   checkOnline,
-  initializeChat,
+  initiateChat,
   requestRegister,
   sendMessage,
   socketConnect,
 } from "../../communication/Sockets";
+import { useCryptoContextStore } from "../../contexts/CryptoContext";
 import { useSqlDbSessionStore } from "../../contexts/DbSession";
 import { useMessagesBufferStore } from "../../contexts/MessagesBuffer";
 import { useServerStore } from "../../contexts/Server";
@@ -34,12 +35,16 @@ export default function Chat() {
   const [firstPartyContact, setFirstPartyContact] = React.useState<Contact | undefined>(undefined);
   const [bannerOfflineVisible, setBannerOfflineVisible] = React.useState<boolean>(false);
   const [sdexEngineOut, setSdexEngineOut] = React.useState<SdexCrypto | undefined>(undefined);
+  const [thirdPartyOnline, setThirdPartyOnline] = React.useState<boolean>(false);
 
   const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
   const newMessage = useMessagesBufferStore((state) => state.newMessage);
   const clearBuffer = useMessagesBufferStore((state) => state.clearBuffer);
   const isRegistered = useServerStore((state) => state.isRegistered);
-  const [thirdPartyOnline, setThirdPartyOnline] = React.useState<boolean>(false);
+  const firstPartyCryptoContext = useCryptoContextStore((state) => state.firstPartyCryptoContext);
+  const thirdPartyCryptoContexts = useCryptoContextStore(
+    (state) => state.thirdPartyCryptoContextsMap,
+  );
 
   const params = useLocalSearchParams();
   const { contactId } = params;
@@ -47,14 +52,6 @@ export default function Chat() {
   React.useEffect(() => {
     requestRegister();
   }, []);
-
-  React.useEffect(() => {
-    if (contact) {
-      (async () => {
-        await initializeChat(contact.publicKey);
-      })();
-    }
-  }, [socket.connected, contact]);
 
   React.useEffect(() => {
     // Get current contact info from the db
@@ -79,22 +76,42 @@ export default function Chat() {
     })();
   }, [contactId]);
 
+  // Check if user is online
+  // If online set his online status and send chatInit message
   React.useEffect(() => {
-    // Check if user is online
-    if (contact?.publicKey) {
+    if (socket.connected && contact?.publicKey && isRegistered) {
+      logger.info(`Checking if user ${contact.getFullName()} is online.`);
       const status = checkOnline(contact.publicKey);
-      logger.info(`User ${contact.getFullName()} is online.`);
-      setThirdPartyOnline(status);
+      if (status) {
+        logger.info(`User ${contact.getFullName()} is online.`);
+      } else {
+        logger.info(`User ${contact.getFullName()} is offline.`);
+      }
     }
   }, [socket.connected, isRegistered, contact?.publicKey]);
 
+  // If user is online, send chatInit message
   React.useEffect(() => {
-    // Fetch archived messages from the db for the current contact
-    if (contact && firstPartyContact) {
+    if (thirdPartyOnline && contact) {
+      logger.info(`Sending chatInit message to ${contact.getFullName()}.`);
+      (async () => {
+        await initiateChat(contact.publicKey);
+      })();
+    }
+  }, [thirdPartyOnline, contact]);
+
+  // Fetch archived messages from the db for the current contact
+  // Mark all messages to and from that contact as read
+  // Fill chat window with these messages
+  React.useEffect(() => {
+    if (contact && contact.id && firstPartyContact) {
+      logger.info(`Fetching archived messages for contactId=${contact.id}.`);
+      logger.info(`Marking messages to and from contactId=${contact.id} as read.`);
+      logger.info(`Filling chat window with archived messages for contactId=${contact.id}.`);
       (async () => {
         const messagesFromStorage = await getMessagesByContactId(Number(contactId), sqlDbSession);
 
-        await markMessagesAsRead(messagesFromStorage, sqlDbSession);
+        await markMessagesAsRead(contact.id as number, sqlDbSession);
 
         const giftedChatMessages: GiftedChatMessage[] = [];
         messagesFromStorage.forEach((message) => {
@@ -117,10 +134,15 @@ export default function Chat() {
     }
   }, [contact, socket.connected, isRegistered]);
 
+  // Monitor new messages from the buffer
+  // If message is from the current contact, re-fetch messages from the db to display it
   React.useEffect(() => {
-    // Monitor new messages from the buffer
-    // If message is from the current contact, re-fetch messages from the db to display it
     if (contact && newMessage?.contactIdFrom === contact.id && firstPartyContact) {
+      logger.info(
+        `New message appeared in a buffer. Fetching archived messages for contactId=${JSON.stringify(
+          contact.id,
+        )}.`,
+      );
       (async () => {
         const messagesFromStorage = await getMessagesByContactId(Number(contactId), sqlDbSession);
         const giftedChatMessages: GiftedChatMessage[] = [];
@@ -133,9 +155,21 @@ export default function Chat() {
     }
   }, [newMessage, contact, firstPartyContact]);
 
+  // Initialize SDEX crypto engine for outgoing messages encryption
   React.useEffect(() => {
-    if (firstPartyContact && contact) {
-      const context = chooseSdexCryptoContext(firstPartyContact.publicKey, contact.publicKey);
+    let thirdPartyCryptoContext;
+    if (contact) {
+      thirdPartyCryptoContext = thirdPartyCryptoContexts.get(contact.publicKey);
+    }
+    if (firstPartyContact && contact && firstPartyCryptoContext && thirdPartyCryptoContext) {
+      logger.info(
+        "Choosing crypto context and initializing SDEX engine for outgoing messages encryption.",
+      );
+      const context = chooseSdexCryptoContext(
+        firstPartyContact.publicKey,
+        firstPartyCryptoContext,
+        thirdPartyCryptoContext,
+      );
       const engine = new SdexCrypto(
         context.initializationHash,
         context.hashFromUserPassword,
@@ -143,12 +177,13 @@ export default function Chat() {
       );
       setSdexEngineOut(engine);
     }
-  }, [firstPartyContact, contact]);
+  }, [firstPartyContact, contact, firstPartyCryptoContext, thirdPartyCryptoContexts]);
 
   const onSend = React.useCallback(
     (newMessages: GiftedChatMessage[] = []) => {
       // Adding messages to chat window locally
       setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
+      logger.info("Message added to chat window locally.");
       // If possible, send messages to server
       // If that succeeds, save messages to database
       // So we keep persistent state in sync with what actually was sent to the server
@@ -158,22 +193,28 @@ export default function Chat() {
         socket.disconnected ||
         !isRegistered ||
         !sqlDbSession ||
-        !sdexEngineOut
+        !sdexEngineOut ||
+        !thirdPartyOnline
       ) {
         logger.error("Unable to send message to server. Some conditions are not met.");
         logger.debug(
           `contact=${JSON.stringify(contact)}, socket.disconnected=${JSON.stringify(
             socket.disconnected,
-          )}, isRegistered=${JSON.stringify(isRegistered)}`,
+          )}, isRegistered=${JSON.stringify(
+            isRegistered,
+          )}, sdexEngineOutUndefined?=${JSON.stringify(
+            sdexEngineOut === undefined,
+          )}, thirdPartyOnline=${JSON.stringify(thirdPartyOnline)}`,
         );
-        return;
+      } else {
+        // Preconditions are met to encrypt and send messages to third party
+        newMessages.forEach((msg) => {
+          const message = giftedChatMessageToMessage(msg, contact.id as number);
+          (async () => {
+            await sendMessage(message, contact.publicKey, sqlDbSession, sdexEngineOut);
+          })();
+        });
       }
-      newMessages.forEach((msg) => {
-        const message = giftedChatMessageToMessage(msg, contact.id as number);
-        (async () => {
-          await sendMessage(message, contact.publicKey, sqlDbSession, sdexEngineOut);
-        })();
-      });
     },
     [
       contact,
@@ -184,6 +225,7 @@ export default function Chat() {
       sqlDbSession,
       sdexEngineOut,
       sendMessage,
+      thirdPartyOnline,
     ],
   );
 

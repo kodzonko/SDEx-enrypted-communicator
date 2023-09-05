@@ -1,5 +1,5 @@
 import { RSA } from "react-native-rsa-native";
-import { RsaGenerationError } from "../Errors";
+import { RsaDecryptionError, RsaEncryptionError, RsaGenerationError } from "../Errors";
 import logger from "../Logger";
 import { saveFileToDocumentsDirectory } from "../storage/FileOps";
 import { KeyPair } from "../Types";
@@ -37,16 +37,26 @@ export async function exportKeyPair(keyPair: KeyPair): Promise<void> {
 export async function encryptRsa(publicKey: string, text: string): Promise<string> {
   logger.info("Encrypting text with RSA public key.");
   try {
-    return await RSA.encrypt(text, publicKey);
+    const encrypted = await RSA.encrypt(text, publicKey);
+    logger.debug(`(RSA) Encrypting text: ${encrypted}`);
+    return encrypted;
   } catch (e: any) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    logger.error(`Error when encrypting message with RSA public key: ${JSON.stringify(e.message)}`);
-    throw new Error(`Failed to encrypt message with RSA public key.`);
+    logger.error(`Error when encrypting text with RSA public key: ${JSON.stringify(e.message)}`);
+    throw new RsaEncryptionError(`Failed to encrypt text with RSA public key.`);
   }
 }
 export async function decryptRsa(privateKey: string, text: string): Promise<string> {
-  logger.info("Decrypting message with RSA private key.");
-  return RSA.decrypt(text, privateKey);
+  logger.info("Decrypting text with RSA private key.");
+  try {
+    const decrypted = await RSA.decrypt(text, privateKey);
+    logger.debug(`(RSA) Decrypted text: ${text}`);
+    return decrypted;
+  } catch (e: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    logger.error(`Error when decrypting text with RSA private key: ${JSON.stringify(e.message)}`);
+    throw new RsaDecryptionError("Failed to decrypt text with RSA private key.");
+  }
 }
 
 export async function doubleEncryptRsa(

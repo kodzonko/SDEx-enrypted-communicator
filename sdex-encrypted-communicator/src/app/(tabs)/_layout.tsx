@@ -34,17 +34,21 @@ function makeBottomTabs(props: BottomTabBarProps) {
 export default function TabsLayout() {
   const setSqlDbSession = useSqlDbSessionStore((state) => state.setSqlDbSession);
   const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
-  const setMyCryptoContext = useCryptoContextStore((state) => state.setMyCryptoContext);
-
+  const setMyCryptoContext = useCryptoContextStore((state) => state.setFirstPartyCryptoContext);
+  const myCryptoContext = useCryptoContextStore((state) => state.firstPartyCryptoContext);
   const theme = useTheme();
 
   React.useEffect(() => {
-    logger.info("Initializing random context for SDEx cryptography.");
-    (async () => {
-      const initializationHash = generateInitializationHash();
-      const hashFromUserPassword = await generateHashFromUserPassword();
-      setMyCryptoContext(initializationHash, hashFromUserPassword);
-    })();
+    if (!myCryptoContext) {
+      logger.info("Initializing random context for SDEx cryptography.");
+      (async () => {
+        const initializationHash = generateInitializationHash();
+        const hashFromUserPassword = await generateHashFromUserPassword();
+        setMyCryptoContext(initializationHash, hashFromUserPassword);
+      })();
+    } else {
+      logger.info("First party crypto context already initialized. Skipping regeneration.");
+    }
   }, []);
 
   React.useEffect(() => {

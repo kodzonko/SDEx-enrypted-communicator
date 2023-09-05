@@ -101,8 +101,8 @@ export default function ContactView() {
     logger.info("Handling contact save.");
     if (verifyContactBuilder()) {
       const contactFromBuilder: Contact = new Contact(
-        contactBuilder.name,
-        contactBuilder.surname,
+        contactBuilder.name.trim(),
+        contactBuilder.surname.trim(),
         contactBuilder.publicKey,
         Number(contactId) === -1 ? undefined : Number(contactId),
       );

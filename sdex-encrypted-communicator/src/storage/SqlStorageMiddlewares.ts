@@ -2,12 +2,9 @@ import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
 import * as SQLite from "expo-sqlite";
 import { Platform } from "react-native";
-import { SqlDatabaseError } from "../Errors";
+import { PreconditionError, SqlDatabaseError } from "../Errors";
 import logger from "../Logger";
-import {
-  GENERIC_LOCAL_STORAGE_SQL_QUERY_FAILURE_MSG,
-  GENERIC_LOCAL_STORAGE_SQL_QUERY_SUCCESS_MSG,
-} from "../Messages";
+import { GENERIC_LOCAL_STORAGE_SQL_QUERY_SUCCESS_MSG } from "../Messages";
 import { Contact, Message } from "../Types";
 
 const DEFAULT_SQLITE_DB_FILE_NAME = "SQLite-database.db";
@@ -37,8 +34,11 @@ export async function createDb(fileName = DEFAULT_SQLITE_DB_FILE_NAME): Promise<
       logger.info(`Successfully copied the SQL database template to: ${targetPath}`);
       return true;
     })
-    .catch((error) => {
-      logger.error(`Failed to copy the SQL database template. Error=${error.message}`);
+    .catch((error: any) => {
+      logger.error(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        `Failed to copy the SQL database template. Error=${JSON.stringify(error.message)}`,
+      );
       return false;
     });
 }
@@ -46,37 +46,41 @@ export async function createDb(fileName = DEFAULT_SQLITE_DB_FILE_NAME): Promise<
 /**
  * Opens a connection to SQLite database.
  * @param fileName The name of the database file.
- * @returns A promise that resolves to a database connection or undefined if the platform is not
- *          supported or an error has occurred when establishing connection.
+ * @returns A promise that resolves to a database connection.
+ * @throws {PreconditionError} If the platform is not supported or path to the database file cannot be determined.
  */
 export async function createDbSession(
   // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   fileName = DEFAULT_SQLITE_DB_FILE_NAME,
-): Promise<SQLite.WebSQLDatabase | undefined> {
+): Promise<SQLite.WebSQLDatabase> {
   logger.info("Creating db session.");
   if (Platform.OS === "web") {
-    logger.info("expo-sqlite is not supported on web, returning.");
-    return undefined;
+    logger.error("expo-sqlite is not supported on web, returning.");
+    throw new PreconditionError(`Unsupported platform: ${Platform.OS}`);
   }
+
   if (!FileSystem.documentDirectory) {
-    logger.info("FileSystem.documentDirectory cannot be determined.");
-    return undefined;
+    logger.error("FileSystem.documentDirectory cannot be determined.");
+    logger.debug(`FileSystem.documentDirectory=${JSON.stringify(FileSystem.documentDirectory)}`);
+    throw new PreconditionError("FileSystem.documentDirectory cannot be determined.");
   }
   const filePath = `${FileSystem.documentDirectory}SQLite/${fileName}`;
   if (!(await FileSystem.getInfoAsync(filePath)).exists) {
-    logger.info(`File=${FileSystem.documentDirectory}SQLite/${fileName} not found.`);
-    return undefined;
+    logger.error(`File=${FileSystem.documentDirectory}SQLite/${fileName} not found.`);
+    throw new PreconditionError("Database file not found.");
   }
   logger.info(`Opening SQL database connection to: ${filePath}`);
   // Cannot pass a **path** to session constructor. It only accepts **file name** and opens/creates db file under: ${FileSystem.documentDirectory}SQLite/<fileName>
   const session = SQLite.openDatabase(fileName);
-  session.exec([{ sql: "PRAGMA foreign_keys = ON;", args: [] }], false, (error, result) => {
+  session.exec([{ sql: "PRAGMA foreign_keys = ON;", args: [] }], false, (error) => {
     if (error) {
       logger.error(
-        `Error occurred when activating foreign keys in the db. Error: ${error.message}`,
+        "Error in SQL execution of createDbSession. Turning on foreign keys in PRAGMA failed.",
       );
+      throw new SqlDatabaseError(`Transaction failed: ${error.message}`);
+    } else {
+      logger.info("Foreign keys turned on.");
     }
-    logger.info("Foreign keys turned on");
   });
   session.exec(
     [
@@ -108,20 +112,21 @@ export async function createDbSession(
       },
     ],
     false,
-    (error, result) => {
+    (error) => {
       if (error) {
         logger.error(
-          `Error occurred when creating views for chat rooms select query. Error: ${error.message}`,
+          "Error in SQL execution of createDbSession. Creation of views for chat rooms select query failed.",
         );
+        throw new SqlDatabaseError(`Transaction failed: ${error.message}`);
+      } else {
+        logger.info("Views for chat rooms select query created.");
       }
-      logger.info("Views for chat rooms select query created.");
     },
   );
   return session;
 }
 
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-export const getContactsQuery = async (dbSession: SQLite.WebSQLDatabase): Promise<any[]> => {
+export async function getContactsQuery(dbSession: SQLite.WebSQLDatabase): Promise<any[]> {
   logger.info("Executing query to get contacts from SQL database.");
   /* eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor, @typescript-eslint/require-await */
   return new Promise(async (resolve, reject) =>
@@ -142,20 +147,19 @@ export const getContactsQuery = async (dbSession: SQLite.WebSQLDatabase): Promis
           resolve(_array);
         },
         (_, error) => {
-          logger.error(GENERIC_LOCAL_STORAGE_SQL_QUERY_FAILURE_MSG, error.message);
-          reject(new SqlDatabaseError(`Transaction failed:${error.message}`));
+          logger.error("Error in SQL execution of getContactsQuery");
+          reject(new SqlDatabaseError(`Transaction failed: ${error.message}`));
           return false;
         },
       );
     }),
   );
-};
+}
 
-export const getContactByIdQuery = async (
+export async function getContactByIdQuery(
   contactId: number,
   dbSession: SQLite.WebSQLDatabase,
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-): Promise<any[]> => {
+): Promise<any[]> {
   logger.info("Executing query to get a contact by id from SQL database.");
   /* eslint-disable-next-line no-async-promise-executor, @typescript-eslint/require-await, @typescript-eslint/no-misused-promises */
   return new Promise(async (resolve, reject) =>
@@ -173,20 +177,19 @@ export const getContactByIdQuery = async (
           resolve(_array);
         },
         (_, error) => {
-          logger.error(GENERIC_LOCAL_STORAGE_SQL_QUERY_FAILURE_MSG, error.message);
-          reject(new SqlDatabaseError(`Transaction failed:${error.message}`));
+          logger.error("Error in SQL execution of getContactByIdQuery");
+          reject(new SqlDatabaseError(`Transaction failed: ${error.message}`));
           return false;
         },
       );
     }),
   );
-};
+}
 
-export const getContactByPublicKeyQuery = async (
+export async function getContactByPublicKeyQuery(
   publicKey: string,
   dbSession: SQLite.WebSQLDatabase,
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-): Promise<any[]> => {
+): Promise<any[]> {
   logger.info("Executing query to get a contact by public key from SQL database.");
   /* eslint-disable-next-line no-async-promise-executor, @typescript-eslint/require-await, @typescript-eslint/no-misused-promises */
   return new Promise(async (resolve, reject) =>
@@ -204,19 +207,19 @@ export const getContactByPublicKeyQuery = async (
           resolve(_array);
         },
         (_, error) => {
-          logger.error(GENERIC_LOCAL_STORAGE_SQL_QUERY_FAILURE_MSG, error.message);
-          reject(new SqlDatabaseError(`Transaction failed:${error.message}`));
+          logger.error("Error in SQL execution of getContactByPublicKeyQuery");
+          reject(new SqlDatabaseError(`Transaction failed: ${error.message}`));
           return false;
         },
       );
     }),
   );
-};
+}
 
-export const addContactQuery = async (
+export async function addContactQuery(
   contact: Contact,
   dbSession: SQLite.WebSQLDatabase,
-): Promise<SQLite.SQLResultSet> => {
+): Promise<SQLite.SQLResultSet> {
   logger.info("Executing a query to insert a contact to SQL database.");
   let query: string;
   let args: (string | number)[] = [];
@@ -244,19 +247,19 @@ export const addContactQuery = async (
           resolve(resultSet);
         },
         (_, error) => {
-          logger.error(GENERIC_LOCAL_STORAGE_SQL_QUERY_FAILURE_MSG, error.message);
-          reject(new SqlDatabaseError(`Transaction failed:${error.message}`));
+          logger.error("Error in SQL execution of addContactQuery");
+          reject(new SqlDatabaseError(`Transaction failed: ${error.message}`));
           return false;
         },
       );
     }),
   );
-};
+}
 
-export const updateContactQuery = async (
+export async function updateContactQuery(
   contact: Contact,
   dbSession: SQLite.WebSQLDatabase,
-): Promise<SQLite.SQLResultSet> => {
+): Promise<SQLite.SQLResultSet> {
   logger.info("Executing query to update contact in SQL database.");
   /* eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor, @typescript-eslint/require-await */
   return new Promise(async (resolve, reject) =>
@@ -275,19 +278,19 @@ export const updateContactQuery = async (
           resolve(resultSet);
         },
         (_, error) => {
-          logger.error(`Transaction updating a contact returned error. Error=${error.message}`);
-          reject(new SqlDatabaseError(`Transaction failed. Error=${error.message}`));
+          logger.error("Error in SQL execution of updateContactQuery");
+          reject(new SqlDatabaseError(`Transaction failed: ${error.message}`));
           return false;
         },
       );
     }),
   );
-};
+}
 
-export const removeContactQuery = async (
+export async function removeContactQuery(
   contactId: number,
   dbSession: SQLite.WebSQLDatabase,
-): Promise<SQLite.SQLResultSet> => {
+): Promise<SQLite.SQLResultSet> {
   logger.info("Executing query to delete contact from SQL database.");
   /* eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor, @typescript-eslint/require-await */
   return new Promise(async (resolve, reject) =>
@@ -295,8 +298,10 @@ export const removeContactQuery = async (
     dbSession.transaction(async (tx) => {
       /* eslint-disable-next-line @typescript-eslint/await-thenable */
       await tx.executeSql(
-        `DELETE FROM contacts
-      WHERE contact_id = ?;`,
+        `DELETE FROM
+                          contacts
+                      WHERE
+                          contact_id = ?;`,
         [contactId],
         (_, resultSet) => {
           logger.info(GENERIC_LOCAL_STORAGE_SQL_QUERY_SUCCESS_MSG);
@@ -304,17 +309,16 @@ export const removeContactQuery = async (
           resolve(resultSet);
         },
         (_, error) => {
-          logger.error(`Transaction deleting a contact returned error. Error=${error.message}`);
-          reject(new SqlDatabaseError(`Transaction failed. Error=${error.message}`));
+          logger.error("Error in SQL execution of removeContactQuery");
+          reject(new SqlDatabaseError(`Transaction failed: ${error.message}`));
           return false;
         },
       );
     }),
   );
-};
+}
 
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-export const getChatRoomsQuery = async (dbSession: SQLite.WebSQLDatabase): Promise<any[]> => {
+export async function getChatRoomsQuery(dbSession: SQLite.WebSQLDatabase): Promise<any[]> {
   logger.info("Executing query to get chat rooms from SQL database.");
   /* eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor, @typescript-eslint/require-await */
   return new Promise(async (resolve, reject) =>
@@ -323,18 +327,13 @@ export const getChatRoomsQuery = async (dbSession: SQLite.WebSQLDatabase): Promi
       /* eslint-disable-next-line @typescript-eslint/await-thenable */
       await tx.executeSql(
         `SELECT
-            contact_id, name, surname, created_at AS last_message_date, SUM(unread)
-        AS
-            unread_message_count
-        FROM
-            all_messages_by_third_parties
-        GROUP BY
-            contact_id;`,
-        //   `SELECT c.contact_id, c.name, c.surname, m.created_at AS last_message_date, SUM(m.unread) AS unread_message_count
-        //  FROM (select * from messages ORDER BY created_at DESC) as m
-        //  JOIN contacts AS c ON m.contact_id_from = c.contact_id OR m.contact_id_to = c.contact_id
-        //  GROUP BY c.name, c.surname
-        //  ORDER BY m.created_at DESC;`,
+                          contact_id, name, surname, created_at AS last_message_date, SUM(unread)
+                      AS
+                          unread_message_count
+                      FROM
+                          all_messages_by_third_parties
+                      GROUP BY
+                          contact_id;`,
         [],
         (_, { rows: { _array } }) => {
           logger.info(GENERIC_LOCAL_STORAGE_SQL_QUERY_SUCCESS_MSG);
@@ -342,20 +341,19 @@ export const getChatRoomsQuery = async (dbSession: SQLite.WebSQLDatabase): Promi
           resolve(_array);
         },
         (_, error) => {
-          logger.error(GENERIC_LOCAL_STORAGE_SQL_QUERY_FAILURE_MSG, error.message);
-          reject(new SqlDatabaseError(`Transaction failed:${error.message}`));
+          logger.error("Error in SQL execution of getChatRoomsQuery");
+          reject(new SqlDatabaseError(`Transaction failed: ${error.message}`));
           return false;
         },
       );
     }),
   );
-};
+}
 
-export const getMessagesByContactIdQuery = async (
+export async function getMessagesByContactIdQuery(
   contactId: number,
   dbSession: SQLite.WebSQLDatabase,
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-): Promise<any[]> => {
+): Promise<any[]> {
   logger.info("Executing query to get messages for a specified contact from SQL database.");
   /* eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor, @typescript-eslint/require-await */
   return new Promise(async (resolve, reject) =>
@@ -363,10 +361,14 @@ export const getMessagesByContactIdQuery = async (
     dbSession.readTransaction(async (tx) => {
       /* eslint-disable-next-line @typescript-eslint/await-thenable */
       await tx.executeSql(
-        `SELECT message_id, contact_id_from, contact_id_to, text, created_at, unread, image, video, audio
-      FROM messages
-      WHERE contact_id_from = ? OR contact_id_to = ?
-      ORDER BY created_at DESC;`,
+        `SELECT
+                          message_id, contact_id_from, contact_id_to, text, created_at, unread, image, video, audio
+                      FROM
+                          messages
+                      WHERE
+                          contact_id_from = ? OR contact_id_to = ?
+                      ORDER BY
+                          created_at DESC;`,
         [contactId, contactId],
         (_, { rows: { _array } }) => {
           logger.info(GENERIC_LOCAL_STORAGE_SQL_QUERY_SUCCESS_MSG);
@@ -374,17 +376,16 @@ export const getMessagesByContactIdQuery = async (
           resolve(_array);
         },
         (_, error) => {
-          logger.error(GENERIC_LOCAL_STORAGE_SQL_QUERY_FAILURE_MSG, error.message);
-          reject(new SqlDatabaseError(`Transaction failed:${error.message}`));
+          logger.error("Error in SQL execution of getMessagesByContactIdQuery");
+          reject(new SqlDatabaseError(`Transaction failed: ${error.message}`));
           return false;
         },
       );
     }),
   );
-};
+}
 
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-export const getUnreadCountQuery = async (dbSession: SQLite.WebSQLDatabase): Promise<any[]> => {
+export async function getUnreadCountQuery(dbSession: SQLite.WebSQLDatabase): Promise<any[]> {
   logger.info("Getting messages count from SQL database.");
   /* eslint-disable-next-line no-async-promise-executor, @typescript-eslint/require-await, @typescript-eslint/no-misused-promises */
   return new Promise(async (resolve, reject) =>
@@ -392,9 +393,12 @@ export const getUnreadCountQuery = async (dbSession: SQLite.WebSQLDatabase): Pro
     dbSession.readTransaction(async (tx) => {
       /* eslint-disable-next-line @typescript-eslint/await-thenable */
       await tx.executeSql(
-        `SELECT COUNT(*) AS count
-      FROM messages
-      WHERE unread = 1;`,
+        `SELECT
+                          COUNT(*) AS count
+                      FROM
+                          messages
+                      WHERE
+                          unread = 1;`,
         [],
         (_, { rows: { _array } }) => {
           logger.info(GENERIC_LOCAL_STORAGE_SQL_QUERY_SUCCESS_MSG);
@@ -402,19 +406,19 @@ export const getUnreadCountQuery = async (dbSession: SQLite.WebSQLDatabase): Pro
           resolve(_array);
         },
         (_, error) => {
-          logger.error(GENERIC_LOCAL_STORAGE_SQL_QUERY_FAILURE_MSG, error.message);
-          reject(new SqlDatabaseError(`Transaction failed:${error.message}`));
+          logger.error("Error in SQL execution of getUnreadCountQuery");
+          reject(new SqlDatabaseError(`Transaction failed: ${error.message}`));
           return false;
         },
       );
     }),
   );
-};
+}
 
-export const addMessageQuery = async (
+export async function addMessageQuery(
   message: Message,
   dbSession: SQLite.WebSQLDatabase,
-): Promise<SQLite.SQLResultSet> => {
+): Promise<SQLite.SQLResultSet> {
   logger.info("Executing query to insert a message to SQL database.");
   logger.debug(`Inserting message=${JSON.stringify(message)}`);
   /* eslint-disable-next-line no-async-promise-executor, @typescript-eslint/require-await, @typescript-eslint/no-misused-promises */
@@ -423,8 +427,9 @@ export const addMessageQuery = async (
     dbSession.transaction(async (tx) => {
       /* eslint-disable-next-line @typescript-eslint/await-thenable */
       await tx.executeSql(
-        `INSERT INTO messages (contact_id_from, contact_id_to, text, created_at, unread, image, video, audio)
-      VALUES(?, ?, ?, ?, ?, ?, ?, ?);`,
+        `INSERT INTO
+                          messages (contact_id_from, contact_id_to, text, created_at, unread, image, video, audio)
+                      VALUES(?, ?, ?, ?, ?, ?, ?, ?);`,
         [
           message.contactIdFrom,
           message.contactIdTo,
@@ -441,19 +446,19 @@ export const addMessageQuery = async (
           resolve(resultSet);
         },
         (_, error) => {
-          logger.error(GENERIC_LOCAL_STORAGE_SQL_QUERY_FAILURE_MSG, error.message);
-          reject(new SqlDatabaseError(`Transaction failed:${error.message}`));
+          logger.error("Error in SQL execution of addMessageQuery");
+          reject(new SqlDatabaseError(`Transaction failed: ${error.message}`));
           return false;
         },
       );
     }),
   );
-};
+}
 
-export const markMessagesAsReadQuery = async (
-  messageIds: number[],
+export async function markMessagesAsReadQuery(
+  thirdPartyContactId: number,
   dbSession: SQLite.WebSQLDatabase,
-): Promise<SQLite.SQLResultSet> => {
+): Promise<boolean> {
   logger.info("Executing query to mark messages as unread in SQL database.");
   /* eslint-disable-next-line no-async-promise-executor, @typescript-eslint/require-await, @typescript-eslint/no-misused-promises */
   return new Promise(async (resolve, reject) =>
@@ -462,21 +467,23 @@ export const markMessagesAsReadQuery = async (
       /* eslint-disable-next-line @typescript-eslint/await-thenable */
       await tx.executeSql(
         `UPDATE
-            messages
-            SET unread = 0
-            WHERE message_id IN (?);`,
-        [messageIds.join(", ")],
+                          messages
+                      SET
+                          unread = 0
+                      WHERE
+                          contact_id_from = ? OR contact_id_to = ?;`,
+        [thirdPartyContactId, thirdPartyContactId],
         (_, resultSet) => {
           logger.info(GENERIC_LOCAL_STORAGE_SQL_QUERY_SUCCESS_MSG);
           logger.debug(`Query results: ${JSON.stringify(resultSet)}`);
-          resolve(resultSet);
+          resolve(true);
         },
         (_, error) => {
-          logger.error(GENERIC_LOCAL_STORAGE_SQL_QUERY_FAILURE_MSG, error.message);
-          reject(new SqlDatabaseError(`Transaction failed:${error.message}`));
+          logger.error("Error in SQL execution of markMessagesAsReadQuery");
+          reject(new SqlDatabaseError(`SQL Transaction failed: ${error.message}`));
           return false;
         },
       );
     }),
   );
-};
+}

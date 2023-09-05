@@ -77,13 +77,14 @@ async def handle_disconnect(sid) -> None:
 
 
 @socket_manager.on("registerInit")  # type: ignore
-async def handle_register_init(sid, data: Any) -> None:
+async def handle_register_init(sid, data: dict[str, str]) -> None:
     """Request for providing salt for user's password"""
     logger.info(f'Received "registerInit" event from sid={sid}.')
+    logger.debug(f"Received data={data}")
     if not validate_register_init_payload(data):
         logger.info("Public key not provided. Authentication unsuccessful.")
         return
-    user = db_manager.get_user_by_public_key(data)
+    user = db_manager.get_user_by_public_key(data["publicKey"])
     # if user is found we need to authenticate the user,
     # otherwise we need to register the user
     # process is the same:
@@ -102,8 +103,9 @@ async def handle_register_init(sid, data: Any) -> None:
 
 
 @socket_manager.on("registerFollowUp")  # type: ignore
-async def handle_register_follow_up(sid, data) -> ResponseStatusType:
+async def handle_register_follow_up(sid, data: dict[str, Any]) -> ResponseStatusType:
     logger.info(f'Received "registerFollowUp" event from sid={sid}.')
+    logger.debug(f"Received data={data}")
     if not validate_register_follow_up_payload(data):
         logger.info(("Bad payload. Returning status: error. "))
         return "error"
@@ -158,6 +160,7 @@ async def handle_chat_init(sender_sid, data) -> bool:
     logger.debug(f"sender_sid={sender_sid}, receiver_sid={receiver_sid}")
     logger.info("Forwarding chatInit request to the receiver.")
     await socket_manager.emit("chatInit", data, to=receiver_sid)
+    return True
 
 
 @socket_manager.on("chat")  # type: ignore
@@ -216,7 +219,7 @@ async def handle_check_public_key_exists(sid, data) -> bool | None:
 
 
 @socket_manager.on("checkOnline")  # type: ignore
-async def handle_check_online_status(sid, data: str) -> bool:
+async def handle_check_online_status(sid, data: dict[str, str]) -> bool:
     """Check if the user with given public key is currently connected."""
     logger.info('Received "checkOnline" event.')
     logger.debug(f"data={data}.")
@@ -229,7 +232,7 @@ async def handle_check_online_status(sid, data: str) -> bool:
         logger.info("User not authenticated. Returning False.")
         return False
     else:
-        result = data in AUTHENTICATED_USERS
+        result = data["publicKey"] in PUBLIC_KEYS_SIDS_MAPPING.keys()
         logger.debug(f"User is online: {result}")
         return result
 

@@ -118,6 +118,7 @@ export async function shareFile(uri: string): Promise<boolean> {
       .then(() => true)
       .catch(() => false);
   } catch (error: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     logger.error(`Error when sharing file. Error=${JSON.stringify(error.message)}`);
     return false;
   }

@@ -1,29 +1,42 @@
 import { create } from "zustand";
-import { CryptoContextState, PersonalSdexEngineContext } from "../Types";
+import { CryptoContextState, ThirdPartySdexEngineContext } from "../Types";
 
 export const useCryptoContextStore = create<CryptoContextState>((set) => ({
-  myCryptoContext: undefined,
-  othersCryptoContexts: new Map<string, PersonalSdexEngineContext & { sessionKey: Uint8Array }>(),
+  firstPartyCryptoContext: undefined,
+  thirdPartyCryptoContextsMap: new Map<string, ThirdPartySdexEngineContext>(),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  setMyCryptoContext: (initializationHash: Uint8Array, hashFromUserPassword: Uint8Array): void => {
+  setFirstPartyCryptoContext: (
+    initializationHash: Uint8Array,
+    hashFromUserPassword: Uint8Array,
+  ): void => {
     set({
-      myCryptoContext: {
+      firstPartyCryptoContext: {
         initializationHash,
         hashFromUserPassword,
       },
     });
   },
-  addOthersCryptoContext: (
+  addThirdPartyCryptoContext: (
     publicKey: string,
-    sessionKey: Uint8Array,
+    sessionKey?: Uint8Array,
     initializationHash?: Uint8Array,
     hashFromUserPassword?: Uint8Array,
-  ): void =>
+  ): void => {
+    const safePartialUpdate: ThirdPartySdexEngineContext = {};
+    if (sessionKey) {
+      safePartialUpdate.sessionKey = sessionKey;
+    }
+    if (initializationHash) {
+      safePartialUpdate.initializationHash = initializationHash;
+    }
+    if (hashFromUserPassword) {
+      safePartialUpdate.hashFromUserPassword = hashFromUserPassword;
+    }
+
     set((prev) => ({
-      othersCryptoContexts: new Map(prev.othersCryptoContexts).set(publicKey, {
-        sessionKey,
-        initializationHash,
-        hashFromUserPassword,
+      thirdPartyCryptoContextsMap: new Map(prev.thirdPartyCryptoContextsMap).set(publicKey, {
+        ...safePartialUpdate,
       }),
-    })),
+    }));
+  },
 }));

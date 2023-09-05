@@ -1,8 +1,9 @@
 import { blake3 } from "@noble/hashes/blake3";
 import * as Crypto from "expo-crypto";
-import { useCryptoContextStore } from "../contexts/CryptoContext";
+import { PreconditionError } from "../Errors";
 import { mmkvStorage } from "../storage/MmkvStorageMiddlewares";
 import { getSecure } from "../storage/SecureStoreMiddlewares";
+import { FirstPartySdexEngineContext, ThirdPartySdexEngineContext } from "../Types";
 
 export async function generateHashFromUserPassword(): Promise<Uint8Array> {
   const userPin = await getSecure("userPIN");
@@ -36,7 +37,8 @@ export function generateSessionKey(byteCount = 32): Uint8Array {
  */
 export function chooseSdexCryptoContext(
   publicKeyFrom: string,
-  publicKeyTo: string,
+  firstPartyCryptoContext: FirstPartySdexEngineContext,
+  thirdPartyContext: ThirdPartySdexEngineContext,
 ): {
   initializationHash: Uint8Array;
   hashFromUserPassword: Uint8Array;
@@ -54,40 +56,33 @@ export function chooseSdexCryptoContext(
   const firstPartyPublicKey = mmkvStorage.getString("publicKey");
   if (publicKeyFrom === firstPartyPublicKey) {
     // You are the sender. Taking your own crypto context.
-    const myInitializationHash =
-      useCryptoContextStore.getState().myCryptoContext?.initializationHash;
-    const myHashFromUserPassword =
-      useCryptoContextStore.getState().myCryptoContext?.hashFromUserPassword;
-    if (!myInitializationHash || !myHashFromUserPassword) {
-      throw new Error("My crypto context is not set.");
+    if (
+      !firstPartyCryptoContext.initializationHash ||
+      !firstPartyCryptoContext.hashFromUserPassword
+    ) {
+      throw new PreconditionError(
+        "First party crypto context is not set. SDEx encryption won't be possible.",
+      );
     }
-    context.hashFromUserPassword = myInitializationHash;
-    context.initializationHash = myHashFromUserPassword;
+    context.initializationHash = firstPartyCryptoContext.initializationHash;
+    context.hashFromUserPassword = firstPartyCryptoContext.hashFromUserPassword;
   } else {
     // Third party is the sender. Taking their crypto context.
-    const thirdPartyContext = useCryptoContextStore
-      .getState()
-      .othersCryptoContexts.get(publicKeyFrom);
-    if (
-      !thirdPartyContext ||
-      !thirdPartyContext.initializationHash ||
-      !thirdPartyContext.hashFromUserPassword
-    ) {
-      throw new Error("Third party's crypto context is not set.");
+    if (!thirdPartyContext.initializationHash || !thirdPartyContext.hashFromUserPassword) {
+      throw new PreconditionError(
+        "Third party's crypto context is not set. SDEx Decryption of received message won't be possible.",
+      );
     }
     context.hashFromUserPassword = thirdPartyContext.initializationHash;
     context.initializationHash = thirdPartyContext.hashFromUserPassword;
-    context.sessionKey = thirdPartyContext.sessionKey;
   }
-  // Deciding session key - if exists take the one from third party context stored in state, otherwise generate a new one.
-  if (!context.sessionKey) {
-    const newSessionKey = generateSessionKey();
-    context.sessionKey = newSessionKey;
-    useCryptoContextStore.getState().addOthersCryptoContext(
-      // Key must be the other party's key, not yours.
-      publicKeyFrom !== firstPartyPublicKey ? publicKeyFrom : publicKeyTo,
-      newSessionKey,
+  // If session key wasn't set yet, it's an error. Either side should have set it with chatInit request.
+  if (!thirdPartyContext.sessionKey) {
+    throw new PreconditionError(
+      "Session key is not set. Either side should have set it before calling chooseSdexCryptoContext.",
     );
+  } else {
+    context.sessionKey = thirdPartyContext.sessionKey;
   }
   return context;
 }

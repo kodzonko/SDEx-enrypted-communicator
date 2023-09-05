@@ -1,11 +1,11 @@
-export class EncryptionError extends Error {
+export class SdexEncryptionError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "EncryptionError";
   }
 }
 
-export class DecryptionError extends Error {
+export class SdexDecryptionError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "DecryptionError";
@@ -51,5 +51,26 @@ export class RsaGenerationError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "RsaGenerationError";
+  }
+}
+
+export class RsaEncryptionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "RsaEncryptionError";
+  }
+}
+
+export class RsaDecryptionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "RsaDecryptionError";
+  }
+}
+
+export class CommunicationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "CommunicationError";
   }
 }

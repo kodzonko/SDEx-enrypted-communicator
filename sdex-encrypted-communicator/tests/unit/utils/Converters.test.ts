@@ -18,6 +18,13 @@ test("Convert a byte array (Uint8Array) to a string.", () => {
   expect(decodedString).toBe("test");
 });
 
+test("String to bytes conversion is reversible.", () => {
+  const testString = "this is a test+=/\\|ąę.,<";
+  const bytes = stringToBytes(testString);
+  const decodedString = bytesToString(bytes);
+  expect(decodedString).toBe(testString);
+});
+
 test("Merge several byte arrays (Uint8Array) into one.", () => {
   const array1 = new Uint8Array([7, 133]);
   const array2 = new Uint8Array([26, 250]);

@@ -71,7 +71,6 @@ export default function RsaKeysCreatorDialog({
         logger.info("Public and private key read successfully. Closing dialog.");
       }
       hideFunc();
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
       /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions */
       logger.error(`Failed to read key(s) from a file. ${error.message}`);
