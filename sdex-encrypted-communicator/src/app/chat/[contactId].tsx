@@ -16,7 +16,6 @@ import { useCryptoContextStore } from "../../contexts/CryptoContext";
 import { useSqlDbSessionStore } from "../../contexts/DbSession";
 import { useMessagesBufferStore } from "../../contexts/MessagesBuffer";
 import { useServerStore } from "../../contexts/Server";
-import { chooseSdexCryptoContext } from "../../crypto/cryptoHelpers";
 import SdexCrypto from "../../crypto/SdexCrypto";
 import logger from "../../Logger";
 import {
@@ -41,13 +40,10 @@ export default function Chat() {
   const newMessage = useMessagesBufferStore((state) => state.newMessage);
   const clearBuffer = useMessagesBufferStore((state) => state.clearBuffer);
   const isRegistered = useServerStore((state) => state.isRegistered);
-  const firstPartyCryptoContext = useCryptoContextStore((state) => state.firstPartyCryptoContext);
-  const thirdPartyCryptoContexts = useCryptoContextStore(
-    (state) => state.thirdPartyCryptoContextsMap,
-  );
+  const sessionKeys = useCryptoContextStore((state) => state.sessionKeys);
 
   const params = useLocalSearchParams();
-  const { contactId } = params;
+  const contactId = params.contactId !== undefined ? Number(params.contactId) : undefined;
 
   React.useEffect(() => {
     requestRegister();
@@ -81,24 +77,27 @@ export default function Chat() {
   React.useEffect(() => {
     if (socket.connected && contact?.publicKey && isRegistered) {
       logger.info(`Checking if user ${contact.getFullName()} is online.`);
-      const status = checkOnline(contact.publicKey);
-      if (status) {
-        logger.info(`User ${contact.getFullName()} is online.`);
-      } else {
-        logger.info(`User ${contact.getFullName()} is offline.`);
-      }
+      (async () => {
+        const status = await checkOnline(contact.publicKey);
+        setThirdPartyOnline(status);
+        if (status) {
+          logger.info(`User ${contact.getFullName()} is online.`);
+        } else {
+          logger.info(`User ${contact.getFullName()} is offline.`);
+        }
+      })();
     }
   }, [socket.connected, isRegistered, contact?.publicKey]);
 
   // If user is online, send chatInit message
   React.useEffect(() => {
-    if (thirdPartyOnline && contact) {
+    if (thirdPartyOnline && contact && !sessionKeys.has(contact.publicKey)) {
       logger.info(`Sending chatInit message to ${contact.getFullName()}.`);
       (async () => {
         await initiateChat(contact.publicKey);
       })();
     }
-  }, [thirdPartyOnline, contact]);
+  }, [thirdPartyOnline, contact, sessionKeys]);
 
   // Fetch archived messages from the db for the current contact
   // Mark all messages to and from that contact as read
@@ -157,27 +156,17 @@ export default function Chat() {
 
   // Initialize SDEX crypto engine for outgoing messages encryption
   React.useEffect(() => {
-    let thirdPartyCryptoContext;
+    let sessionKey: Uint8Array | undefined;
     if (contact) {
-      thirdPartyCryptoContext = thirdPartyCryptoContexts.get(contact.publicKey);
+      sessionKey = sessionKeys.get(contact.publicKey);
     }
-    if (firstPartyContact && contact && firstPartyCryptoContext && thirdPartyCryptoContext) {
-      logger.info(
-        "Choosing crypto context and initializing SDEX engine for outgoing messages encryption.",
-      );
-      const context = chooseSdexCryptoContext(
-        firstPartyContact.publicKey,
-        firstPartyCryptoContext,
-        thirdPartyCryptoContext,
-      );
-      const engine = new SdexCrypto(
-        context.initializationHash,
-        context.hashFromUserPassword,
-        context.sessionKey,
-      );
+    if (contact && sessionKey) {
+      logger.info("Initializing SDEX engine for outgoing messages encryption.");
+      logger.debug(`Session key: ${JSON.stringify(sessionKey)}`);
+      const engine = new SdexCrypto(sessionKey);
       setSdexEngineOut(engine);
     }
-  }, [firstPartyContact, contact, firstPartyCryptoContext, thirdPartyCryptoContexts]);
+  }, [contact, sessionKeys]);
 
   const onSend = React.useCallback(
     (newMessages: GiftedChatMessage[] = []) => {
@@ -189,8 +178,7 @@ export default function Chat() {
       // So we keep persistent state in sync with what actually was sent to the server
       if (
         !contact ||
-        !contact.id ||
-        socket.disconnected ||
+        !socket.connected ||
         !isRegistered ||
         !sqlDbSession ||
         !sdexEngineOut ||
@@ -198,16 +186,15 @@ export default function Chat() {
       ) {
         logger.error("Unable to send message to server. Some conditions are not met.");
         logger.debug(
-          `contact=${JSON.stringify(contact)}, socket.disconnected=${JSON.stringify(
-            socket.disconnected,
-          )}, isRegistered=${JSON.stringify(
-            isRegistered,
-          )}, sdexEngineOutUndefined?=${JSON.stringify(
-            sdexEngineOut === undefined,
-          )}, thirdPartyOnline=${JSON.stringify(thirdPartyOnline)}`,
+          `contact: ${JSON.stringify(Boolean(contact))}, socket.connected: ${JSON.stringify(
+            socket.connected,
+          )}, isRegistered: ${JSON.stringify(isRegistered)}, sdexEngineOut: ${JSON.stringify(
+            Boolean(sdexEngineOut),
+          )}, thirdPartyOnline: ${JSON.stringify(thirdPartyOnline)}`,
         );
       } else {
         // Preconditions are met to encrypt and send messages to third party
+        logger.info("Preconditions met. Encrypting and sending messages to third party.");
         newMessages.forEach((msg) => {
           const message = giftedChatMessageToMessage(msg, contact.id as number);
           (async () => {

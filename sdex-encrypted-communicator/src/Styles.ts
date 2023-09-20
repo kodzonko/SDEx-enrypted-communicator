@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   appBarIcons: {
     color: theme.colors.onPrimary,
   },
-  textInputPin: {
+  textInput: {
     width: 200,
   },
   surface: {

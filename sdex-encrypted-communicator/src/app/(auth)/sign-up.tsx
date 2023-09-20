@@ -2,7 +2,6 @@ import { Link } from "expo-router";
 import * as React from "react";
 import { Alert, KeyboardAvoidingView, SafeAreaView, ScrollView } from "react-native";
 import { Appbar, Button, Surface, Text, TextInput } from "react-native-paper";
-import { requestRegister } from "../../communication/Sockets";
 import { GENERIC_OKAY_DISMISS_ALERT_BUTTON } from "../../components/Buttons";
 import QrCodeDialog from "../../components/QrCodeDialog";
 import RsaKeysCreatorDialog from "../../components/RsaKeysCreatorDialog";
@@ -14,13 +13,13 @@ import logger from "../../Logger";
 import { GENERIC_WRITE_ERROR_TITLE } from "../../Messages";
 import { addContact } from "../../storage/DataHandlers";
 import { mmkvStorage } from "../../storage/MmkvStorageMiddlewares";
-import * as SecureStoreMiddleware from "../../storage/SecureStoreMiddlewares";
 import { createDb } from "../../storage/SqlStorageMiddlewares";
 import styles from "../../Styles";
 import { Contact } from "../../Types";
 
 export default function SignUp(): Element {
   const [userPin, setUserPin] = React.useState<string>("");
+  const [login, setLogin] = React.useState<string>(mmkvStorage.getString("login") || "");
   const [userPinRepeated, setUserPinRepeated] = React.useState<string>("");
   const [keyObtainDialogVisible, setKeyObtainDialogVisible] = React.useState(false);
   const [qrExportDialogVisible, setQrExportDialogVisible] = React.useState(false);
@@ -36,13 +35,11 @@ export default function SignUp(): Element {
   React.useEffect(() => {
     // Adding your contact to the database
     // and handles actual signing in process
-    if (sqlDbSession && firstPartyContact) {
+    if (sqlDbSession && firstPartyContact && login) {
       (async () => {
         const result = await addContact(firstPartyContact, sqlDbSession);
         if (result) {
           logger.info("Your contact has been added to the database.");
-          logger.info("Registering client on the server...");
-          requestRegister();
           logger.info("Signing in...");
           // Signing in to the app
           signIn();
@@ -66,19 +63,11 @@ export default function SignUp(): Element {
   const handleSignUp = async (): Promise<void> => {
     // Clear registered flag. Once registered button is pressed, previous registration data (is present) is no longer valid.
     setUnregistered();
-    // Store RSA key pair in MMKV storage
+    mmkvStorage.set("userPin", userPin);
     mmkvStorage.set("privateKey", privateKey);
     mmkvStorage.set("publicKey", publicKey);
-    // Store PIN in SecureStore
-    const successfulPinWrite = await SecureStoreMiddleware.saveSecure("userPIN", userPin);
-    if (!successfulPinWrite) {
-      logger.error("Failed to save PIN to SecureStore.");
-      Alert.alert(GENERIC_WRITE_ERROR_TITLE, "Nie udało się zapisać PINu w bazie danych.", [
-        GENERIC_OKAY_DISMISS_ALERT_BUTTON,
-      ]);
-      return;
-    }
-    logger.info("PIN and key pair saved successfully.");
+    mmkvStorage.set("login", login);
+    logger.info("Login, PIN and key pair saved successfully.");
     // Creating fresh sql db file from template. Creating a new session.
     logger.info("SignUp successful. Creating a new app database.");
     await createDb()
@@ -125,13 +114,25 @@ export default function SignUp(): Element {
 
       <ScrollView keyboardShouldPersistTaps="never">
         <Surface style={[styles.surface, { marginTop: 30 }]}>
-          <Text variant="titleLarge" className="mb-4">
+          <Text variant="titleLarge" className="mb-2">
+            Login
+          </Text>
+          <TextInput
+            keyboardType="default"
+            mode="outlined"
+            style={styles.textInput}
+            autoFocus={false}
+            placeholder="Utwórz login"
+            value={login}
+            onChangeText={(value) => setLogin(value)}
+          />
+          <Text variant="titleLarge" className="my-2">
             PIN
           </Text>
           <TextInput
             keyboardType="numeric"
             mode="outlined"
-            style={styles.textInputPin}
+            style={styles.textInput}
             secureTextEntry
             autoFocus={false}
             maxLength={8}
@@ -140,9 +141,9 @@ export default function SignUp(): Element {
             onChangeText={(value) => setUserPin(value)}
           />
           <TextInput
-            className="mt-3"
+            className="mt-1"
             mode="outlined"
-            style={styles.textInputPin}
+            style={styles.textInput}
             keyboardType="numeric"
             secureTextEntry
             autoFocus={false}
@@ -159,15 +160,15 @@ export default function SignUp(): Element {
           style={[
             styles.surface,
             {
-              marginTop: 30,
-              paddingBottom: 30,
+              marginTop: 20,
+              paddingBottom: 20,
             },
           ]}
         >
-          <Text variant="titleLarge" className="my-4">
+          <Text variant="titleLarge" className="my-2">
             Klucze szyfrujące
           </Text>
-          <Button mode="contained" onPress={showKeyObtainDialog} className="mx-2 mb-6 w-40">
+          <Button mode="contained" onPress={showKeyObtainDialog} className="mx-2 mb-2 w-40">
             Uzyskaj
           </Button>
           <Text variant="bodyLarge" className="mt-2">
@@ -192,7 +193,11 @@ export default function SignUp(): Element {
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onPress={handleSignUp}
             disabled={
-              !privateKey || !publicKey || userPin.length < 4 || userPin !== userPinRepeated
+              !privateKey ||
+              !publicKey ||
+              userPin.length < 4 ||
+              userPin !== userPinRepeated ||
+              !login
             }
           >
             Zarejestruj

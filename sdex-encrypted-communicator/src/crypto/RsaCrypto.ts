@@ -1,5 +1,10 @@
 import { RSA } from "react-native-rsa-native";
-import { RsaDecryptionError, RsaEncryptionError, RsaGenerationError } from "../Errors";
+import {
+  RsaDecryptionError,
+  RsaEncryptionError,
+  RsaGenerationError,
+  RsaSigningError,
+} from "../Errors";
 import logger from "../Logger";
 import { saveFileToDocumentsDirectory } from "../storage/FileOps";
 import { KeyPair } from "../Types";
@@ -38,7 +43,7 @@ export async function encryptRsa(publicKey: string, text: string): Promise<strin
   logger.info("Encrypting text with RSA public key.");
   try {
     const encrypted = await RSA.encrypt(text, publicKey);
-    logger.debug(`(RSA) Encrypting text: ${encrypted}`);
+    logger.debug(`(RSA) Encrypted text: ${encrypted}`);
     return encrypted;
   } catch (e: any) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -59,22 +64,15 @@ export async function decryptRsa(privateKey: string, text: string): Promise<stri
   }
 }
 
-export async function doubleEncryptRsa(
-  firstPartyPrivate: string,
-  thirdPartyPublic: string,
-  text: string,
-): Promise<string> {
-  const firstEncryption = await encryptRsa(firstPartyPrivate, text);
-  const secondEncryption = await encryptRsa(thirdPartyPublic, firstEncryption);
-  return secondEncryption;
-}
-
-export async function doubleDecryptRsa(
-  firstPartyPrivate: string,
-  thirdPartyPublic: string,
-  text: string,
-): Promise<string> {
-  const firstDecryption = await decryptRsa(thirdPartyPublic, text);
-  const secondDecryption = await decryptRsa(firstPartyPrivate, firstDecryption);
-  return secondDecryption;
+export async function signRsa(privateKey: string, text: string): Promise<string> {
+  logger.info("Signing text with RSA private key.");
+  try {
+    const signature = await RSA.sign(text, privateKey);
+    logger.debug(`(RSA) signature: ${signature}`);
+    return signature;
+  } catch (e: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    logger.error(`Error when signing text with RSA private key: ${JSON.stringify(e.message)}`);
+    throw new RsaSigningError("Failed to sign text with RSA private key.");
+  }
 }

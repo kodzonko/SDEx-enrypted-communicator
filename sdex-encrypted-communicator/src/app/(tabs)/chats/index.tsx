@@ -7,6 +7,7 @@ import { Link } from "expo-router";
 import * as React from "react";
 import { FlatList, SafeAreaView, StyleProp, ViewStyle } from "react-native";
 import { Appbar, Divider, FAB, List } from "react-native-paper";
+import socket, { socketConnect } from "../../../communication/Sockets";
 import AddChatRoomModal from "../../../components/AddChatRoomModal";
 import { useChatRoomsStore } from "../../../contexts/ChatRooms";
 import { useSqlDbSessionStore } from "../../../contexts/DbSession";
@@ -53,6 +54,12 @@ export default function ChatRooms() {
       })();
     }
   }, [sqlDbSession, isFocused]);
+
+  React.useEffect(() => {
+    if (!socket.connected) {
+      socketConnect();
+    }
+  }, [socket.connected]);
 
   /**
    * Returns a badge if count > 0 else right arrow.

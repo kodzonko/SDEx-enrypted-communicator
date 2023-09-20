@@ -182,38 +182,26 @@ export type ThirdPartySdexEngineContext = {
 };
 
 export type CryptoContextState = {
-  firstPartyCryptoContext: FirstPartySdexEngineContext | undefined;
-  thirdPartyCryptoContextsMap: Map<string, ThirdPartySdexEngineContext>;
-  setFirstPartyCryptoContext: (
-    initializationHash: Uint8Array,
-    hashFromUserPassword: Uint8Array,
-  ) => void;
-  addThirdPartyCryptoContext: (
-    publicKey: string,
-    sessionKey: Uint8Array,
-    initializationHash?: Uint8Array,
-    hashFromUserPassword?: Uint8Array,
-  ) => void;
+  sessionKeys: Map<string, Uint8Array>;
+  addSessionKey: (publicKey: string, sessionKey: Uint8Array) => void;
 };
 
 export type StatusResponse = "success" | "error";
 
-type RegisterFollowUpPayload = {
+export type RegisterFollowUpPayload = {
+  login: string;
   publicKey: string;
-  privateKeyHash: string;
-  salt: string;
+  signature: string;
 };
 
 export type ChatInitPayload = {
   publicKeyFrom: string;
   publicKeyTo: string;
-  initializationHashEncrypted: string;
-  hashFromUserPasswordEncrypted: string;
-  sessionKeyEncrypted: string;
+  sessionKeyPartEncrypted: string;
 };
 
 export type ChatInitFollowUpPayload = {
-  sessionKeyEncrypted: string;
+  sessionKeyPartEncrypted: string;
   publicKeyFrom: string;
 };
 
@@ -232,13 +220,12 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
-  registerInit: (publicKey: { publicKey: string }) => void;
+  registerInit: (callback: (challenge: string) => void) => void;
   registerFollowUp: (
     payload: RegisterFollowUpPayload,
     callback: (status: StatusResponse) => void,
   ) => void;
-  chatInit: (data: ChatInitPayload) => void;
-  chatInitFollowUp: (data: ChatInitFollowUpPayload) => void;
+  chatInit: (data: ChatInitPayload, callback: (response?: string) => void) => void;
   chat: (message: TransportedMessage, callback: (status: StatusResponse) => void) => void;
   checkKey: (publicKey: { publicKey: string }, callback: (response: boolean) => void) => void;
   checkOnline: (publicKey: { publicKey: string }, callback: (response: boolean) => void) => void;

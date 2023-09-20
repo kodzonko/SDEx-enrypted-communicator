@@ -6,54 +6,41 @@ import { GENERIC_OKAY_DISMISS_ALERT_BUTTON } from "../../components/Buttons";
 import { useAuthStore } from "../../contexts/Auth";
 import logger from "../../Logger";
 import { GENERIC_AUTHORIZATION_ERROR_MSG } from "../../Messages";
-import { getSecure } from "../../storage/SecureStoreMiddlewares";
+import { mmkvStorage } from "../../storage/MmkvStorageMiddlewares";
 import styles from "../../Styles";
 
 export default function SignIn() {
-  const [userInputPIN, setUserInputPIN] = React.useState("");
-  const [userActualPIN, setUserActualPIN] = React.useState("");
+  const actualLogin = mmkvStorage.getString("login") || "";
+  const [userInputPin, setUserInputPin] = React.useState("");
+  const [userInputLogin, setUserInputLogin] = React.useState(actualLogin);
   const signIn = useAuthStore((state) => state.signIn);
-
-  React.useEffect((): void => {
-    (async () => {
-      logger.info("Fetching user PIN from SecureStore.");
-      const actualPinFromDb = await getSecure("userPIN");
-      if (!actualPinFromDb) {
-        logger.info(
-          "PIN missing or failed to fetch from SecureStore. Authorization won't be possible.",
-        );
-      } else if (typeof actualPinFromDb === "string") {
-        setUserActualPIN(actualPinFromDb);
-        logger.info("PIN successfully fetched from SecureStore.");
-      }
-    })();
-  }, []);
 
   const handleSignIn = React.useCallback(() => {
     logger.info("Verifying user PIN.");
-    if (userActualPIN === "") {
-      Alert.alert(GENERIC_AUTHORIZATION_ERROR_MSG, "Brak PINu, uwierzytelnienie jest niemożliwe.", [
-        GENERIC_OKAY_DISMISS_ALERT_BUTTON,
-      ]);
+    const actualPin = mmkvStorage.getString("userPin");
+    logger.debug(`Actual PIN: ${JSON.stringify(actualPin)}`);
+    if (!actualLogin || !actualPin) {
+      Alert.alert(
+        GENERIC_AUTHORIZATION_ERROR_MSG,
+        "Brak PINu lub loginu, uwierzytelnienie jest niemożliwe.",
+        [GENERIC_OKAY_DISMISS_ALERT_BUTTON],
+      );
       return;
     }
-    if (userInputPIN.trim().length >= 4 && userInputPIN.trim().length <= 8) {
-      if (userInputPIN.trim() === userActualPIN) {
-        logger.info("PIN verified, signing in.");
-        signIn();
-      } else {
-        logger.info("PIN verified as incorrect.");
-        Alert.alert(GENERIC_AUTHORIZATION_ERROR_MSG, "PIN jest niepoprawny", [
-          GENERIC_OKAY_DISMISS_ALERT_BUTTON,
-        ]);
-      }
+    if (
+      userInputPin.trim() === actualPin &&
+      actualLogin.length > 0 &&
+      userInputLogin.trim() === actualLogin
+    ) {
+      logger.info("PIN verified, signing in.");
+      signIn();
     } else {
-      logger.info("PIN length incorrect. Skipped secure storage verification.");
-      Alert.alert(GENERIC_AUTHORIZATION_ERROR_MSG, "Podaj PIN aby się zalogować (4-8 cyfr).", [
+      logger.info("PIN verified as incorrect.");
+      Alert.alert(GENERIC_AUTHORIZATION_ERROR_MSG, "PIN lub login jest niepoprawny", [
         GENERIC_OKAY_DISMISS_ALERT_BUTTON,
       ]);
     }
-  }, [signIn, userInputPIN, userActualPIN]);
+  }, [signIn, userInputPin, userInputLogin, actualLogin]);
 
   return (
     <SafeAreaView className="flex flex-1 flex-col">
@@ -62,19 +49,35 @@ export default function SignIn() {
       </Appbar.Header>
       <View className="my-auto items-center justify-center">
         <TextInput
+          keyboardType="default"
+          className="mb-4"
+          mode="outlined"
+          style={styles.textInput}
+          placeholder={actualLogin || "Wprowadź login"}
+          value={userInputLogin}
+          onChangeText={(value) => {
+            setUserInputLogin(value);
+          }}
+        />
+        <TextInput
           keyboardType="numeric"
           mode="outlined"
-          style={styles.textInputPin}
+          style={styles.textInput}
           secureTextEntry
           autoFocus
           maxLength={8}
           placeholder="Wprowadź PIN"
-          value={userInputPIN}
+          value={userInputPin}
           onChangeText={(value) => {
-            setUserInputPIN(value);
+            setUserInputPin(value);
           }}
         />
-        <Button mode="contained" className="my-7 w-40" onPress={handleSignIn}>
+        <Button
+          mode="contained"
+          className="my-7 w-40"
+          onPress={handleSignIn}
+          disabled={!userInputLogin || !userInputPin}
+        >
           Zaloguj
         </Button>
       </View>

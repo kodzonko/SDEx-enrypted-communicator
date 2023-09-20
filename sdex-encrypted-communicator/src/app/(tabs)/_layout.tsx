@@ -5,13 +5,7 @@ import * as React from "react";
 import { useTheme } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 import socket, { requestRegister } from "../../communication/Sockets";
-import { useCryptoContextStore } from "../../contexts/CryptoContext";
 import { useSqlDbSessionStore } from "../../contexts/DbSession";
-import {
-  generateHashFromUserPassword,
-  generateInitializationHash,
-} from "../../crypto/cryptoHelpers";
-import logger from "../../Logger";
 
 function makeIcon(
   icon: keyof typeof Ionicons.glyphMap,
@@ -34,22 +28,7 @@ function makeBottomTabs(props: BottomTabBarProps) {
 export default function TabsLayout() {
   const setSqlDbSession = useSqlDbSessionStore((state) => state.setSqlDbSession);
   const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
-  const setMyCryptoContext = useCryptoContextStore((state) => state.setFirstPartyCryptoContext);
-  const myCryptoContext = useCryptoContextStore((state) => state.firstPartyCryptoContext);
   const theme = useTheme();
-
-  React.useEffect(() => {
-    if (!myCryptoContext) {
-      logger.info("Initializing random context for SDEx cryptography.");
-      (async () => {
-        const initializationHash = generateInitializationHash();
-        const hashFromUserPassword = await generateHashFromUserPassword();
-        setMyCryptoContext(initializationHash, hashFromUserPassword);
-      })();
-    } else {
-      logger.info("First party crypto context already initialized. Skipping regeneration.");
-    }
-  }, []);
 
   React.useEffect(() => {
     requestRegister();

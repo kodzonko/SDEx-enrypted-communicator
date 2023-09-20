@@ -2,8 +2,11 @@ import { Stack, useRouter } from "expo-router";
 import * as React from "react";
 import { PaperProvider } from "react-native-paper";
 import { RootSiblingParent } from "react-native-root-siblings";
+
+import { requestRegister } from "../communication/Sockets";
 import { useAuthStore } from "../contexts/Auth";
 import "../Globals";
+import logger from "../Logger";
 import { theme } from "../Styles";
 
 export default function RootLayout() {
@@ -14,6 +17,8 @@ export default function RootLayout() {
     if (!isSignedIn) {
       router.replace("/sign-in");
     } else {
+      logger.info("Registering client on the server...");
+      requestRegister();
       router.replace("/chats");
     }
   }, [isSignedIn]);

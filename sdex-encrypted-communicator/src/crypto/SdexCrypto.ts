@@ -9,29 +9,27 @@ import {
   stringToBytes,
 } from "../utils/Converters";
 import { xorUintArrays } from "../utils/Math";
+import { splitSessionKey } from "./CryptoHelpers";
 
 export default class SdexCrypto {
   HASH_LENGTH: number;
 
   ZEROED_BLOCK: Uint8Array;
 
-  initializationHash: Uint8Array;
+  sessionKeyHash: Uint8Array;
 
-  hashFromUserPassword: Uint8Array;
+  sessionKeyFirstPartHash: Uint8Array; // aka S1
 
-  sessionKey: Uint8Array;
+  sessionKeySecondPartHash: Uint8Array; // aka S2
 
-  constructor(
-    initializationHash: Uint8Array,
-    hashFromUserPassword: Uint8Array,
-    sessionKey: Uint8Array,
-    hashLength = 32,
-  ) {
-    this.initializationHash = initializationHash;
-    this.hashFromUserPassword = hashFromUserPassword;
+  constructor(sessionKey: Uint8Array, hashLength = 32) {
     this.HASH_LENGTH = hashLength;
     this.ZEROED_BLOCK = new Uint8Array(this.HASH_LENGTH);
-    this.sessionKey = sessionKey;
+    this.sessionKeyHash = this.blake3Wrapper(sessionKey);
+    // Split session key into two parts
+    const [sessionKeyFirstPart, sessionKeySecondPart] = splitSessionKey(sessionKey);
+    this.sessionKeyFirstPartHash = this.blake3Wrapper(sessionKeyFirstPart as Uint8Array);
+    this.sessionKeySecondPartHash = this.blake3Wrapper(sessionKeySecondPart as Uint8Array);
   }
 
   blake3Wrapper(message: Uint8Array | string, context?: Uint8Array | string) {
@@ -64,28 +62,19 @@ export default class SdexCrypto {
     const messageBlocks = changeTo1IndexedArray(messageSplit);
     const result = <Uint8Array[]>[];
     const hashIterations = <Uint8Array[]>[]; // h0, h1, ..., hk
-    hashIterations[0] = this.initializationHash; // h0
-    const sessionKeyHash = this.blake3Wrapper(this.sessionKey); // aka hash from initialization vector H(IV)
+
+    // hashIterations[0] = this.sessionKeyFirstPartHash; // h0
     // First block
     logger.debug("Calculating k=1 block.");
-    // IV++h0
-    const sessionKeyAndInitializationHash = mergeUint8Arrays(
-      this.sessionKey,
-      this.initializationHash,
-    );
-    // H(IV++h0)
-    const hashFromSessionKeyAndInitializationHash = this.blake3Wrapper(
-      sessionKeyAndInitializationHash,
-    );
     // C1
     result[1] = SdexCrypto.calculateBlock(
       messageBlocks[1] as Uint8Array,
-      sessionKeyHash,
-      hashFromSessionKeyAndInitializationHash,
+      this.sessionKeyFirstPartHash,
+      this.sessionKeyHash,
     );
     // h1
     hashIterations[1] = this.blake3Wrapper(
-      sessionKeyAndInitializationHash,
+      this.sessionKeyHash,
       mergeUint8Arrays(messageBlocks[1] as Uint8Array, messageBlocks[2] ?? this.ZEROED_BLOCK),
     );
 
@@ -95,15 +84,12 @@ export default class SdexCrypto {
     if (messageBlocks[2]) {
       result[2] = SdexCrypto.calculateBlock(
         messageBlocks[2],
-        this.hashFromUserPassword,
-        sessionKeyHash,
+        this.sessionKeyFirstPartHash,
+        this.sessionKeySecondPartHash,
       );
       // h2
       hashIterations[2] = this.blake3Wrapper(
-        xorUintArrays(
-          hashIterations[0] ?? this.ZEROED_BLOCK,
-          hashFromSessionKeyAndInitializationHash,
-        ),
+        xorUintArrays(hashIterations[1], this.sessionKeyHash),
         mergeUint8Arrays(
           messageBlocks[3] ?? this.ZEROED_BLOCK,
           messageBlocks[4] ?? this.ZEROED_BLOCK,
@@ -135,7 +121,7 @@ export default class SdexCrypto {
         // Even blocks in 1-based indexing (k=4, 6, 8...)
         result[2 * k + 2] = SdexCrypto.calculateBlock(
           messageBlocks[2 * k] ?? this.ZEROED_BLOCK,
-          this.hashFromUserPassword,
+          this.sessionKeySecondPartHash,
           hashIterations[k] ?? this.ZEROED_BLOCK,
         );
       }
