@@ -1,7 +1,10 @@
-from email import message
+import base64
+from concurrent.futures import Future
 from pathlib import Path
-from typing import Any
+from typing import Any, Awaitable, Optional
 
+import rsa
+from bidict import bidict
 from fastapi import FastAPI
 from fastapi_socketio import SocketManager
 from loguru import logger
@@ -13,26 +16,22 @@ from sdex_server.connection.payload_sanitizers import (
     validate_check_online_payload,
     validate_connect_payload,
     validate_register_follow_up_payload,
-    validate_register_init_payload,
 )
-from sdex_server.crypto.randomness import generate_salt
+from sdex_server.crypto.randomness import generate_challenge
 from sdex_server.database.database import DatabaseManager
 from sdex_server.database.models import User
 from sdex_server.logger import init_logging
 from sdex_server.settings import HOST_ADDRESS, HOST_PORT, SQLITE_DB_PATH
-from sdex_server.type_definitions import ResponseStatusType
-from bidict import bidict
-
-from sdex_server.type_definitions import PublicKeysSidsMappingType
-
+from sdex_server.type_definitions import PublicKeysSidsMappingType, ResponseStatusType
 
 # Keeps a mapping of public keys to socket ids in bidirectional dictionary, where:
 #   keys are: public RSA keys
 #   values are: socket ids
-
 PUBLIC_KEYS_SIDS_MAPPING: PublicKeysSidsMappingType = bidict()
 # Set of authenticated users' sids
 AUTHENTICATED_USERS: set[str] = set()
+# Maps sids to challenges sent to users for authentication
+SID_TO_CHALLENGE_MAPPING: dict[str, str] = {}
 
 
 db_manager = DatabaseManager(SQLITE_DB_PATH)
@@ -44,7 +43,7 @@ socket_manager = SocketManager(app=app)
 
 
 @socket_manager.on("connect")  # type: ignore
-async def handle_connect(sid, environ, auth) -> None:
+async def handle_connect(sid, environ, auth) -> Awaitable[None] | None:
     logger.info(f"User connected sid={sid}.")
     if not validate_connect_payload(auth):
         logger.info("Bad payload. Dropping connection.")
@@ -53,87 +52,86 @@ async def handle_connect(sid, environ, auth) -> None:
     else:
         PUBLIC_KEYS_SIDS_MAPPING[auth["publicKey"]] = sid
         logger.info("User connected. User's public key and sid saved.")
-        logger.debug(
-            f"After adding the user PUBLIC_KEYS_SIDS_MAPPING={PUBLIC_KEYS_SIDS_MAPPING}"
-        )
 
 
 @socket_manager.on("disconnect")  # type: ignore
 async def handle_disconnect(sid) -> None:
     logger.info(f"User disconnected sid={sid}.")
     PUBLIC_KEYS_SIDS_MAPPING.inverse.pop(sid, None)
-    logger.debug(
-        f"After removing the user PUBLIC_KEYS_SIDS_MAPPING={PUBLIC_KEYS_SIDS_MAPPING}"
-    )
+    SID_TO_CHALLENGE_MAPPING.pop(sid, None)
     try:
         AUTHENTICATED_USERS.remove(sid)
-        logger.debug(
-            f"After removing the user AUTHENTICATED_USERS={AUTHENTICATED_USERS}"
-        )
     except KeyError:
-        logger.info("User wasn't in AUTHENTICATED_USERS set.")
+        logger.info("User wasn't in AUTHENTICATED_USERS.")
         logger.debug(f"AUTHENTICATED_USERS={AUTHENTICATED_USERS}")
     logger.info("Client's sid and public key removed from mapping.")
 
 
 @socket_manager.on("registerInit")  # type: ignore
-async def handle_register_init(sid, data: dict[str, str]) -> None:
-    """Request for providing salt for user's password"""
+async def handle_register_init(sid: str) -> str:
+    """Request for challenge to authenticate or register a user."""
     logger.info(f'Received "registerInit" event from sid={sid}.')
-    logger.debug(f"Received data={data}")
-    if not validate_register_init_payload(data):
-        logger.info("Public key not provided. Authentication unsuccessful.")
-        return
-    user = db_manager.get_user_by_public_key(data["publicKey"])
-    # if user is found we need to authenticate the user,
-    # otherwise we need to register the user
-    # process is the same:
-    # - send salt to the client (either fetched from db or generated)
-    # - listen event containing user's password hash
-    # - if hash matches the one in db, authenticate the user
-    # - if it's a new user, save the user in db  along with the new hashed pwd
-    if user:
-        logger.info("User found in database. Sending salt to verify.")
-        await socket_manager.emit("registerInit", user.salt, to=sid)
-    else:
-        logger.info(
-            "User not found in database. Sending salt to register his password."
-        )
-        await socket_manager.emit("registerInit", generate_salt(), to=sid)
+    if sid in AUTHENTICATED_USERS:
+        logger.info("User already authenticated. Ignoring request.")
+        return "already authenticated"
+    if existing_challenge := SID_TO_CHALLENGE_MAPPING.get(sid, None):
+        logger.info("Re-sending the same challenge.")
+        return existing_challenge
+    challenge = generate_challenge()
+    SID_TO_CHALLENGE_MAPPING[sid] = challenge
+    return challenge
 
 
 @socket_manager.on("registerFollowUp")  # type: ignore
-async def handle_register_follow_up(sid, data: dict[str, Any]) -> ResponseStatusType:
+async def handle_register_follow_up(sid: str, data: Any) -> ResponseStatusType:
     logger.info(f'Received "registerFollowUp" event from sid={sid}.')
     logger.debug(f"Received data={data}")
     if not validate_register_follow_up_payload(data):
-        logger.info(("Bad payload. Returning status: error. "))
+        logger.info(("Bad payload. Returning status: error."))
         return "error"
-    # Check by public key if a user already exists
+    # Verify challenge
+    challenge = SID_TO_CHALLENGE_MAPPING.get(sid, None)
+    if not challenge:
+        logger.info("Challenge not found. Authentication unsuccessful.")
+        return "error"
+    logger.debug(f"challenge={challenge}")
+    try:
+        rsa.verify(
+            message=challenge.encode(),
+            signature=base64.b64decode(data["signature"]),
+            pub_key=rsa.PublicKey.load_pkcs1(data["publicKey"]),
+        )
+        logger.info("Challenge verification successful.")
+    except rsa.VerificationError as e:
+        logger.info("Challenge verification failed. Authentication unsuccessful.")
+        return "error"
+
     logger.info(
         "Verifying if user with that public key already exists in the database."
     )
-    user = db_manager.get_user_by_public_key(data["publicKey"])
+    user = db_manager.get_user_by_login(data["login"])
+
     if user:
         logger.info(
             (
-                "User with that public key already exists. "
-                "Verifying if password hashes match."
+                (
+                    "User with that login already exists. "
+                    "Verifying if public key and login match."
+                )
             )
         )
-        AUTHENTICATED_USERS.add(sid)
-        logger.info(
-            "User registered successfully."
-            if user.private_key_hash == data["privateKeyHash"]
-            else "Authentication failed. Credentials don't match."
-        )
-        return "success" if user.private_key_hash == data["privateKeyHash"] else "error"
+        if user.public_key != data["publicKey"] or user.login != data["login"]:
+            logger.info("Public key doesn't match. Authentication unsuccessful.")
+            return "error"
+        else:
+            AUTHENTICATED_USERS.add(sid)
+            logger.info("Authentication of existing user successful.")
+            return "success"
     else:
         logger.info("User with that public key doesn't exist. Registering...")
         user = User(
+            login=data["login"],
             public_key=data["publicKey"],
-            private_key_hash=data["privateKeyHash"],
-            salt=data["salt"],
         )
         insert_successful = db_manager.add_user(user)
         if insert_successful:
@@ -146,25 +144,42 @@ async def handle_register_follow_up(sid, data: dict[str, Any]) -> ResponseStatus
 
 
 @socket_manager.on("chatInit")  # type: ignore
-async def handle_chat_init(sender_sid, data) -> bool:
-    """Forwards chatInit request between users."""
+async def handle_chat_init(sender_sid: str, data: Any) -> Optional[str]:
+    """Exchanges chatInit messages between users.
+
+    This event mediates exchange of session key parts between users.
+    Each user delivers their part of the session key to the server
+    and receives the second part of the session key from the other user.
+
+    """
     logger.info(f'Received "chatInit" event from sid={sender_sid}.')
     logger.debug(f"Received data={data}.")
     if not validate_chat_init_payload(data):
         logger.info("Bad payload. Ignoring request.")
-        return False
+        return None
     if sender_sid not in AUTHENTICATED_USERS:
         logger.info("User not authenticated. Ignoring request.")
-        return False
+        return None
     receiver_sid = PUBLIC_KEYS_SIDS_MAPPING.get(data["publicKeyTo"], None)
     logger.debug(f"sender_sid={sender_sid}, receiver_sid={receiver_sid}")
     logger.info("Forwarding chatInit request to the receiver.")
-    await socket_manager.emit("chatInit", data, to=receiver_sid)
-    return True
+
+    session_key_second_part_future: Future[Optional[str]] = Future()
+
+    def callback(data: Any):
+        logger.info("Received response from second client.")
+        session_key_second_part_future.set_result(
+            data if isinstance(data, str) else None
+        )
+
+    await socket_manager.emit("chatInit", data, to=receiver_sid, callback=callback)
+    session_key_second_part = await session_key_second_part_future
+
+    return session_key_second_part
 
 
 @socket_manager.on("chat")  # type: ignore
-async def handle_chat(sender_sid, data) -> ResponseStatusType:
+async def handle_chat(sender_sid: str, data: Any) -> ResponseStatusType:
     """Forwards messages between clients."""
     logger.info(f'Received "chat" event from sid={sender_sid}.')
     logger.debug(f"Received data={data}.")
@@ -198,11 +213,12 @@ async def handle_chat(sender_sid, data) -> ResponseStatusType:
         to=receiver_sid,
     )
     logger.info("Message forwarded successfully.")
+    logger.debug(f"Message forwarded to receiver: {data['publicKeyTo']}")
     return "success"
 
 
 @socket_manager.on("checkKey")  # type: ignore
-async def handle_check_public_key_exists(sid, data) -> bool | None:
+async def handle_check_public_key_exists(sid: str, data: Any) -> bool | None:
     """Check if the public_key exists on server."""
     logger.info('Received "checkKey" event.')
     logger.debug(f"data={data}.")
@@ -219,7 +235,7 @@ async def handle_check_public_key_exists(sid, data) -> bool | None:
 
 
 @socket_manager.on("checkOnline")  # type: ignore
-async def handle_check_online_status(sid, data: dict[str, str]) -> bool:
+async def handle_check_online_status(sid: str, data: Any) -> bool:
     """Check if the user with given public key is currently connected."""
     logger.info('Received "checkOnline" event.')
     logger.debug(f"data={data}.")

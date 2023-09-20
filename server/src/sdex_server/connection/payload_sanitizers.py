@@ -12,9 +12,7 @@ def validate_connect_payload(data: Any) -> bool:
 
 def validate_register_init_payload(data: Any) -> bool:
     """Validate payload for request to authenticate/register from user."""
-    if not isinstance(data, dict):
-        return False
-    if "publicKey" not in data.keys():
+    if not isinstance(data, str):
         return False
     return True
 
@@ -23,11 +21,11 @@ def validate_register_follow_up_payload(data: Any) -> bool:
     """Validate the payload for user registration."""
     if not isinstance(data, dict):
         return False
+    if not data.get("login", None):
+        return False
     if not data.get("publicKey", None):
         return False
-    if not data.get("privateKeyHash", None):
-        return False
-    if not data.get("salt", None):
+    if not data.get("signature", None):
         return False
     return True
 

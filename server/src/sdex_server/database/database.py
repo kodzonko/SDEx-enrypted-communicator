@@ -14,30 +14,58 @@ class DatabaseManager:
         except Exception as e:
             raise DBConnectionError(e)
 
+    def get_user_by_login(self, login: str) -> User | None:
+        """Get user data from the database by login."""
+        try:
+            cursor: sqlite3.Cursor = self.client.execute(
+                """
+                SELECT
+                    id, login, public_key
+                FROM
+                    users
+                WHERE
+                    login = :login;
+                """,
+                {"login": login},
+            )
+            output = cursor.fetchone()
+            if not output:
+                logger.info("User not found.")
+                return None
+            user = User(
+                id=output[0],
+                login=output[1],
+                public_key=output[2],
+            )
+            logger.info("User data fetched successfully.")
+            return user
+        except Exception as e:
+            raise DBConnectionError(e)
+
     def get_user_by_public_key(self, public_key: str) -> User | None:
         """Get user data from the database by public key."""
         try:
             cursor: sqlite3.Cursor = self.client.execute(
                 """
-                SELECT id, public_key, private_key_hash, salt
-                FROM users
-                WHERE public_key = :rsa_key;
+                SELECT
+                    id, login, public_key
+                FROM
+                    users
+                WHERE
+                    public_key = :rsa_key;
                 """,
                 {"rsa_key": public_key},
             )
             output = cursor.fetchone()
             if not output:
-                log_msg = "User not found."
-                logger.info(log_msg)
+                logger.info("User not found.")
                 return None
             user = User(
                 id=output[0],
-                public_key=output[1],
-                private_key_hash=output[2],
-                salt=output[3],
+                login=output[1],
+                public_key=output[2],
             )
-            log_msg = "User data fetched successfully."
-            logger.info(log_msg)
+            logger.info("User data fetched successfully.")
             return user
         except Exception as e:
             raise DBConnectionError(e)
@@ -46,7 +74,14 @@ class DatabaseManager:
         """Check if public key exists in the database."""
         try:
             cursor: sqlite3.Cursor = self.client.execute(
-                "SELECT * FROM users WHERE public_key = :key;",
+                """
+                SELECT
+                    *
+                FROM
+                    users
+                WHERE
+                    public_key = :key;
+                """,
                 {"key": public_key},
             )
             output = cursor.fetchone()
@@ -56,14 +91,17 @@ class DatabaseManager:
         except Exception as e:
             raise DBConnectionError(e)
 
-    def update_user(self, previous_rsa: str, user_new_data: User) -> bool:
+    def update_user(self, previous_rsa: str, new_rsa: str) -> bool:
         """Update user public key in the database."""
         try:
             find_user_cursor: sqlite3.Cursor = self.client.execute(
                 """
-                SELECT *
-                FROM users
-                WHERE public_key = :rsa;
+                SELECT
+                    *
+                FROM
+                    users
+                WHERE
+                    public_key = :rsa;
                 """,
                 {"rsa": previous_rsa},
             )
@@ -73,16 +111,15 @@ class DatabaseManager:
             else:
                 self.client.execute(
                     """
-                    UPDATE users
-                    SET public_key = :public_rsa,
-                        private_key_hash = :private_rsa_hash,
-                        salt = :salt
-                    WHERE public_key = :previous_rsa;
+                    UPDATE
+                        users
+                    SET
+                        public_key = :new_rsa,
+                    WHERE
+                        public_key = :previous_rsa;
                     """,
                     {
-                        "public_rsa": user_new_data.public_key,
-                        "private_rsa_hash": user_new_data.private_key_hash,
-                        "salt": user_new_data.salt,
+                        "new_rsa": new_rsa,
                         "previous_rsa": previous_rsa,
                     },
                 )
@@ -96,29 +133,27 @@ class DatabaseManager:
         try:
             self.client.execute(
                 """
-                INSERT INTO users (public_key, private_key_hash, salt)
-                VALUES (:public_rsa, :private_rsa_hash, :salt);
+                INSERT INTO users (login, public_key)
+                VALUES (:login, :public_rsa);
                 """,
-                {
-                    "public_rsa": user.public_key,
-                    "private_rsa_hash": user.private_key_hash,
-                    "salt": user.salt,
-                },
+                {"login": user.login, "public_rsa": user.public_key},
             )
             self.client.commit()
             return self.client.total_changes > 0
         except Exception as e:
             raise DBConnectionError(e)
 
-    def remove_user(self, public_key: str) -> bool:
-        """Add new user to the database."""
+    def remove_user(self, login: str) -> bool:
+        """Remove user from the database."""
         try:
             self.client.execute(
                 """
-                DELETE FROM users
-                WHERE public_key = :rsa;
+                DELETE FROM
+                    users
+                WHERE
+                    login = :login;
                 """,
-                {"rsa": public_key},
+                {"login": login},
             )
             self.client.commit()
             return self.client.total_changes > 0
