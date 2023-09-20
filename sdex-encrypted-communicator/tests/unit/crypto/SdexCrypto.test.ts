@@ -1,25 +1,23 @@
-import { blake3 } from "@noble/hashes/blake3";
-import { generateSessionKey } from "../../../src/crypto/cryptoHelpers";
+import { generateSessionKeyPart } from "../../../src/crypto/CryptoHelpers";
 import SdexCrypto from "../../../src/crypto/SdexCrypto";
-import { EncryptionError } from "../../../src/Errors";
+import { SdexEncryptionError } from "../../../src/Errors";
 
-const initializationHash = blake3("test-initialization-hash", { dkLen: 32 });
-const hashFromUserPassword = blake3("test-user-password-hash", { dkLen: 32 });
 const sessionKey = new Uint8Array([
   199, 182, 158, 16, 28, 191, 237, 76, 143, 157, 160, 176, 212, 216, 69, 149, 116, 80, 98, 155, 212,
-  183, 228, 53, 100, 16, 112, 89, 150, 82, 0, 116,
+  183, 228, 53, 100, 16, 112, 89, 150, 82, 0, 116, 163, 242, 21, 164, 67, 83, 188, 5, 92, 26, 189,
+  251, 17, 55, 89, 90, 4, 193, 80, 49, 150, 142, 205, 68, 98, 31, 22, 221, 192, 211, 235, 55,
+]);
+const clearTextMessage = "Hello world!";
+const encryptedMessage = new Uint8Array([
+  216, 52, 125, 5, 37, 138, 143, 114, 25, 15, 52, 201, 212, 18, 223, 193, 158, 24, 12, 232, 141, 40,
+  144, 183, 142, 15, 134, 10, 228, 223, 72, 148,
 ]);
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const messageEncryptorDecryptor = new SdexCrypto(
-  initializationHash,
-  hashFromUserPassword,
-  sessionKey,
-  32,
-);
+const messageEncryptorDecryptor = new SdexCrypto(sessionKey, 32);
 
-test("Generating a session key.", () => {
-  const newSessionKey = generateSessionKey(32);
-  expect(newSessionKey.length).toBe(32);
+test("Generating a session key part.", () => {
+  const sessionKeyPart = generateSessionKeyPart(32);
+  expect(sessionKeyPart.length).toBe(32);
 });
 
 test("Calculating a block properly.", () => {
@@ -38,25 +36,16 @@ test("Calculating a block throws error on mismatching arrays lengths.", () => {
   const result = () => {
     SdexCrypto.calculateBlock(array1, array2, array3);
   };
-  expect(result).toThrow(EncryptionError);
+  expect(result).toThrow(SdexEncryptionError);
   expect(result).toThrow("Invalid block length");
 });
 
 test("Encrypting a message properly.", () => {
-  const result = messageEncryptorDecryptor.encryptMessage("Hello world!");
-  const expected = new Uint8Array([
-    33, 219, 133, 253, 234, 100, 96, 76, 182, 215, 34, 78, 50, 106, 19, 179, 173, 229, 8, 238, 29,
-    117, 182, 204, 171, 238, 138, 5, 127, 84, 88, 172,
-  ]);
-  expect(result).toEqual(expected);
+  const result = messageEncryptorDecryptor.encryptMessage(clearTextMessage);
+  expect(result).toEqual(encryptedMessage);
 });
 
 test("Decrypting a message properly.", () => {
-  const message = new Uint8Array([
-    33, 219, 133, 253, 234, 100, 96, 76, 182, 215, 34, 78, 50, 106, 19, 179, 173, 229, 8, 238, 29,
-    117, 182, 204, 171, 238, 138, 5, 127, 84, 88, 172,
-  ]);
-  const result = messageEncryptorDecryptor.decryptMessage(message);
-  const expected = "Hello world!";
-  expect(result).toBe(expected);
+  const result = messageEncryptorDecryptor.decryptMessage(encryptedMessage);
+  expect(result).toBe(clearTextMessage);
 });

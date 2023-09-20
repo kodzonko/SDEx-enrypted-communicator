@@ -1,6 +1,5 @@
-import { blake3 } from "@noble/hashes/blake3";
 import { prepareToIngest, prepareToSend } from "../../../src/communication/PayloadComposers";
-import { generateInitializationHash, generateSessionKey } from "../../../src/crypto/cryptoHelpers";
+import { generateSessionKeyPart } from "../../../src/crypto/CryptoHelpers";
 import SdexCrypto from "../../../src/crypto/SdexCrypto";
 import { Message } from "../../../src/Types";
 
@@ -33,30 +32,17 @@ test.skip("Preparation process for message is fully reversible by ingestion proc
   muay6Au635N3NAk+AwJAESyykEnrU3yYXhU0hZFUIqUoB01g3qfUa7Ik/eo5NTky
   i/f+WqIAP4RwpCa6eV9bmcI+6WDzU8wDRmYYMA3jew==
   -----END RSA PRIVATE KEY-----`;
-  const senderInitializationHash = generateInitializationHash();
-  const senderHashFromUserPassword = blake3("1234", {
-    dkLen: 32,
-  });
-  const senderSessionKey = generateSessionKey();
-  const senderSdexEngine = new SdexCrypto(
-    senderInitializationHash,
-    senderHashFromUserPassword,
-    senderSessionKey,
-  );
-  const receiverSdexEngine = senderSdexEngine;
+  // for this test we skip combining session key parts and just provide a ready full length session key
+  const senderSessionKey = generateSessionKeyPart(64);
+  const sdexEngine = new SdexCrypto(senderSessionKey);
 
   const messageToSend = await prepareToSend(
     originalMessage,
     senderPublicKey,
     receiverPublicKey,
-    senderSdexEngine,
+    sdexEngine,
   );
-  const ingestedMessage = await prepareToIngest(
-    messageToSend,
-    receiverSdexEngine,
-    receiverPrivateKey,
-    1,
-  );
+  const ingestedMessage = await prepareToIngest(messageToSend, sdexEngine, receiverPrivateKey, 1);
 
   expect(ingestedMessage).toEqual(originalMessage);
 });

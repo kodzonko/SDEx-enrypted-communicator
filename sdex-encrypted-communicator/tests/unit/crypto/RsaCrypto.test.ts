@@ -47,7 +47,7 @@ test.skip("Encrypting and decrypting text with RSA key pair.", async () => {
   expect(decryptedText).toBe(testMessage);
 });
 
-test.skip("Encrypting text with public RSA key raises error due to wrong RSA key.", async () => {
+test.skip("Encrypting text with public RSA key raises error due to wrong RSA key.", () => {
   const rsaKey = `-----BEGIN RSA PUBLIC KEY-----
   wrong key
   -----END RSA PUBLIC KEY-----`;
