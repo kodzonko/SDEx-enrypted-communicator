@@ -33,13 +33,6 @@ export class SqlDatabaseError extends Error {
   }
 }
 
-export class SecureStoreDatabaseError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "SecureStoreDatabaseError";
-  }
-}
-
 export class DataHandlerError extends Error {
   constructor(message: string) {
     super(message);
@@ -65,6 +58,13 @@ export class RsaDecryptionError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "RsaDecryptionError";
+  }
+}
+
+export class RsaSigningError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "RsaSigningError";
   }
 }
 
