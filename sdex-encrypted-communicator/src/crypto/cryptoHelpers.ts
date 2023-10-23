@@ -7,13 +7,13 @@ import * as Crypto from "expo-crypto";
  * @returns The generated session key part.
  */
 export function generateSessionKeyPart(byteCount = 32): Uint8Array {
-  return Crypto.getRandomBytes(byteCount);
+    return Crypto.getRandomBytes(byteCount);
 }
 
 /**
  * Splits a session key into two parts.
  */
 export function splitSessionKey(sessionKey: Uint8Array): Uint8Array[] {
-  const halfLength = sessionKey.length / 2;
-  return [sessionKey.slice(0, halfLength), sessionKey.slice(halfLength)];
+    const halfLength = sessionKey.length / 2;
+    return [sessionKey.slice(0, halfLength), sessionKey.slice(halfLength)];
 }

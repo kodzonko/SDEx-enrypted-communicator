@@ -2,7 +2,7 @@ import { decryptRsa, encryptRsa } from "../../../src/crypto/RsaCrypto";
 import { RsaEncryptionError } from "../../../src/Errors";
 
 test.skip("Encrypting and decrypting text with RSA key pair.", async () => {
-  const publicKey = `-----BEGIN RSA PUBLIC KEY-----
+    const publicKey = `-----BEGIN RSA PUBLIC KEY-----
   MIIBCgKCAQEAqt7XmmXprVIPhPMOdFwJg2BYlw47yLq6eZABd+k9hTA691Mmtanl
   T8ImJ1KGV/pyPQYeqpwkDlf8Q/yAwOoGvhgCWqr65WHxCCA0ByxklXiRFeBhe4/W
   LfrANzRYXysPpKF33XiGPhTaT2BCMNHsVcI1Bl4HqblmPeSwYloX7HMHjdF5RP3T
@@ -11,7 +11,7 @@ test.skip("Encrypting and decrypting text with RSA key pair.", async () => {
   oOislFltE6nLyeGfL8IeAZU6gr1FdTQUBwIDAQAB
   -----END RSA PUBLIC KEY-----
   `;
-  const privateKey = `-----BEGIN RSA PRIVATE KEY-----
+    const privateKey = `-----BEGIN RSA PRIVATE KEY-----
   MIIEowIBAAKCAQEAqt7XmmXprVIPhPMOdFwJg2BYlw47yLq6eZABd+k9hTA691Mm
   tanlT8ImJ1KGV/pyPQYeqpwkDlf8Q/yAwOoGvhgCWqr65WHxCCA0ByxklXiRFeBh
   e4/WLfrANzRYXysPpKF33XiGPhTaT2BCMNHsVcI1Bl4HqblmPeSwYloX7HMHjdF5
@@ -39,20 +39,20 @@ test.skip("Encrypting and decrypting text with RSA key pair.", async () => {
   o0tR5T5WQ+lcw5Cz+BOtLOTjY0Wx1A4OclwmmiDQgEdwE+jKnLXS
   -----END RSA PRIVATE KEY-----
   `;
-  const testMessage = "This is a test";
-  const encryptedText = await encryptRsa(publicKey, testMessage);
-  // Because the algorithm isn't idempotent, we can't compare the encrypted text with a known value.
-  expect(encryptedText).toBeTruthy();
-  const decryptedText = await decryptRsa(privateKey, encryptedText);
-  expect(decryptedText).toBe(testMessage);
+    const testMessage = "This is a test";
+    const encryptedText = await encryptRsa(publicKey, testMessage);
+    // Because the algorithm isn't idempotent, we can't compare the encrypted text with a known value.
+    expect(encryptedText).toBeTruthy();
+    const decryptedText = await decryptRsa(privateKey, encryptedText);
+    expect(decryptedText).toBe(testMessage);
 });
 
 test.skip("Encrypting text with public RSA key raises error due to wrong RSA key.", () => {
-  const rsaKey = `-----BEGIN RSA PUBLIC KEY-----
+    const rsaKey = `-----BEGIN RSA PUBLIC KEY-----
   wrong key
   -----END RSA PUBLIC KEY-----`;
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  expect(async () => {
-    await encryptRsa(rsaKey, "Hello World");
-  }).rejects.toThrow(RsaEncryptionError);
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    expect(async () => {
+        await encryptRsa(rsaKey, "Hello World");
+    }).rejects.toThrow(RsaEncryptionError);
 });

@@ -63,6 +63,13 @@ def validate_check_online_payload(data: Any) -> bool:
     return True
 
 
+def validate_check_has_crypto_context(data: Any) -> bool:
+    """Validate the payload for check has crypto context request."""
+    if not isinstance(data, str):
+        return False
+    return True
+
+
 def validate_chat_init_payload(data: Any) -> bool:
     """Validate the payload for chat initialization request."""
     if not isinstance(data, dict):
@@ -71,10 +78,6 @@ def validate_chat_init_payload(data: Any) -> bool:
         return False
     if not data.get("publicKeyTo", None):
         return False
-    if not data.get("initializationHashEncrypted", None):
-        return False
-    if not data.get("hashFromUserPasswordEncrypted", None):
-        return False
-    if not data.get("sessionKeyEncrypted", None):
+    if not data.get("sessionKeyPartEncrypted", None):
         return False
     return True

@@ -1,13 +1,13 @@
 import base64
-from concurrent.futures import Future
 from pathlib import Path
-from typing import Any, Awaitable, Optional
+from typing import Any, Awaitable
 
 import rsa
 from bidict import bidict
 from fastapi import FastAPI
 from fastapi_socketio import SocketManager
 from loguru import logger
+from socketio.exceptions import TimeoutError
 
 from sdex_server.connection.payload_sanitizers import (
     validate_chat_init_payload,
@@ -102,7 +102,7 @@ async def handle_register_follow_up(sid: str, data: Any) -> ResponseStatusType:
             pub_key=rsa.PublicKey.load_pkcs1(data["publicKey"]),
         )
         logger.info("Challenge verification successful.")
-    except rsa.VerificationError as e:
+    except rsa.VerificationError:
         logger.info("Challenge verification failed. Authentication unsuccessful.")
         return "error"
 
@@ -144,13 +144,12 @@ async def handle_register_follow_up(sid: str, data: Any) -> ResponseStatusType:
 
 
 @socket_manager.on("chatInit")  # type: ignore
-async def handle_chat_init(sender_sid: str, data: Any) -> Optional[str]:
+async def handle_chat_init(sender_sid: str, data: Any) -> str | None:
     """Exchanges chatInit messages between users.
 
     This event mediates exchange of session key parts between users.
     Each user delivers their part of the session key to the server
     and receives the second part of the session key from the other user.
-
     """
     logger.info(f'Received "chatInit" event from sid={sender_sid}.')
     logger.debug(f"Received data={data}.")
@@ -159,23 +158,23 @@ async def handle_chat_init(sender_sid: str, data: Any) -> Optional[str]:
         return None
     if sender_sid not in AUTHENTICATED_USERS:
         logger.info("User not authenticated. Ignoring request.")
-        return None
+        # return None
     receiver_sid = PUBLIC_KEYS_SIDS_MAPPING.get(data["publicKeyTo"], None)
+    if not receiver_sid:
+        logger.info("Receiver not connected. Ignoring request.")
+        return None
     logger.debug(f"sender_sid={sender_sid}, receiver_sid={receiver_sid}")
-    logger.info("Forwarding chatInit request to the receiver.")
-
-    session_key_second_part_future: Future[Optional[str]] = Future()
-
-    def callback(data: Any):
-        logger.info("Received response from second client.")
-        session_key_second_part_future.set_result(
-            data if isinstance(data, str) else None
+    logger.info("Forwarding chatInit request to the second client.")
+    try:
+        response: str | None = await socket_manager.call(
+            "chatInit", data=data, to=receiver_sid
         )
-
-    await socket_manager.emit("chatInit", data, to=receiver_sid, callback=callback)
-    session_key_second_part = await session_key_second_part_future
-
-    return session_key_second_part
+        logger.debug(f"response={response}")
+        logger.info("Returning response to the first client.")
+        return response
+    except TimeoutError:
+        logger.error("TimeoutError while waiting for response from second client.")
+        return None
 
 
 @socket_manager.on("chat")  # type: ignore
@@ -202,19 +201,27 @@ async def handle_chat(sender_sid: str, data: Any) -> ResponseStatusType:
 
     # Check if both parties are authenticated
     if sender_sid not in AUTHENTICATED_USERS:
-        logger.info("One of the users is not authenticated. Ignoring the message.")
-        logger.debug(f"sender_sid={sender_sid}, receiver_sid={receiver_sid}")
+        logger.info("Message sender is not authenticated. Ignoring the message.")
+        logger.debug(f"sender_sid={sender_sid}")
         return "error"
 
     # All conditions met, forwarding the message
-    await socket_manager.emit(
-        "chat",
-        data,
-        to=receiver_sid,
-    )
-    logger.info("Message forwarded successfully.")
-    logger.debug(f"Message forwarded to receiver: {data['publicKeyTo']}")
-    return "success"
+    try:
+        receiver_response: bool = await socket_manager.call(
+            "chat",
+            data,
+            to=receiver_sid,
+        )  # type: ignore
+        logger.info("Message forwarded successfully.")
+        logger.debug(f"Message forwarded to receiver: {data['publicKeyTo']}")
+        if receiver_response:
+            logger.info("Receiver responded with success.")
+            return "success"
+        else:
+            return "error"
+    except TimeoutError:
+        logger.error("TimeoutError while waiting for response from second client.")
+        return "error"
 
 
 @socket_manager.on("checkKey")  # type: ignore

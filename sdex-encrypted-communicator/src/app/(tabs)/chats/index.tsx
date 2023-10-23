@@ -20,114 +20,118 @@ import { sortChatRoomsDescendingByDate } from "../../../utils/Sort";
  * Screen displaying all threads existing in local persistent storage + fetched from the server.
  */
 export default function ChatRooms() {
-  const [addChatRoomModalVisible, setAddChatRoomModalVisible] = React.useState(false);
+    const [addChatRoomModalVisible, setAddChatRoomModalVisible] = React.useState(false);
 
-  const isFocused = useIsFocused();
+    const isFocused = useIsFocused();
 
-  const chatRooms = useChatRoomsStore((state) => state.chatRooms);
-  const setChatRooms = useChatRoomsStore((state) => state.setChatRooms);
-  const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
-  const setSqlDbSession = useSqlDbSessionStore((state) => state.setSqlDbSession);
+    const chatRooms = useChatRoomsStore((state) => state.chatRooms);
+    const setChatRooms = useChatRoomsStore((state) => state.setChatRooms);
+    const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
+    const setSqlDbSession = useSqlDbSessionStore((state) => state.setSqlDbSession);
 
-  const divider = () => <Divider />;
-  const leftIcon = (props: { color: string; style?: StyleProp<ViewStyle> }) => (
-    /* eslint-disable-next-line react/jsx-props-no-spreading */
-    <List.Icon {...props} icon="email" />
-  );
-
-  React.useEffect(() => {
-    if (isFocused && sqlDbSession) {
-      (async () => {
-        const chatRoomsFromDb = await getChatRooms(sqlDbSession);
-        const sortedChatRooms = sortChatRoomsDescendingByDate(chatRoomsFromDb);
-        setChatRooms(sortedChatRooms);
-      })();
-    } else if (!sqlDbSession) {
-      logger.info("sqlDbSession is undefined. Creating a new one.");
-      (async () => {
-        await setSqlDbSession();
-      })();
-      (async () => {
-        const chatRoomsFromDb = await getChatRooms(sqlDbSession);
-        const sortedChatRooms = sortChatRoomsDescendingByDate(chatRoomsFromDb);
-        setChatRooms(sortedChatRooms);
-      })();
-    }
-  }, [sqlDbSession, isFocused]);
-
-  React.useEffect(() => {
-    if (!socket.connected) {
-      socketConnect();
-    }
-  }, [socket.connected]);
-
-  /**
-   * Returns a badge if count > 0 else right arrow.
-   */
-  const makeBadge = (count: number) => {
-    const icon = count > 0 && count < 10 ? `numeric-${count}-circle` : "numeric-9-plus-circle";
-
-    return count > 0 ? (
-      <List.Icon icon={icon} color="red" />
-    ) : (
-      <List.Icon icon="arrow-right-circle" />
+    const divider = () => <Divider />;
+    const leftIcon = (props: { color: string; style?: StyleProp<ViewStyle> }) => (
+        /* eslint-disable-next-line react/jsx-props-no-spreading */
+        <List.Icon {...props} icon="email" />
     );
-  };
 
-  const showModal = () => {
-    logger.info("Showing AddChatRoomModal.");
-    setAddChatRoomModalVisible(true);
-  };
+    React.useEffect(() => {
+        if (isFocused && sqlDbSession) {
+            (async () => {
+                const chatRoomsFromDb = await getChatRooms(sqlDbSession);
+                const sortedChatRooms = sortChatRoomsDescendingByDate(chatRoomsFromDb);
+                setChatRooms(sortedChatRooms);
+            })();
+        } else if (!sqlDbSession) {
+            logger.info("sqlDbSession is undefined. Creating a new one.");
+            (async () => {
+                await setSqlDbSession();
+            })();
+            (async () => {
+                const chatRoomsFromDb = await getChatRooms(sqlDbSession);
+                const sortedChatRooms = sortChatRoomsDescendingByDate(chatRoomsFromDb);
+                setChatRooms(sortedChatRooms);
+            })();
+        }
+    }, [sqlDbSession, isFocused]);
 
-  const hideModal = () => setAddChatRoomModalVisible(false);
+    React.useEffect(() => {
+        if (!socket.connected) {
+            socketConnect();
+        }
+    }, [socket.connected]);
 
-  return (
-    <SafeAreaView className="flex-1">
-      <Appbar.Header style={styles.appBarHeader}>
-        <Appbar.Content title="Wiadomości" titleStyle={styles.appBarTitle} />
-        <Link href="/settings" asChild>
-          <Appbar.Action icon="cog" iconColor={styles.appBarIcons.color} />
-        </Link>
-      </Appbar.Header>
-      <FlatList
-        data={chatRooms}
-        keyExtractor={(item) => item.name + item.surname}
-        ItemSeparatorComponent={divider}
-        renderItem={({ item }) => (
-          <Link
-            href={{
-              pathname: "/chat/[contactId]",
-              params: { contactId: item.contactId },
-            }}
-            asChild
-          >
-            <List.Item
-              title={`${item.name} ${item.surname}`}
-              description={formatDistance(new Date(item.lastMessageDate), new Date(), {
-                addSuffix: true,
-                locale: pl,
-              })}
-              left={leftIcon}
-              right={() => makeBadge(item.unreadMessageCount)}
-              titleNumberOfLines={1}
-              descriptionNumberOfLines={1}
+    /**
+     * Returns a badge if count > 0 else right arrow.
+     */
+    const makeBadge = (count: number) => {
+        const icon = count > 0 && count < 10 ? `numeric-${count}-circle` : "numeric-9-plus-circle";
+
+        return count > 0 ? (
+            <List.Icon icon={icon} color="red" />
+        ) : (
+            <List.Icon icon="arrow-right-circle" />
+        );
+    };
+
+    const showModal = () => {
+        logger.info("Showing AddChatRoomModal.");
+        setAddChatRoomModalVisible(true);
+    };
+
+    const hideModal = () => setAddChatRoomModalVisible(false);
+
+    return (
+        <SafeAreaView className="flex-1">
+            <Appbar.Header style={styles.appBarHeader}>
+                <Appbar.Content title="Wiadomości" titleStyle={styles.appBarTitle} />
+                <Link href="/settings" asChild>
+                    <Appbar.Action icon="cog" iconColor={styles.appBarIcons.color} />
+                </Link>
+            </Appbar.Header>
+            <FlatList
+                data={chatRooms}
+                keyExtractor={(item) => item.name + item.surname}
+                ItemSeparatorComponent={divider}
+                renderItem={({ item }) => (
+                    <Link
+                        href={{
+                            pathname: "/chat/[contactId]",
+                            params: { contactId: item.contactId },
+                        }}
+                        asChild
+                    >
+                        <List.Item
+                            title={`${item.name} ${item.surname}`}
+                            description={formatDistance(
+                                new Date(item.lastMessageDate),
+                                new Date(),
+                                {
+                                    addSuffix: true,
+                                    locale: pl,
+                                },
+                            )}
+                            left={leftIcon}
+                            right={() => makeBadge(item.unreadMessageCount)}
+                            titleNumberOfLines={1}
+                            descriptionNumberOfLines={1}
+                        />
+                    </Link>
+                )}
             />
-          </Link>
-        )}
-      />
-      {addChatRoomModalVisible && (
-        <>
-          <FAB icon="plus" style={styles.fab} onPress={showModal} />
-          <BlurView
-            style={styles.blurView}
-            blurType="light"
-            blurAmount={10}
-            reducedTransparencyFallbackColor="white"
-          />
-        </>
-      )}
-      <AddChatRoomModal visible={addChatRoomModalVisible} hideFunction={hideModal} />
-      {!addChatRoomModalVisible && <FAB icon="plus" style={styles.fab} onPress={showModal} />}
-    </SafeAreaView>
-  );
+            {addChatRoomModalVisible && (
+                <>
+                    <FAB icon="plus" style={styles.fab} onPress={showModal} />
+                    <BlurView
+                        style={styles.blurView}
+                        blurType="light"
+                        blurAmount={10}
+                        reducedTransparencyFallbackColor="white"
+                    />
+                </>
+            )}
+            <AddChatRoomModal visible={addChatRoomModalVisible} hideFunction={hideModal} />
+            {!addChatRoomModalVisible && <FAB icon="plus" style={styles.fab} onPress={showModal} />}
+        </SafeAreaView>
+    );
 }
