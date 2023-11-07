@@ -24,8 +24,8 @@ export default function QrScanner() {
     }, []);
 
     const handleBarCodeScanned = (scan: BarCodeScannerResult) => {
-        logger.info("QR code scanned successfully.");
-        logger.debug(`QR code data=${JSON.stringify(scan.data)}.`);
+        logger.info("[QrScanner.handleBarCodeScanned] QR code scanned successfully.");
+        logger.debug(`[QrScanner.handleBarCodeScanned] QR code data=${JSON.stringify(scan.data)}.`);
         setScanned(true);
         setPublicKey(scan.data);
         Toast.show("Kod QR został zapisany.", {

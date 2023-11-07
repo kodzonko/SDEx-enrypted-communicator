@@ -1,6 +1,6 @@
 import base64
 from pathlib import Path
-from typing import Any, Awaitable
+from typing import Any
 
 import rsa
 from bidict import bidict
@@ -33,7 +33,6 @@ AUTHENTICATED_USERS: set[str] = set()
 # Maps sids to challenges sent to users for authentication
 SID_TO_CHALLENGE_MAPPING: dict[str, str] = {}
 
-
 db_manager = DatabaseManager(SQLITE_DB_PATH)
 
 app = FastAPI(title="SDEx communicator server", debug=True)
@@ -43,7 +42,7 @@ socket_manager = SocketManager(app=app)
 
 
 @socket_manager.on("connect")  # type: ignore
-async def handle_connect(sid, environ, auth) -> Awaitable[None] | None:
+async def handle_connect(sid, environ: Any, auth: Any) -> None:
     logger.info(f"User connected sid={sid}.")
     if not validate_connect_payload(auth):
         logger.info("Bad payload. Dropping connection.")
@@ -87,7 +86,7 @@ async def handle_register_follow_up(sid: str, data: Any) -> ResponseStatusType:
     logger.info(f'Received "registerFollowUp" event from sid={sid}.')
     logger.debug(f"Received data={data}")
     if not validate_register_follow_up_payload(data):
-        logger.info(("Bad payload. Returning status: error."))
+        logger.info("Bad payload. Returning status: error.")
         return "error"
     # Verify challenge
     challenge = SID_TO_CHALLENGE_MAPPING.get(sid, None)
@@ -114,10 +113,8 @@ async def handle_register_follow_up(sid: str, data: Any) -> ResponseStatusType:
     if user:
         logger.info(
             (
-                (
-                    "User with that login already exists. "
-                    "Verifying if public key and login match."
-                )
+                "User with that login already exists. "
+                "Verifying if public key and login match."
             )
         )
         if user.public_key != data["publicKey"] or user.login != data["login"]:
@@ -135,11 +132,11 @@ async def handle_register_follow_up(sid: str, data: Any) -> ResponseStatusType:
         )
         insert_successful = db_manager.add_user(user)
         if insert_successful:
-            logger.info(("User registered successfully."))
+            logger.info("User registered successfully.")
             AUTHENTICATED_USERS.add(sid)
             return "success"
         else:
-            logger.error(("Failed to register user due to database write error."))
+            logger.error("Failed to register user due to database write error.")
             return "error"
 
 
@@ -158,7 +155,7 @@ async def handle_chat_init(sender_sid: str, data: Any) -> str | None:
         return None
     if sender_sid not in AUTHENTICATED_USERS:
         logger.info("User not authenticated. Ignoring request.")
-        # return None
+        return None
     receiver_sid = PUBLIC_KEYS_SIDS_MAPPING.get(data["publicKeyTo"], None)
     if not receiver_sid:
         logger.info("Receiver not connected. Ignoring request.")

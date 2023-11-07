@@ -37,13 +37,13 @@ export default function SignUp(): Element {
             (async () => {
                 const result = await addContact(firstPartyContact, sqlDbSession);
                 if (result) {
-                    logger.info("Your contact has been added to the database.");
-                    logger.info("Signing in...");
+                    logger.info("[SignUp.useEffect] Your contact has been added to the database.");
+                    logger.info("[SignUp.useEffect] Signing in...");
                     // Signing in to the app
                     signIn();
                 } else {
                     logger.error(
-                        "An error occurred when trying to save user's contact to database.",
+                        "[SignUp.useEffect] An error occurred when trying to save user's contact to database.",
                     );
                     Alert.alert(
                         GENERIC_WRITE_ERROR_TITLE,
@@ -67,16 +67,18 @@ export default function SignUp(): Element {
         mmkvStorage.set("privateKey", privateKey);
         mmkvStorage.set("publicKey", publicKey);
         mmkvStorage.set("login", login);
-        logger.info("Login, PIN and key pair saved successfully.");
+        logger.info("[SignUp.handleSignUp] Login, PIN and key pair saved successfully.");
         // Creating fresh sql db file from template. Creating a new session.
-        logger.info("SignUp successful. Creating a new app database.");
+        logger.info("[SignUp.handleSignUp] SignUp successful. Creating a new app database.");
         await createDb()
             .then(async () => {
                 await setSqlDbSession();
                 setFirstPartyContact(new Contact("Twój profil", "", publicKey, 0));
             })
             .catch((error: Error) => {
-                logger.error(`Failed to create a new app database: ${error.message})`);
+                logger.error(
+                    `[SignUp.handleSignUp] Failed to create a new app database: ${error.message})`,
+                );
                 Alert.alert(
                     GENERIC_WRITE_ERROR_TITLE,
                     "Nie udało się utworzyć nowej bazy danych.",

@@ -29,7 +29,11 @@ export default function AddChatRoomModal({
         if (isFocused && sqlDbSession) {
             (async () => {
                 const contactsFromStorage: ContactListItem[] = await getContacts(sqlDbSession);
-                logger.info(`Contacts from storage: ${JSON.stringify(contactsFromStorage)}`);
+                logger.info(
+                    `[AddChatRoomModal.useEffect] Contacts from storage: ${JSON.stringify(
+                        contactsFromStorage,
+                    )}`,
+                );
                 setContacts(contactsFromStorage);
             })();
         }
@@ -38,14 +42,20 @@ export default function AddChatRoomModal({
     const goToChatRoom = () => {
         if (contactId) {
             hideModalFunction();
-            logger.info(`Going into chat screen with Contact=${contactId}`);
+            logger.info(
+                `[AddChatRoomModal.goToChatRoom] Going into chat screen with Contact=${contactId}`,
+            );
             router.push({
                 pathname: "/chat/[contactId]",
                 params: { contactId },
             });
             setContactId(undefined);
         } else {
-            logger.error(`Ignoring button press. contactId=${JSON.stringify(contactId)}`);
+            logger.error(
+                `[AddChatRoomModal.goToChatRoom] Ignoring button press. contactId=${JSON.stringify(
+                    contactId,
+                )}`,
+            );
         }
     };
 

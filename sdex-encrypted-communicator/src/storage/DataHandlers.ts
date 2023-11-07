@@ -24,14 +24,14 @@ import {
  * @returns List of contacts.
  */
 export const getContacts = async (dbSession?: WebSQLDatabase): Promise<ContactListItem[]> => {
-    logger.info("Getting contacts.");
+    logger.info("[getContacts] Getting contacts.");
     const contacts: ContactListItem[] = [];
     if (!dbSession) {
-        logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning [].`);
+        logger.error(`[getContacts] ${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning [].`);
         return contacts;
     }
     const results = await getContactsQuery(dbSession);
-    logger.info("Converting database results to Contact[].");
+    logger.info("[getContacts] Converting database results to Contact[].");
     results.forEach((result) => {
         contacts.push(
             new ContactListItem(
@@ -43,8 +43,8 @@ export const getContacts = async (dbSession?: WebSQLDatabase): Promise<ContactLi
             ),
         );
     });
-    logger.debug(`Results converted to Contacts: ${JSON.stringify(contacts)}`);
-    logger.info("Returning contacts.");
+    logger.debug(`[getContacts] Results converted to Contacts: ${JSON.stringify(contacts)}`);
+    logger.info("[getContacts] Returning contacts.");
     return contacts;
 };
 
@@ -58,18 +58,20 @@ export const getContactById = async (
     contactId: number,
     dbSession?: WebSQLDatabase,
 ): Promise<Contact | undefined> => {
-    logger.info("Getting contact by id.");
+    logger.info("[getContactById] Getting contact by id.");
     if (!dbSession) {
-        logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning.`);
+        logger.error(`[getContactById] ${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning.`);
         return undefined;
     }
     /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
     const result = (await getContactByIdQuery(contactId, dbSession))[0];
     if (!result) {
-        logger.info(`Contact with id=${contactId} not found in the database. Returning`);
+        logger.info(
+            `[getContactById] Contact with id=${contactId} not found in the database. Returning`,
+        );
         return undefined;
     }
-    logger.info("Converting database result to Contact.");
+    logger.info("[getContactById] Converting database result to Contact.");
     const contact: Contact = new Contact(
         /* eslint-disable @typescript-eslint/no-unsafe-member-access */
         <string>result.name,
@@ -78,8 +80,8 @@ export const getContactById = async (
         /* eslint-enable @typescript-eslint/no-unsafe-member-access */
         contactId,
     );
-    logger.debug(`Result converted to Contact: ${JSON.stringify(contact)}`);
-    logger.info("Returning contact.");
+    logger.debug(`[getContactById] Result converted to Contact: ${JSON.stringify(contact)}`);
+    logger.info("[getContactById] Returning contact.");
     return contact;
 };
 
@@ -87,18 +89,22 @@ export const getContactByPublicKey = async (
     publicKey: string,
     dbSession?: WebSQLDatabase,
 ): Promise<Contact | undefined> => {
-    logger.info("Getting contact by publicKey.");
+    logger.info("[getContactByPublicKey] Getting contact by publicKey.");
     if (!dbSession) {
-        logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning.`);
+        logger.error(
+            `[getContactByPublicKey] getContactByPublicKey${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning.`,
+        );
         return undefined;
     }
     /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
     const result = (await getContactByPublicKeyQuery(publicKey, dbSession))[0];
     if (!result) {
-        logger.info(`Contact with publicKey=${publicKey} not found in the database. Returning`);
+        logger.info(
+            `[getContactByPublicKey] Contact with publicKey=${publicKey} not found in the database. Returning`,
+        );
         return undefined;
     }
-    logger.info("Converting database result to Contact.");
+    logger.info("[getContactByPublicKey] Converting database result to Contact.");
     const contact: Contact = new Contact(
         /* eslint-disable @typescript-eslint/no-unsafe-member-access */
         <string>result.name,
@@ -107,8 +113,8 @@ export const getContactByPublicKey = async (
         Number(<string>result.contact_id),
         /* eslint-enable @typescript-eslint/no-unsafe-member-access */
     );
-    logger.debug(`Result converted to Contact: ${JSON.stringify(contact)}`);
-    logger.info("Returning contact.");
+    logger.debug(`[getContactByPublicKey] Result converted to Contact: ${JSON.stringify(contact)}`);
+    logger.info("[getContactByPublicKey] Returning contact.");
     return contact;
 };
 
@@ -122,9 +128,9 @@ export const addContact = async (
     contact: Contact,
     dbSession?: WebSQLDatabase,
 ): Promise<boolean> => {
-    logger.info("Saving a contact.");
+    logger.info("[addContact] Saving a contact.");
     if (!dbSession) {
-        logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning false.`);
+        logger.error(`[addContact] ${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning false.`);
         return false;
     }
     // Replace windows (\r\n) newlines with unix newlines (\n).
@@ -133,14 +139,16 @@ export const addContact = async (
     contact.publicKey = contact.publicKey.replace(/\r/gm, "");
     const results = await addContactQuery(contact, dbSession);
     if (results.rowsAffected === 1 && typeof results.insertId === "number") {
-        logger.debug(`Contact saved successfully. Inserted id=${results.insertId}`);
-        logger.info("Contact saved successfully.");
+        logger.debug(`[addContact] Contact saved successfully. Inserted id=${results.insertId}`);
+        logger.info("[addContact] Contact saved successfully.");
         /* eslint-disable-next-line no-param-reassign */
         contact.id = results.insertId;
-        logger.info("Contact instance has been updated with an id generated by database.");
+        logger.info(
+            "[addContact] Contact instance has been updated with an id generated by database.",
+        );
         return true;
     }
-    logger.error("Failed to save a contact.");
+    logger.error("[addContact] Failed to save a contact.");
     return false;
 };
 
@@ -148,24 +156,24 @@ export const updateContact = async (
     contact: Contact,
     dbSession?: WebSQLDatabase,
 ): Promise<boolean> => {
-    logger.info("Updating a contact.");
+    logger.info("[updateContact] Updating a contact.");
     if (!dbSession) {
-        logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning false.`);
+        logger.error(`[updateContact] ${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning false.`);
         return false;
     }
     if (contact.id === undefined) {
         logger.error(
-            "Contact id=undefined (probably contact wasn't loaded from database). Returning false.",
+            "[updateContact] Contact id=undefined (probably contact wasn't loaded from database). Returning false.",
         );
         return false;
     }
     const results = await updateContactQuery(contact, dbSession);
     if (results.rowsAffected === 1) {
-        logger.info("Contact updated successfully.");
+        logger.info("[updateContact] Contact updated successfully.");
         /* eslint-disable-next-line no-param-reassign */
         return true;
     }
-    logger.error("Failed to update a contact.");
+    logger.error("[updateContact] Failed to update a contact.");
     return false;
 };
 
@@ -173,17 +181,17 @@ export const removeContact = async (
     contactId: number,
     dbSession?: WebSQLDatabase,
 ): Promise<boolean> => {
-    logger.info(`Removing contact with id=${contactId}`);
+    logger.info(`[removeContact] Removing contact with id=${contactId}`);
     if (!dbSession) {
-        logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning false.`);
+        logger.error(`[removeContact] ${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning false.`);
         return false;
     }
     const results = await removeContactQuery(contactId, dbSession);
     if (results.rowsAffected === 1) {
-        logger.info("Contact removed successfully.");
+        logger.info("[removeContact] Contact removed successfully.");
         return true;
     }
-    logger.error("Failed to remove a contact.");
+    logger.error("[removeContact] Failed to remove a contact.");
     return false;
 };
 
@@ -193,14 +201,14 @@ export const removeContact = async (
  * @returns List of ChatRoomListItem objects.
  */
 export const getChatRooms = async (dbSession?: WebSQLDatabase): Promise<ChatRoom[]> => {
-    logger.info("Getting chat rooms.");
+    logger.info("[getChatRooms] Getting chat rooms.");
     const chatRooms: ChatRoom[] = [];
     if (!dbSession) {
-        logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning []`);
+        logger.error(`[getChatRooms] ${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning []`);
         return chatRooms;
     }
     const results = await getChatRoomsQuery(dbSession);
-    logger.info("Converting database results to ChatRoom items.");
+    logger.info("[getChatRooms] Converting database results to ChatRoom items.");
     results.forEach((result) => {
         chatRooms.push(
             new ChatRoom(
@@ -214,8 +222,8 @@ export const getChatRooms = async (dbSession?: WebSQLDatabase): Promise<ChatRoom
             ),
         );
     });
-    logger.debug(`Results converted to ChatRooms: ${JSON.stringify(chatRooms)}`);
-    logger.info("Returning chat rooms.");
+    logger.debug(`[getChatRooms] Results converted to ChatRooms: ${JSON.stringify(chatRooms)}`);
+    logger.info("[getChatRooms] Returning chat rooms.");
     return chatRooms;
 };
 
@@ -229,14 +237,14 @@ export const getMessagesByContactId = async (
     contactId: number,
     dbSession?: WebSQLDatabase,
 ): Promise<Message[]> => {
-    logger.info("Getting messages with a provided contact.");
+    logger.info("[getMessagesByContactId] Getting messages with a provided contact.");
     const messages: Message[] = [];
     if (!dbSession) {
-        logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning []`);
+        logger.error(`[getMessagesByContactId] ${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning []`);
         return messages;
     }
     const results = await getMessagesByContactIdQuery(contactId, dbSession);
-    logger.info("Converting database results to Message[].");
+    logger.info("[getMessagesByContactId] Converting database results to Message[].");
     results.forEach((result) => {
         messages.push(
             new Message(
@@ -254,8 +262,10 @@ export const getMessagesByContactId = async (
             ),
         );
     });
-    logger.debug(`Results converted to Messages=${JSON.stringify(messages)}`);
-    logger.info("Returning messages list.");
+    logger.debug(
+        `[getMessagesByContactId] Results converted to Messages=${JSON.stringify(messages)}`,
+    );
+    logger.info("[getMessagesByContactId] Returning messages list.");
     return messages;
 };
 
@@ -269,36 +279,41 @@ export const addMessage = async (
     message: Message,
     dbSession?: WebSQLDatabase,
 ): Promise<boolean> => {
-    logger.info("Saving a message.");
+    logger.info("[addMessage] Saving a message.");
     if (!dbSession) {
-        logger.error(MISSING_SQL_DB_SESSION_FAILURE_MSG);
-        throw new PreconditionError("Cannot save a message. Database session is missing.");
+        logger.error(`[addMessage] ${MISSING_SQL_DB_SESSION_FAILURE_MSG}`);
+        throw new PreconditionError(
+            "[addMessage] Cannot save a message. Database session is missing.",
+        );
     }
-    if (
-        !(
-            (await getContactById(message.contactIdFrom, dbSession)) ||
-            (await getContactById(message.contactIdFrom, dbSession))
-        )
-    ) {
-        logger.debug(`contactIdFrom=${message.contactIdFrom}, contactIdTo=${message.contactIdTo}`);
-        if (!message.contactIdFrom) {
-            logger.error("Sender's contact id not found in the database");
+    const senderContact = await getContactById(message.contactIdFrom, dbSession);
+    const receiverContact = await getContactById(message.contactIdFrom, dbSession);
+    if (!(senderContact || receiverContact)) {
+        logger.debug(
+            `[addMessage] senderContact=${JSON.stringify(
+                senderContact,
+            )}, receiverContact=${JSON.stringify(receiverContact)}`,
+        );
+        if (!senderContact) {
+            logger.error("[addMessage] Sender's contact id not found in the database");
         }
-        if (!message.contactIdTo) {
-            logger.error("Receiver's contact id not found in the database");
+        if (!receiverContact) {
+            logger.error("[addMessage] Receiver's contact id not found in the database");
         }
-        throw new DataHandlerError("Failed to save a message in the database.");
+        throw new DataHandlerError("[addMessage] Failed to save a message in the database.");
     }
     const results = await addMessageQuery(message, dbSession);
     if (results.rowsAffected === 1 && results.insertId) {
-        logger.debug(`Message saved successfully. Inserted id=${results.insertId}`);
-        logger.info("Message saved successfully.");
+        logger.debug(`[addMessage] Message saved successfully. Inserted id=${results.insertId}`);
+        logger.info("[addMessage] Message saved successfully.");
         /* eslint-disable-next-line no-param-reassign */
         message.id = results.insertId;
-        logger.info("Message instance has been updated with an id generated by database.");
+        logger.info(
+            "[addMessage] Message instance has been updated with an id generated by database.",
+        );
         return true;
     }
-    logger.error("Failed to save a message.");
+    logger.error("[addMessage] Failed to save a message.");
     return false;
 };
 
@@ -308,33 +323,33 @@ export const addMessage = async (
  * @returns Number of unread messages.
  */
 export const getUnreadCount = async (dbSession?: WebSQLDatabase): Promise<number> => {
-    logger.info("Getting a number of unread messages from SQL database.");
+    logger.info("[getUnreadCount] Getting a number of unread messages from SQL database.");
     if (!dbSession) {
-        logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning count=0.`);
+        logger.error(`[getUnreadCount] ${MISSING_SQL_DB_SESSION_FAILURE_MSG} Returning count=0.`);
         return 0;
     }
     const results = await getUnreadCountQuery(dbSession);
     /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
     const parsedResult: number = <number>results[0].count;
-    logger.debug(`Parsed result=${parsedResult}`);
+    logger.debug(`[getUnreadCount] Parsed result=${parsedResult}`);
     return parsedResult;
 };
 
 export const selectRsaKeyFile = async (): Promise<string | undefined> => {
-    logger.info("Selecting RSA key file.");
+    logger.info("[selectRsaKeyFile] Selecting RSA key file.");
     const uri = await selectFile();
     if (!uri) {
-        logger.error("Failed to select RSA key file.");
+        logger.error("[selectRsaKeyFile] Failed to select RSA key file.");
         return undefined;
     }
-    logger.info(`Returning content of the file=${uri}`);
+    logger.info(`[selectRsaKeyFile] Returning content of the file=${uri}`);
     const fileContent = await readFile(uri);
     if (fileContent === undefined) {
-        logger.error("Failed to read RSA key file or file is empty.");
+        logger.error("[selectRsaKeyFile] Failed to read RSA key file or file is empty.");
     } else if (fileContent.length === 0) {
-        logger.error("File is empty.");
+        logger.error("[selectRsaKeyFile] File is empty.");
     }
-    logger.debug(`File content=${JSON.stringify(fileContent)}`);
+    logger.debug(`[selectRsaKeyFile] File content=${JSON.stringify(fileContent)}`);
     return fileContent;
 };
 
@@ -342,19 +357,23 @@ export const markMessagesAsRead = async (
     thirdPartyContactId: number,
     dbSession?: WebSQLDatabase,
 ): Promise<boolean> => {
-    logger.info("Marking all messages to and from a given contact id as read.");
+    logger.info(
+        "[markMessagesAsRead] Marking all messages to and from a given contact id as read.",
+    );
     if (!dbSession) {
-        logger.error(`${MISSING_SQL_DB_SESSION_FAILURE_MSG}`);
+        logger.error(`[markMessagesAsRead] ${MISSING_SQL_DB_SESSION_FAILURE_MSG}`);
         return false;
     }
 
     try {
         return await markMessagesAsReadQuery(thirdPartyContactId, dbSession);
     } catch (error: any) {
-        logger.error("Failed to mark messages as read.");
+        logger.error("[markMessagesAsRead] Failed to mark messages as read.");
         throw new DataHandlerError(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            `Failed to mark messages as read: ${JSON.stringify(error.message)}`,
+            `[markMessagesAsRead] Failed to mark messages as read: ${JSON.stringify(
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                error.message,
+            )}`,
         );
     }
 };

@@ -1,5 +1,4 @@
 import { IMessage as GiftedChatMessage } from "react-native-gifted-chat/lib/Models";
-import { TextEncoder } from "text-encoding";
 import { Contact, Message, TransportedMessage } from "../Types";
 
 const firstOrThirdPartyName = (
@@ -116,14 +115,16 @@ export const changeTo1IndexedArray = (array: Uint8Array[]): Uint8Array[] => {
  * @param array
  * @returns An utf-8 string.
  */
-export const bytesToString = (array: Uint8Array): string => new TextDecoder().decode(array);
+export const bytesToString = (array: Uint8Array): string =>
+    String.fromCharCode.apply(null, Array.from(array));
 
 /**
  * Converts a string to Uint8Array.
  * @param text
  * @returns An Uint8Array.
  */
-export const stringToBytes = (text: string): Uint8Array => new TextEncoder().encode(text);
+export const stringToBytes = (text: string): Uint8Array =>
+    new Uint8Array(text.split("").map((c) => c.charCodeAt(0)));
 
 export function messageToTransportedMessage(
     message: Message,

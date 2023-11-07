@@ -209,9 +209,9 @@ export interface ServerToClientEvents {
     connect_error: (error: Error) => void;
     registerInit: (salt: string) => void;
     registerFollowUp: (status: StatusResponse) => void;
-    chatInit: (data: ChatInitPayload) => void;
+    chatInit: (data: ChatInitPayload, callback: (sessionKeyPart: string | null) => void) => void;
     chatInitFollowUp: (data: ChatInitFollowUpPayload) => void;
-    chat: (message: TransportedMessage) => Promise<boolean>;
+    chat: (message: TransportedMessage, callback: (response: boolean) => void) => void;
 }
 
 export interface ClientToServerEvents {

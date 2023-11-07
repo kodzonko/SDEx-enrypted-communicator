@@ -19,7 +19,7 @@ export default function QrCodeDialog({
 }) {
     const qrRef = React.createRef();
     const saveQrImg = async () => {
-        logger.info("Saving QR code to a file.");
+        logger.info("[QrCodeDialog.saveQrImg] Saving QR code to a file.");
         const result = await saveImage("qr.png", qrRef.current as string);
         if (!result) {
             Alert.alert(GENERIC_WRITE_ERROR_TITLE, "Nie udało się zapisać QR kodu.", [

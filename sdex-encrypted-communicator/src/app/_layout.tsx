@@ -17,7 +17,7 @@ export default function RootLayout() {
         if (!isSignedIn) {
             router.replace("/sign-in");
         } else {
-            logger.info("Registering client on the server...");
+            logger.info("[RootLayout.useEffect] Registering client on the server...");
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             requestRegister();
             router.replace("/chats");

@@ -47,10 +47,22 @@ export default class SdexCrypto {
      */
     static calculateBlock(block: Uint8Array, hash1: Uint8Array, hash2: Uint8Array): Uint8Array {
         if (block.length !== hash1.length || block.length !== hash2.length) {
-            logger.error(`block length=${block.length}, block=${block.toString()}`);
-            logger.error(`hash1 length=${hash1.length}, hash1=${hash1.toString()}`);
-            logger.error(`hash2 length=${hash2.length}, hash2=${hash2.toString()}`);
-            throw new SdexEncryptionError("Invalid block length");
+            logger.error(
+                `[SdexCrypto.calculateBlock] block length=${
+                    block.length
+                }, block=${block.toString()}`,
+            );
+            logger.error(
+                `[SdexCrypto.calculateBlock] hash1 length=${
+                    hash1.length
+                }, hash1=${hash1.toString()}`,
+            );
+            logger.error(
+                `[SdexCrypto.calculateBlock] hash2 length=${
+                    hash2.length
+                }, hash2=${hash2.toString()}`,
+            );
+            throw new SdexEncryptionError("[SdexCrypto.calculateBlock] Invalid block length");
         }
         return xorUintArrays(block, hash1, hash2);
     }
@@ -65,7 +77,7 @@ export default class SdexCrypto {
 
         // hashIterations[0] = this.sessionKeyFirstPartHash; // h0
         // First block
-        logger.debug("Calculating k=1 block.");
+        logger.debug("[SdexCrypto.calculateMessage] Calculating k=1 block.");
         // C1
         result[1] = SdexCrypto.calculateBlock(
             messageBlocks[1] as Uint8Array,
@@ -79,7 +91,7 @@ export default class SdexCrypto {
         );
 
         // Second block
-        logger.debug("Calculating k=2 block.");
+        logger.debug("[SdexCrypto.calculateMessage] Calculating k=2 block.");
         // C2
         if (messageBlocks[2]) {
             result[2] = SdexCrypto.calculateBlock(
@@ -100,7 +112,7 @@ export default class SdexCrypto {
         for (let k = 1; k <= messageBlocks.length; k += 1) {
             // k-th hash iteration
             if (k >= 3) {
-                logger.debug(`Calculating hash iteration k=${k}.`);
+                logger.debug(`[SdexCrypto.calculateMessage] Calculating hash iteration k=${k}.`);
                 hashIterations[k] = this.blake3Wrapper(
                     xorUintArrays(
                         hashIterations[k - 1] ?? this.ZEROED_BLOCK,
@@ -111,7 +123,7 @@ export default class SdexCrypto {
                         messageBlocks[2 * k] ?? this.ZEROED_BLOCK,
                     ),
                 );
-                logger.debug(`Calculating k=${k + 1} block.`);
+                logger.debug(`[SdexCrypto.calculateMessage] Calculating k=${k + 1} block.`);
                 // Odd blocks in 1-based indexing (k=3, 5, 7...)
                 result[2 * k + 1] = SdexCrypto.calculateBlock(
                     messageBlocks[2 * k + 1] ?? this.ZEROED_BLOCK,
@@ -134,21 +146,27 @@ export default class SdexCrypto {
     }
 
     encryptMessage(message: string): Uint8Array {
-        logger.info("Encrypting message.");
+        logger.info("[SdexCrypto.encryptMessage] Encrypting message.");
         const messageByteArray = stringToBytes(message);
+        logger.debug(`[SdexCrypto.encryptMessage] messageByteArray=${messageByteArray.toString()}`);
         const encrypted = this.calculateMessage(messageByteArray);
-        logger.debug(`(SDEx) Encrypted message: ${JSON.stringify(encrypted)}`);
+        logger.debug(
+            `[SdexCrypto.encryptMessage] (SDEx) Encrypted message: ${JSON.stringify(encrypted)}`,
+        );
         return encrypted;
     }
 
     decryptMessage(messageCipherTextByteArray: Uint8Array): string {
-        logger.info("Decrypting message.");
+        logger.info("[SdexCrypto.decryptMessage] Decrypting message.");
         const decryptedByteArray = this.calculateMessage(messageCipherTextByteArray);
+        logger.debug(
+            `[SdexCrypto.decryptMessage] decryptedByteArray=${decryptedByteArray.toString()}`,
+        );
         // Remove empty superfluous bytes from the end of the last block
         for (let i = decryptedByteArray.length - 1; i >= 0; i -= 1) {
             if (decryptedByteArray[i] !== 0) {
                 const decrypted = bytesToString(decryptedByteArray.slice(0, i + 1));
-                logger.debug(`(SDEx) Decrypted message: ${decrypted}`);
+                logger.debug(`[SdexCrypto.decryptMessage] (SDEx) Decrypted message: ${decrypted}`);
                 return decrypted;
             }
         }

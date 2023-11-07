@@ -19,7 +19,7 @@ test("Convert a byte array (Uint8Array) to a string.", () => {
 });
 
 test("String to bytes conversion is reversible.", () => {
-    const testString = "this is a test+=/\\|ąę.,<";
+    const testString = "this is a test+=/\\|ąęśćżźó.,<";
     const bytes = stringToBytes(testString);
     const decodedString = bytesToString(bytes);
     expect(decodedString).toBe(testString);
@@ -35,7 +35,8 @@ test("Merge several byte arrays (Uint8Array) into one.", () => {
 });
 
 test("Convert Message into GiftChatMessage", () => {
-    const contact = new Contact("Jane", "Doe", "rsa-key-123", "messaging-key-999", 17);
+    const contact = new Contact("Jane", "Doe", "rsa-key-123", 17);
+    const firstPartyContact = new Contact("Your", "Profile", "rsa-key-111", 0);
     const message = new Message(
         17,
         2,
@@ -53,6 +54,6 @@ test("Convert Message into GiftChatMessage", () => {
         audio: undefined,
         user: { _id: 17, name: "Jane Doe" },
     };
-    const giftedChatMessage = messageToGiftedChatMessage(message, contact);
+    const giftedChatMessage = messageToGiftedChatMessage(message, contact, firstPartyContact);
     expect(giftedChatMessage).toEqual(expected);
 });

@@ -40,17 +40,23 @@ export default function ContactView() {
         (async () => {
             // If contactID is -1, then user is creating a new contact (so we don't look for it in database).
             if (contactId && contactId !== "-1") {
-                logger.info(`Fetching contact info for contactId=${JSON.stringify(contactId)}.`);
+                logger.info(
+                    `[ContactView.useEffect] Fetching contact info for contactId=${JSON.stringify(
+                        contactId,
+                    )}.`,
+                );
                 const dbQueryResult = await getContactById(Number(contactId), sqlDbSession);
                 if (!dbQueryResult) {
                     logger.error(
-                        `User with contactId=${JSON.stringify(contactId)} not found in storage.`,
+                        `[ContactView.useEffect] User with contactId=${JSON.stringify(
+                            contactId,
+                        )} not found in storage.`,
                     );
                 } else {
                     setContact(dbQueryResult);
                 }
             } else {
-                logger.info(`Creating new contact.`);
+                logger.info(`[ContactView.useEffect] Creating new contact.`);
             }
         })();
     }, [contactId]);
@@ -58,7 +64,7 @@ export default function ContactView() {
     React.useEffect(() => {
         if (contact) {
             logger.info(
-                "Pulled contact data from db successfully. Filling forms with contact data and going into update mode.",
+                "[ContactView.useEffect] Pulled contact data from db successfully. Filling forms with contact data and going into update mode.",
             );
             setContactBuilder({
                 name: contact.name,
@@ -71,7 +77,7 @@ export default function ContactView() {
 
     React.useEffect(() => {
         if (publicKey) {
-            logger.info("Updating form with scanned RSA key.");
+            logger.info("[ContactView.useEffect] Updating form with scanned RSA key.");
             setContactBuilder({
                 ...contactBuilder,
                 publicKey,
@@ -85,7 +91,9 @@ export default function ContactView() {
             typeof contactBuilder.surname !== "string" ||
             typeof contactBuilder.publicKey !== "string"
         ) {
-            logger.error("Contact builder verification unsuccessful. Some fields are not strings.");
+            logger.error(
+                "[ContactView.verifyContactBuilder] Contact builder verification unsuccessful. Some fields are not strings.",
+            );
             return false;
         }
         if (
@@ -93,16 +101,16 @@ export default function ContactView() {
             contactBuilder.publicKey.length < 1
         ) {
             logger.error(
-                "Contact builder verification unsuccessful. Some fields are empty strings.",
+                "[ContactView.verifyContactBuilder] Contact builder verification unsuccessful. Some fields are empty strings.",
             );
             return false;
         }
-        logger.info("Contact builder verification successful.");
+        logger.info("[ContactView.verifyContactBuilder] Contact builder verification successful.");
         return true;
     };
 
     const handleContactSave = async (): Promise<void> => {
-        logger.info("Handling contact save.");
+        logger.info("[ContactView.handleContactSave] Handling contact save.");
         if (verifyContactBuilder()) {
             const contactFromBuilder: Contact = new Contact(
                 contactBuilder.name.trim(),
@@ -113,16 +121,16 @@ export default function ContactView() {
             setPublicKey("");
             let dbQueryResult = false;
             if (updateMode) {
-                logger.info("Updating contact in database.");
+                logger.info("[ContactView.handleContactSave] Updating contact in database.");
                 dbQueryResult = await updateContact(contactFromBuilder, sqlDbSession);
                 router.back();
             } else {
-                logger.info("Adding new contact to database.");
+                logger.info("[ContactView.handleContactSave] Adding new contact to database.");
                 dbQueryResult = await addContact(contactFromBuilder, sqlDbSession);
                 router.back();
             }
             if (!dbQueryResult) {
-                logger.error("Failed to save contact to database.");
+                logger.error("[ContactView.handleContactSave] Failed to save contact to database.");
                 Alert.alert(
                     "Błąd",
                     "Nie udało się zapisać kontaktu. Błąd bazy danych.",
@@ -131,7 +139,7 @@ export default function ContactView() {
                 );
                 return;
             }
-            logger.info("Contact saved to database successfully.");
+            logger.info("[ContactView.handleContactSave] Contact saved to database successfully.");
             return;
         }
         // verification failed
@@ -144,7 +152,7 @@ export default function ContactView() {
     };
 
     const handleContactRemove = (): void => {
-        logger.info("Handling contact remove.");
+        logger.info("[ContactView.handleContactRemove] Handling contact remove.");
         if (contactId && contactId !== "-1") {
             Alert.alert(
                 "Usuwanie kontaktu",
@@ -160,7 +168,9 @@ export default function ContactView() {
                                 sqlDbSession,
                             );
                             if (!dbQueryResult) {
-                                logger.error("Failed to remove contact from database.");
+                                logger.error(
+                                    "[ContactView.handleContactRemove] Failed to remove contact from database.",
+                                );
                                 Alert.alert(
                                     "Błąd",
                                     "Nie udało się usunąć kontaktu. Błąd bazy danych.",
@@ -169,7 +179,9 @@ export default function ContactView() {
                                 );
                                 return;
                             }
-                            logger.info("Contact removed from database successfully.");
+                            logger.info(
+                                "[ContactView.handleContactRemove] Contact removed from database successfully.",
+                            );
                             router.back();
                         },
                     },
@@ -184,13 +196,13 @@ export default function ContactView() {
     };
 
     const handleImportRsaKey = React.useCallback(async () => {
-        logger.info("Handling RSA key import.");
+        logger.info("[ContactView.handleImportRsaKey] Handling RSA key import.");
         const rsaKey = await selectRsaKeyFile();
         if (!rsaKey) {
-            logger.warn("No RSA key file selected.");
+            logger.warn("[ContactView.handleImportRsaKey] No RSA key file selected.");
             return;
         }
-        logger.info("Selected RSA key file.");
+        logger.info("[ContactView.handleImportRsaKey] Selected RSA key file.");
         setContactBuilder({ ...contactBuilder, publicKey: rsaKey });
     }, [selectRsaKeyFile]);
 

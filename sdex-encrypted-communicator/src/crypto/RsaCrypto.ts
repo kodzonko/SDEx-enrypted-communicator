@@ -14,16 +14,22 @@ import { KeyPair } from "../Types";
  * @returns The generated key pair.
  */
 export async function generateKeyPair(bits = 2048): Promise<KeyPair> {
-    logger.info("Generating RSA key pair.");
+    logger.info("[RsaCrypto.generateKeyPair] Generating RSA key pair.");
     return RSA.generateKeys(bits)
         .then((keyPair) => ({
             publicKey: keyPair.public,
             privateKey: keyPair.private,
         }))
         .catch((error: any) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            logger.error(`Error when generating key pair: ${JSON.stringify(error.message)}`);
-            throw new RsaGenerationError("Failed to generate RSA key pair.");
+            logger.error(
+                `[RsaCrypto.generateKeyPair] Error when generating key pair: ${JSON.stringify(
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    error.message,
+                )}`,
+            );
+            throw new RsaGenerationError(
+                "[RsaCrypto.generateKeyPair] Failed to generate RSA key pair.",
+            );
         });
 }
 
@@ -34,49 +40,61 @@ export async function generateKeyPair(bits = 2048): Promise<KeyPair> {
  * @returns true if operation has been successful, false otherwise.
  */
 export async function exportKeyPair(keyPair: KeyPair): Promise<void> {
-    logger.info("Exporting key pair to files in a chosen directory.");
+    logger.info("[RsaCrypto.exportKeyPair] Exporting key pair to files in a chosen directory.");
     await saveFileToDocumentsDirectory("id_rsa.pub.txt", keyPair.publicKey);
     await saveFileToDocumentsDirectory("id_rsa.txt", keyPair.privateKey);
 }
 
 export async function encryptRsa(publicKey: string, text: string): Promise<string> {
-    logger.info("Encrypting text with RSA public key.");
+    logger.info("[RsaCrypto.encryptRsa] Encrypting text with RSA public key.");
     try {
         const encrypted = await RSA.encrypt(text, publicKey);
-        logger.debug(`(RSA) Encrypted text: ${encrypted}`);
+        logger.debug(`[RsaCrypto.encryptRsa] (RSA) Encrypted text: ${encrypted}`);
         return encrypted;
     } catch (error: any) {
         logger.error(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            `Error when encrypting text with RSA public key: ${JSON.stringify(error.message)}`,
+            `[RsaCrypto.encryptRsa] Error when encrypting text with RSA public key: ${JSON.stringify(
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                error.message,
+            )}`,
         );
-        throw new RsaEncryptionError(`Failed to encrypt text with RSA public key.`);
+        throw new RsaEncryptionError(
+            `[RsaCrypto.encryptRsa] Failed to encrypt text with RSA public key.`,
+        );
     }
 }
 export async function decryptRsa(privateKey: string, text: string): Promise<string> {
-    logger.info("Decrypting text with RSA private key.");
+    logger.info("[RsaCrypto.decryptRsa] Decrypting text with RSA private key.");
     try {
         const decrypted = await RSA.decrypt(text, privateKey);
-        logger.debug(`(RSA) Decrypted text: ${text}`);
+        logger.debug(`[RsaCrypto.decryptRsa] (RSA) Decrypted text: ${decrypted}`);
         return decrypted;
     } catch (error: any) {
         logger.error(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            `Error when decrypting text with RSA private key: ${JSON.stringify(error.message)}`,
+            `[RsaCrypto.decryptRsa] Error when decrypting text with RSA private key: ${JSON.stringify(
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                error.message,
+            )}`,
         );
-        throw new RsaDecryptionError("Failed to decrypt text with RSA private key.");
+        throw new RsaDecryptionError(
+            "[RsaCrypto.decryptRsa] Failed to decrypt text with RSA private key.",
+        );
     }
 }
 
 export async function signRsa(privateKey: string, text: string): Promise<string> {
-    logger.info("Signing text with RSA private key.");
+    logger.info("[RsaCrypto.signRsa] Signing text with RSA private key.");
     try {
         const signature = await RSA.sign(text, privateKey);
-        logger.debug(`(RSA) signature: ${signature}`);
+        logger.debug(`[RsaCrypto.signRsa] (RSA) signature: ${signature}`);
         return signature;
-    } catch (e: any) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        logger.error(`Error when signing text with RSA private key: ${JSON.stringify(e.message)}`);
-        throw new RsaSigningError("Failed to sign text with RSA private key.");
+    } catch (error: any) {
+        logger.error(
+            `[RsaCrypto.signRsa] Error when signing text with RSA private key: ${JSON.stringify(
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                error.message,
+            )}`,
+        );
+        throw new RsaSigningError("[RsaCrypto.signRsa] Failed to sign text with RSA private key.");
     }
 }

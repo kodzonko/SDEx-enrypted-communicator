@@ -31,7 +31,11 @@ export default function Contacts() {
         if (isFocused && sqlDbSession) {
             (async () => {
                 const contactsFromStorage: ContactListItem[] = await getContacts(sqlDbSession);
-                logger.info(`Contacts from storage: ${JSON.stringify(contactsFromStorage)}`);
+                logger.info(
+                    `[Contacts.useEffect] Contacts from storage: ${JSON.stringify(
+                        contactsFromStorage,
+                    )}`,
+                );
                 setContacts(contactsFromStorage);
             })();
         }

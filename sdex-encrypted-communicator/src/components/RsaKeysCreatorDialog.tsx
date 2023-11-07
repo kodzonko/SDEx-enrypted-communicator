@@ -22,7 +22,7 @@ export default function RsaKeysCreatorDialog({
     const setPrivateKey = useKeyPairStore((state) => state.setPrivateKey);
 
     const handleKeysGen = (): void => {
-        logger.info("Generating key pair.");
+        logger.info("[RsaKeysCreatorDialog.handleKeysGen] Generating key pair.");
         hideFunc();
         // eslint-disable-next-line no-void
         void generateKeyPair().then((result) => {
@@ -36,44 +36,66 @@ export default function RsaKeysCreatorDialog({
             Toast.show("Wybierz plik z kluczem publicznym, a następnie prywatnym.", {
                 duration: Toast.durations.SHORT,
             });
-            logger.info("Picking a file with public key..");
+            logger.info("[RsaKeysCreatorDialog.handleKeysImport] Picking a file with public key..");
             const documentPublic = await DocumentPicker.getDocumentAsync();
             if (documentPublic.type === "success") {
-                logger.info("Reading public key from a file.");
+                logger.info(
+                    "[RsaKeysCreatorDialog.handleKeysImport] Reading public key from a file.",
+                );
                 const publicKeyImported = await readFile(documentPublic.uri);
                 if (publicKeyImported) {
                     setPublicKey(publicKeyImported);
                 }
-                logger.info("Public key read from file and assigned.");
+                logger.info(
+                    "[RsaKeysCreatorDialog.handleKeysImport] Public key read from file and assigned.",
+                );
             } else {
-                logger.info("Public key file picking cancelled.");
+                logger.info(
+                    "[RsaKeysCreatorDialog.handleKeysImport] Public key file picking cancelled.",
+                );
             }
 
-            logger.info("Picking a file with private key..");
+            logger.info(
+                "[RsaKeysCreatorDialog.handleKeysImport] Picking a file with private key..",
+            );
             const documentPrivate = await DocumentPicker.getDocumentAsync({});
             if (documentPrivate.type === "success") {
-                logger.info("Reading private key from a file.");
+                logger.info(
+                    "[RsaKeysCreatorDialog.handleKeysImport] Reading private key from a file.",
+                );
                 const privateKeyImported = await readFile(documentPrivate.uri);
                 if (privateKeyImported) {
                     setPrivateKey(privateKeyImported);
                 }
 
-                logger.info("Private key read from file and assigned.");
+                logger.info(
+                    "[RsaKeysCreatorDialog.handleKeysImport] Private key read from file and assigned.",
+                );
             } else {
-                logger.info("Private key file picking cancelled.");
+                logger.info(
+                    "[RsaKeysCreatorDialog.handleKeysImport] Private key file picking cancelled.",
+                );
             }
             if (publicKey === "" || privateKey === "") {
-                logger.error("Failed to read key(s) from a file.");
+                logger.error(
+                    "[RsaKeysCreatorDialog.handleKeysImport] Failed to read key(s) from a file.",
+                );
                 Alert.alert("Błąd odczytu", "Nie udało się wczytać kluczy z plików.", [
                     GENERIC_OKAY_DISMISS_ALERT_BUTTON,
                 ]);
             } else {
-                logger.info("Public and private key read successfully. Closing dialog.");
+                logger.info(
+                    "[RsaKeysCreatorDialog.handleKeysImport] Public and private key read successfully. Closing dialog.",
+                );
             }
             hideFunc();
         } catch (error: any) {
-            /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions */
-            logger.error(`Failed to read key(s) from a file. ${error.message}`);
+            logger.error(
+                `[RsaKeysCreatorDialog.handleKeysImport] Failed to read key(s) from a file. ${JSON.stringify(
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    error.message,
+                )}`,
+            );
             Alert.alert("Błąd odczytu", "Nie udało się wczytać kluczy z plików.", [
                 GENERIC_OKAY_DISMISS_ALERT_BUTTON,
             ]);

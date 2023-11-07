@@ -43,7 +43,7 @@ export default function ChatRooms() {
                 setChatRooms(sortedChatRooms);
             })();
         } else if (!sqlDbSession) {
-            logger.info("sqlDbSession is undefined. Creating a new one.");
+            logger.info("[ChatRooms.useEffect] sqlDbSession is undefined. Creating a new one.");
             (async () => {
                 await setSqlDbSession();
             })();
@@ -75,7 +75,7 @@ export default function ChatRooms() {
     };
 
     const showModal = () => {
-        logger.info("Showing AddChatRoomModal.");
+        logger.info("[ChatRooms.showModal] Showing AddChatRoomModal.");
         setAddChatRoomModalVisible(true);
     };
 

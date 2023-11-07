@@ -27,7 +27,7 @@ export default function Settings() {
     const setPrivateKey = useKeyPairStore((state) => state.setPrivateKey);
 
     const showQrDialog = () => {
-        logger.info(`Showing QR code dialog.`);
+        logger.info(`[Settings.showQrDialog] Showing QR code dialog.`);
         setQrDialogVisible(true);
     };
     const hideQrDialog = () => {
@@ -69,7 +69,7 @@ export default function Settings() {
                     duration: Toast.durations.SHORT,
                 });
             } else {
-                logger.error(`Error while exporting public key.`);
+                logger.error(`[Settings.handleExportKeys] Error while exporting public key.`);
                 Alert.alert("Błąd zapisu", "Nie udało się wyeksportować klucza publicznego", [
                     GENERIC_OKAY_DISMISS_ALERT_BUTTON,
                 ]);
@@ -80,7 +80,7 @@ export default function Settings() {
                     duration: Toast.durations.SHORT,
                 });
             } else {
-                logger.error(`Error while exporting private key.`);
+                logger.error(`[Settings.handleExportKeys] Error while exporting private key.`);
                 Alert.alert("Błąd zapisu", "Nie udało się wyeksportować klucza prywatnego", [
                     GENERIC_OKAY_DISMISS_ALERT_BUTTON,
                 ]);

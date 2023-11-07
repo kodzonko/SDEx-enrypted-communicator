@@ -16,9 +16,9 @@ export default function SignIn() {
     const signIn = useAuthStore((state) => state.signIn);
 
     const handleSignIn = React.useCallback(() => {
-        logger.info("Verifying user PIN.");
+        logger.info("[SignIn.handleSignIn] Verifying user PIN.");
         const actualPin = mmkvStorage.getString("userPin");
-        logger.debug(`Actual PIN: ${JSON.stringify(actualPin)}`);
+        logger.debug(`[SignIn.handleSignIn] Actual PIN: ${JSON.stringify(actualPin)}`);
         if (!actualLogin || !actualPin) {
             Alert.alert(
                 GENERIC_AUTHORIZATION_ERROR_MSG,
@@ -32,10 +32,10 @@ export default function SignIn() {
             actualLogin.length > 0 &&
             userInputLogin.trim() === actualLogin
         ) {
-            logger.info("PIN verified, signing in.");
+            logger.info("[SignIn.handleSignIn] PIN verified, signing in.");
             signIn();
         } else {
-            logger.info("PIN verified as incorrect.");
+            logger.info("[SignIn.handleSignIn] PIN verified as incorrect.");
             Alert.alert(GENERIC_AUTHORIZATION_ERROR_MSG, "PIN lub login jest niepoprawny", [
                 GENERIC_OKAY_DISMISS_ALERT_BUTTON,
             ]);

@@ -92,13 +92,13 @@ export async function prepareToIngest(
         ? await decryptRsa(privateKeyTo, message.audio)
         : undefined;
 
-    const textToBytes = stringToBytes(rsaDecryptedText);
+    const textAsBytes = stringToBytes(rsaDecryptedText);
     const imageToBytes = rsaDecryptedImage ? stringToBytes(rsaDecryptedImage) : undefined;
     const videoToBytes = rsaDecryptedVideo ? stringToBytes(rsaDecryptedVideo) : undefined;
     const audioToBytes = rsaDecryptedAudio ? stringToBytes(rsaDecryptedAudio) : undefined;
 
     // Next decrypt SDEx, at this point we will have decrypted content
-    const decryptedText = sdexEngine.decryptMessage(textToBytes);
+    const decryptedText = sdexEngine.decryptMessage(textAsBytes);
     const decryptedImage = imageToBytes ? sdexEngine.decryptMessage(imageToBytes) : undefined;
     const decryptedVideo = videoToBytes ? sdexEngine.decryptMessage(videoToBytes) : undefined;
     const decryptedAudio = audioToBytes ? sdexEngine.decryptMessage(audioToBytes) : undefined;
