@@ -36,23 +36,27 @@ export default function ChatRooms() {
     );
 
     React.useEffect(() => {
-        if (isFocused && sqlDbSession) {
-            (async () => {
-                const chatRoomsFromDb = await getChatRooms(sqlDbSession);
-                const sortedChatRooms = sortChatRoomsDescendingByDate(chatRoomsFromDb);
-                setChatRooms(sortedChatRooms);
-            })();
-        } else if (!sqlDbSession) {
-            logger.info("[ChatRooms.useEffect] sqlDbSession is undefined. Creating a new one.");
-            (async () => {
-                await setSqlDbSession();
-            })();
-            (async () => {
-                const chatRoomsFromDb = await getChatRooms(sqlDbSession);
-                const sortedChatRooms = sortChatRoomsDescendingByDate(chatRoomsFromDb);
-                setChatRooms(sortedChatRooms);
-            })();
-        }
+        // Check if there are any new messages in the local database - and repeat that check every 5 seconds
+        const interval = setInterval(() => {
+            if (isFocused && sqlDbSession) {
+                (async () => {
+                    const chatRoomsFromDb = await getChatRooms(sqlDbSession);
+                    const sortedChatRooms = sortChatRoomsDescendingByDate(chatRoomsFromDb);
+                    setChatRooms(sortedChatRooms);
+                })();
+            } else if (!sqlDbSession) {
+                logger.info("[ChatRooms.useEffect] sqlDbSession is undefined. Creating a new one.");
+                (async () => {
+                    await setSqlDbSession();
+                })();
+                (async () => {
+                    const chatRoomsFromDb = await getChatRooms(sqlDbSession);
+                    const sortedChatRooms = sortChatRoomsDescendingByDate(chatRoomsFromDb);
+                    setChatRooms(sortedChatRooms);
+                })();
+            }
+        }, 5000);
+        return () => clearInterval(interval);
     }, [sqlDbSession, isFocused]);
 
     React.useEffect(() => {
