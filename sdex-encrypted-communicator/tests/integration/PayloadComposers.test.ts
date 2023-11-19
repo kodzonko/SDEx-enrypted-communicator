@@ -1,7 +1,7 @@
-import { prepareToIngest, prepareToSend } from "../../../src/communication/PayloadComposers";
-import { generateSessionKeyPart } from "../../../src/crypto/CryptoHelpers";
-import SdexCrypto from "../../../src/crypto/SdexCrypto";
-import { Message } from "../../../src/Types";
+import { prepareToIngest, prepareToSend } from "../../src/communication/PayloadComposers";
+import { generateSessionKeyPart } from "../../src/crypto/CryptoHelpers";
+import SdexCrypto from "../../src/crypto/SdexCrypto";
+import { Message } from "../../src/Types";
 
 test.skip("Preparation process for message is fully reversible by ingestion process", async () => {
     const originalMessage = new Message(0, 1, "this is a test.", new Date("2023-01-02"), false);

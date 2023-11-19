@@ -1,7 +1,7 @@
 import { decryptRsa, encryptRsa } from "../crypto/RsaCrypto";
 import SdexCrypto from "../crypto/SdexCrypto";
 import { Message, TransportedMessage } from "../Types";
-import { bytesToString, messageToTransportedMessage, stringToBytes } from "../utils/Converters";
+import { base64ToBytes, bytesToBase64, messageToTransportedMessage } from "../utils/Converters";
 
 /**
  * Handler preparation of message to send it to the server.
@@ -20,15 +20,15 @@ export async function prepareToSend(
     sdexEngine: SdexCrypto,
 ): Promise<TransportedMessage> {
     // Encrypt message (each content field separately) with SDEx and serialize Uint8Array to base64string
-    const sdexEncryptedText = bytesToString(sdexEngine.encryptMessage(message.text));
+    const sdexEncryptedText = bytesToBase64(sdexEngine.encryptMessage(message.text));
     const sdexEncryptedImage = message.image
-        ? bytesToString(sdexEngine.encryptMessage(message.image))
+        ? bytesToBase64(sdexEngine.encryptMessage(message.image))
         : undefined;
     const sdexEncryptedVideo = message.video
-        ? bytesToString(sdexEngine.encryptMessage(message.video))
+        ? bytesToBase64(sdexEngine.encryptMessage(message.video))
         : undefined;
     const sdexEncryptedAudio = message.audio
-        ? bytesToString(sdexEngine.encryptMessage(message.audio))
+        ? bytesToBase64(sdexEngine.encryptMessage(message.audio))
         : undefined;
 
     // Encrypt sdex-encrypted content with receiver's publicKey
@@ -92,10 +92,10 @@ export async function prepareToIngest(
         ? await decryptRsa(privateKeyTo, message.audio)
         : undefined;
 
-    const textAsBytes = stringToBytes(rsaDecryptedText);
-    const imageToBytes = rsaDecryptedImage ? stringToBytes(rsaDecryptedImage) : undefined;
-    const videoToBytes = rsaDecryptedVideo ? stringToBytes(rsaDecryptedVideo) : undefined;
-    const audioToBytes = rsaDecryptedAudio ? stringToBytes(rsaDecryptedAudio) : undefined;
+    const textAsBytes = base64ToBytes(rsaDecryptedText);
+    const imageToBytes = rsaDecryptedImage ? base64ToBytes(rsaDecryptedImage) : undefined;
+    const videoToBytes = rsaDecryptedVideo ? base64ToBytes(rsaDecryptedVideo) : undefined;
+    const audioToBytes = rsaDecryptedAudio ? base64ToBytes(rsaDecryptedAudio) : undefined;
 
     // Next decrypt SDEx, at this point we will have decrypted content
     const decryptedText = sdexEngine.decryptMessage(textAsBytes);

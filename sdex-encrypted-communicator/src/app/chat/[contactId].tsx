@@ -5,9 +5,11 @@ import { GiftedChat, IMessage as GiftedChatMessage } from "react-native-gifted-c
 import { Appbar, Banner } from "react-native-paper";
 
 import { Link, useLocalSearchParams } from "expo-router";
+import { prepareToIngest } from "../../communication/PayloadComposers";
 import socket, {
     checkOnline,
     initiateChat,
+    outsideChatRoomChatListener,
     requestRegister,
     sendMessage,
     socketConnect,
@@ -18,11 +20,13 @@ import { useMessagesBufferStore } from "../../contexts/MessagesBuffer";
 import logger from "../../Logger";
 import {
     getContactById,
+    getContactByPublicKey,
     getMessagesByContactId,
     markMessagesAsRead,
 } from "../../storage/DataHandlers";
+import { mmkvStorage } from "../../storage/MmkvStorageMiddlewares";
 import styles from "../../Styles";
-import { Contact } from "../../Types";
+import { Contact, TransportedMessage } from "../../Types";
 import { giftedChatMessageToMessage, messageToGiftedChatMessage } from "../../utils/Converters";
 
 export default function Chat() {
@@ -36,7 +40,7 @@ export default function Chat() {
 
     const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
     const newMessage = useMessagesBufferStore((state) => state.newMessage);
-    const clearBuffer = useMessagesBufferStore((state) => state.clearBuffer);
+    // const clearBuffer = useMessagesBufferStore((state) => state.clearBuffer);
     const sdexEngines = useCryptoContextStore((state) => state.sdexEngines);
 
     const params = useLocalSearchParams();
@@ -44,8 +48,120 @@ export default function Chat() {
 
     // Register with the server
     React.useEffect(() => {
+        logger.info(`[Chat.useEffect] Requesting registration with the server.`);
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         requestRegister();
+    }, []);
+
+    // Swap chat event listener from "background" to "foreground"
+    React.useEffect(() => {
+        logger.info(
+            '[Chat.useEffect] Swapping "chat" event listener from "background" to "foreground".',
+        );
+        socket.off("chat", outsideChatRoomChatListener);
+        socket.on(
+            "chat",
+            async (
+                message: TransportedMessage,
+                callback: (response: boolean) => void,
+            ): Promise<void> => {
+                logger.info(
+                    '[socket.on("chat", <foreground listener>)] Received "chat" event from server.',
+                );
+                logger.info(
+                    '[socket.on("chat", <foreground listener>)] Getting context for SDEx engine.',
+                );
+                const sdexEngine = useCryptoContextStore
+                    .getState()
+                    .sdexEngines.get(message.publicKeyFrom);
+                if (!sdexEngine) {
+                    logger.error(
+                        '[socket.on("chat", <foreground listener>)] Crypto context not found. Cannot decrypt message.',
+                    );
+                    callback(false);
+                    return;
+                }
+
+                const firstPartyPrivateKey = mmkvStorage.getString("privateKey");
+                if (!firstPartyPrivateKey) {
+                    logger.error(
+                        '[socket.on("chat", <foreground listener>)] First party private key not found. Cannot decrypt message.',
+                    );
+                    callback(false);
+                    return;
+                }
+
+                if (!sqlDbSession) {
+                    logger.error(
+                        '[socket.on("chat", <foreground listener>)] Database session not found. Cannot ingest a new message.',
+                    );
+                    callback(false);
+                    return;
+                }
+                const contactFrom = await getContactByPublicKey(
+                    message.publicKeyFrom,
+                    sqlDbSession,
+                );
+                if (!contactFrom) {
+                    logger.error(
+                        '[socket.on("chat", <foreground listener>)] Contact not found. Cannot ingest a new message.',
+                    );
+                    callback(false);
+                    return;
+                }
+
+                logger.info('[socket.on("chat", <foreground listener>)] Decrypting message.');
+                logger.debug(
+                    `[socket.on("chat", <foreground listener>)] Received message encrypted=${JSON.stringify(
+                        message,
+                    )}`,
+                );
+                logger.debug(
+                    `[socket.on("chat", <foreground listener>)] SDEx engine=${JSON.stringify(
+                        sdexEngine,
+                    )}`,
+                );
+                const decryptedMessage = await prepareToIngest(
+                    message,
+                    sdexEngine,
+                    firstPartyPrivateKey,
+                    contactFrom.id as number, // if it's fetched from db we know it has an id
+                );
+                logger.debug(
+                    `[socket.on("chat", <foreground listener>)] Decrypted message=${JSON.stringify(
+                        decryptedMessage,
+                    )}`,
+                );
+
+                // await addMessage(decryptedMessage, sqlDbSession);
+                logger.info(
+                    '[socket.on("chat", <foreground listener>)] Message ingested successfully.',
+                );
+
+                // If incoming message is from the current contact, add it to the chat window
+                if (firstPartyContact && contact?.id === decryptedMessage.contactIdFrom) {
+                    logger.info(
+                        '[socket.on("chat", <foreground listener>)] Adding message to current chat window buffer.',
+                    );
+
+                    const giftedChatMessage = messageToGiftedChatMessage(
+                        decryptedMessage,
+                        contact,
+                        firstPartyContact,
+                    );
+                    setMessages([giftedChatMessage, ...messages]);
+                }
+                // useMessagesBufferStore.getState().addNewMessage(decryptedMessage);
+                callback(true);
+            },
+        );
+
+        return () => {
+            logger.info(
+                '[Chat.useEffect] Leaving chat window. Swapping "chat" event listener from "foreground" to "background".',
+            );
+            socket.on("chat", outsideChatRoomChatListener);
+        };
     }, []);
 
     // Check if third party is online - and repeat that check every 10 seconds
@@ -105,7 +221,7 @@ export default function Chat() {
         logger.info("[Chat.useEffect] Attempting to initiate chat.");
         if (contact?.publicKey && sdexEngines.has(contact?.publicKey)) {
             logger.info(
-                "[Chat.useEffect] Skipping chat initialization, user already has a session key for with that third party.",
+                "[Chat.useEffect] Skipping chat initialization, user already has a session key for that third party.",
             );
         } else if (
             socket.connected &&

@@ -1,3 +1,4 @@
+import { Base64 } from "js-base64";
 import { IMessage as GiftedChatMessage } from "react-native-gifted-chat/lib/Models";
 import { Contact, Message, TransportedMessage } from "../Types";
 
@@ -116,7 +117,8 @@ export const changeTo1IndexedArray = (array: Uint8Array[]): Uint8Array[] => {
  * @returns An utf-8 string.
  */
 export const bytesToString = (array: Uint8Array): string =>
-    String.fromCharCode.apply(null, Array.from(array));
+    // String.fromCharCode.apply(null, Array.from(array));
+    new TextDecoder().decode(array);
 
 /**
  * Converts a string to Uint8Array.
@@ -124,7 +126,14 @@ export const bytesToString = (array: Uint8Array): string =>
  * @returns An Uint8Array.
  */
 export const stringToBytes = (text: string): Uint8Array =>
-    new Uint8Array(text.split("").map((c) => c.charCodeAt(0)));
+    // new Uint8Array(text.split("").map((c) => c.charCodeAt(0)));
+    new TextEncoder().encode(text);
+
+export const bytesToBase64 = (bytes: Uint8Array): string => Base64.fromUint8Array(bytes);
+// bytesToString(bytes);
+
+export const base64ToBytes = (base64: string): Uint8Array => Base64.toUint8Array(base64);
+// stringToBytes(base64);
 
 export function messageToTransportedMessage(
     message: Message,

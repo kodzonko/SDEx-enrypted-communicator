@@ -534,11 +534,11 @@ export async function addMessageQuery(
                     message.contactIdFrom,
                     message.contactIdTo,
                     message.text,
-                    message.createdAt.toISOString(),
+                    message.createdAt,
                     message.unread ? 1 : 0,
-                    message.image ? message.image : null,
-                    message.video ? message.video : null,
-                    message.audio ? message.audio : null,
+                    message.image ? message.image : "",
+                    message.video ? message.video : "",
+                    message.audio ? message.audio : "",
                 ],
                 (_, resultSet) => {
                     logger.info(`[addMessageQuery] ${GENERIC_LOCAL_STORAGE_SQL_QUERY_SUCCESS_MSG}`);

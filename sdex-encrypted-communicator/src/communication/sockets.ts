@@ -18,7 +18,7 @@ import {
     ServerToClientEvents,
     TransportedMessage,
 } from "../Types";
-import { bytesToString, mergeUint8Arrays, stringToBytes } from "../utils/Converters";
+import { base64ToBytes, bytesToBase64, mergeUint8Arrays } from "../utils/Converters";
 import { prepareToIngest, prepareToSend } from "./PayloadComposers";
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
@@ -272,7 +272,7 @@ socket.on(
         logger.debug(
             `[socket.on("chatInit")] Session key first part decrypted as string=${sessionKeyFirstPartString}`,
         );
-        const sessionKeyFirstPart = stringToBytes(sessionKeyFirstPartString);
+        const sessionKeyFirstPart = base64ToBytes(sessionKeyFirstPartString);
         logger.debug(
             `[socket.on("chatInit")] Session key first part decrypted=${JSON.stringify(
                 sessionKeyFirstPart,
@@ -289,7 +289,7 @@ socket.on(
         logger.info('[socket.on("chatInit")] Encrypting 2nd part of the session key.');
         const sessionKeySecondPartEncrypted = await encryptRsa(
             data.publicKeyFrom,
-            bytesToString(sessionKeySecondPart),
+            bytesToBase64(sessionKeySecondPart),
         );
         logger.debug(
             `[socket.on("chatInit")] Session key second part encrypted=${sessionKeySecondPartEncrypted}`,
@@ -344,15 +344,11 @@ export async function initiateChat(publicKeyTo: string): Promise<boolean> {
     // Session key for this contact doesn't exist yet. Generating first part of it.
     const sessionKeyFirstPart = generateSessionKeyPart();
     logger.debug(`[initiateChat] Session key first part=${JSON.stringify(sessionKeyFirstPart)}`);
-    logger.debug(
-        `[initiateChat] Session key first part as string=${bytesToString(sessionKeyFirstPart)}`,
-    );
+    const sessionKeyFirstPartString = bytesToBase64(sessionKeyFirstPart);
+    logger.debug(`[initiateChat] Session key first part as string=${sessionKeyFirstPartString}`);
 
     logger.info("[initiateChat] (RSA) Encrypting first part of session key before sending.");
-    const sessionKeyFirstPartEncrypted = await encryptRsa(
-        publicKeyTo,
-        bytesToString(sessionKeyFirstPart),
-    );
+    const sessionKeyFirstPartEncrypted = await encryptRsa(publicKeyTo, sessionKeyFirstPartString);
     logger.debug(`[initiateChat] Session key first part encrypted=${sessionKeyFirstPartEncrypted}`);
 
     logger.info('[initiateChat] Emitting "chatInit" event.');
@@ -372,7 +368,7 @@ export async function initiateChat(publicKeyTo: string): Promise<boolean> {
             logger.debug(
                 `[initiateChat] Decrypted session key second part as string=${sessionKeySecondPartString}`,
             );
-            const sessionKeySecondPart = stringToBytes(sessionKeySecondPartString);
+            const sessionKeySecondPart = base64ToBytes(sessionKeySecondPartString);
             logger.debug(
                 `[initiateChat] Decrypted session key second part=${JSON.stringify(
                     sessionKeySecondPart,
@@ -401,60 +397,130 @@ export async function initiateChat(publicKeyTo: string): Promise<boolean> {
     }
 }
 
-socket.on(
-    "chat",
-    async (message: TransportedMessage, callback: (response: boolean) => void): Promise<void> => {
-        logger.info('[socket.on("chat")] Received "chat" event from server.');
-        logger.info('[socket.on("chat")] Getting context for SDEx engine.');
-        const sdexEngine = useCryptoContextStore.getState().sdexEngines.get(message.publicKeyFrom);
-        if (!sdexEngine) {
-            logger.error('[socket.on("chat")] Crypto context not found. Cannot decrypt message.');
-            callback(false);
-            return;
-        }
-
-        const firstPartyPrivateKey = mmkvStorage.getString("privateKey");
-        if (!firstPartyPrivateKey) {
-            logger.error(
-                '[socket.on("chat")] First party private key not found. Cannot decrypt message.',
-            );
-            callback(false);
-            return;
-        }
-
-        const { sqlDbSession } = useSqlDbSessionStore.getState();
-        if (!sqlDbSession) {
-            logger.error(
-                '[socket.on("chat")] Database session not found. Cannot ingest a new message.',
-            );
-            callback(false);
-            return;
-        }
-        const contactFrom = await getContactByPublicKey(message.publicKeyFrom, sqlDbSession);
-        if (!contactFrom) {
-            logger.error('[socket.on("chat")] Contact not found. Cannot ingest a new message.');
-            callback(false);
-            return;
-        }
-
-        logger.info('[socket.on("chat")] Decrypting message.');
-        logger.debug(`[socket.on("chat")] Received message encrypted=${JSON.stringify(message)}`);
-        logger.debug(`[socket.on("chat")] SDEx engine=${JSON.stringify(sdexEngine)}`);
-        const decryptedMessage = await prepareToIngest(
-            message,
-            sdexEngine,
-            firstPartyPrivateKey,
-            contactFrom.id as number, // if it's fetched from db we know it has an id
+export async function outsideChatRoomChatListener(
+    message: TransportedMessage,
+    callback: (response: boolean) => void,
+) {
+    logger.info('[socket.on("chat", <background listener>)] Received "chat" event from server.');
+    logger.info('[socket.on("chat", <background listener>)] Getting context for SDEx engine.');
+    const sdexEngine = useCryptoContextStore.getState().sdexEngines.get(message.publicKeyFrom);
+    if (!sdexEngine) {
+        logger.error(
+            '[socket.on("chat", <background listener>)] Crypto context not found. Cannot decrypt message.',
         );
-        logger.debug(`[socket.on("chat")] Decrypted message=${JSON.stringify(decryptedMessage)}`);
+        callback(false);
+        return;
+    }
 
-        // await addMessage(decryptedMessage, sqlDbSession);
-        logger.info('[socket.on("chat")] Message ingested successfully.');
-        logger.info('[socket.on("chat")] Adding message to the buffer.');
-        // useMessagesBufferStore.getState().addNewMessage(decryptedMessage);
-        callback(true);
-    },
-);
+    const firstPartyPrivateKey = mmkvStorage.getString("privateKey");
+    if (!firstPartyPrivateKey) {
+        logger.error(
+            '[socket.on("chat", <background listener>)] First party private key not found. Cannot decrypt message.',
+        );
+        callback(false);
+        return;
+    }
+
+    const { sqlDbSession } = useSqlDbSessionStore.getState();
+    if (!sqlDbSession) {
+        logger.error(
+            '[socket.on("chat", <background listener>)] Database session not found. Cannot ingest a new message.',
+        );
+        callback(false);
+        return;
+    }
+    const contactFrom = await getContactByPublicKey(message.publicKeyFrom, sqlDbSession);
+    if (!contactFrom) {
+        logger.error(
+            '[socket.on("chat", <background listener>)] Contact not found. Cannot ingest a new message.',
+        );
+        callback(false);
+        return;
+    }
+
+    logger.info('[socket.on("chat", <background listener>)] Decrypting message.');
+    logger.debug(
+        `[socket.on("chat", <background listener>)] Received message encrypted=${JSON.stringify(
+            message,
+        )}`,
+    );
+    logger.debug(
+        `[socket.on("chat", <background listener>)] SDEx engine=${JSON.stringify(sdexEngine)}`,
+    );
+    const decryptedMessage = await prepareToIngest(
+        message,
+        sdexEngine,
+        firstPartyPrivateKey,
+        contactFrom.id as number, // if it's fetched from db we know it has an id
+    );
+    logger.debug(
+        `[socket.on("chat", <background listener>)] Decrypted message=${JSON.stringify(
+            decryptedMessage,
+        )}`,
+    );
+
+    await addMessage(decryptedMessage, sqlDbSession);
+    logger.info('[socket.on("chat", <background listener>)] Message ingested successfully.');
+    logger.info('[socket.on("chat", <background listener>)] Adding message to the buffer.');
+    callback(true);
+}
+
+socket.on("chat", outsideChatRoomChatListener);
+
+// socket.on(
+//     "chat",
+//     async (message: TransportedMessage, callback: (response: boolean) => void): Promise<void> => {
+//         logger.info('[socket.on("chat")] Received "chat" event from server.');
+//         logger.info('[socket.on("chat")] Getting context for SDEx engine.');
+//         const sdexEngine = useCryptoContextStore.getState().sdexEngines.get(message.publicKeyFrom);
+//         if (!sdexEngine) {
+//             logger.error('[socket.on("chat")] Crypto context not found. Cannot decrypt message.');
+//             callback(false);
+//             return;
+//         }
+
+//         const firstPartyPrivateKey = mmkvStorage.getString("privateKey");
+//         if (!firstPartyPrivateKey) {
+//             logger.error(
+//                 '[socket.on("chat")] First party private key not found. Cannot decrypt message.',
+//             );
+//             callback(false);
+//             return;
+//         }
+
+//         const { sqlDbSession } = useSqlDbSessionStore.getState();
+//         if (!sqlDbSession) {
+//             logger.error(
+//                 '[socket.on("chat")] Database session not found. Cannot ingest a new message.',
+//             );
+//             callback(false);
+//             return;
+//         }
+//         const contactFrom = await getContactByPublicKey(message.publicKeyFrom, sqlDbSession);
+//         if (!contactFrom) {
+//             logger.error('[socket.on("chat")] Contact not found. Cannot ingest a new message.');
+//             callback(false);
+//             return;
+//         }
+
+//         logger.info('[socket.on("chat")] Decrypting message.');
+//         logger.debug(`[socket.on("chat")] Received message encrypted=${JSON.stringify(message)}`);
+//         logger.debug(`[socket.on("chat")] SDEx engine=${JSON.stringify(sdexEngine)}`);
+//         const decryptedMessage = await prepareToIngest(
+//             message,
+//             sdexEngine,
+//             firstPartyPrivateKey,
+//             contactFrom.id as number, // if it's fetched from db we know it has an id
+//         );
+//         logger.debug(`[socket.on("chat")] Decrypted message=${JSON.stringify(decryptedMessage)}`);
+
+//         await addMessage(decryptedMessage, sqlDbSession);
+//         logger.info('[socket.on("chat")] Message ingested successfully.');
+//         logger.info('[socket.on("chat")] Adding message to the buffer.');
+//         // useMessagesBufferStore.getState().addNewMessage(decryptedMessage);
+//         callback(true);
+//     },
+// );
 
 /**
  * Check whether a public key is registered on the server.

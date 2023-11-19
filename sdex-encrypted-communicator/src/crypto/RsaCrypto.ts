@@ -49,7 +49,7 @@ export async function encryptRsa(publicKey: string, text: string): Promise<strin
     logger.info("[RsaCrypto.encryptRsa] Encrypting text with RSA public key.");
     try {
         const encrypted = await RSA.encrypt(text, publicKey);
-        logger.debug(`[RsaCrypto.encryptRsa] (RSA) Encrypted text: ${encrypted}`);
+        logger.debug(`[RsaCrypto.encryptRsa] Encrypted text: ${encrypted}`);
         return encrypted;
     } catch (error: any) {
         logger.error(
@@ -67,7 +67,7 @@ export async function decryptRsa(privateKey: string, text: string): Promise<stri
     logger.info("[RsaCrypto.decryptRsa] Decrypting text with RSA private key.");
     try {
         const decrypted = await RSA.decrypt(text, privateKey);
-        logger.debug(`[RsaCrypto.decryptRsa] (RSA) Decrypted text: ${decrypted}`);
+        logger.debug(`[RsaCrypto.decryptRsa] Decrypted text: ${decrypted}`);
         return decrypted;
     } catch (error: any) {
         logger.error(

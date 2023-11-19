@@ -13,7 +13,7 @@ const encryptedMessage = new Uint8Array([
     40, 144, 183, 142, 15, 134, 10, 228, 223, 72, 148,
 ]);
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const messageEncryptorDecryptor = new SdexCrypto(sessionKey, 32);
+const sdexEngine = new SdexCrypto(sessionKey, 32);
 
 test("Generating a session key part.", () => {
     const sessionKeyPart = generateSessionKeyPart(32);
@@ -41,11 +41,17 @@ test("Calculating a block throws error on mismatching arrays lengths.", () => {
 });
 
 test("Encrypting a message properly.", () => {
-    const result = messageEncryptorDecryptor.encryptMessage(clearTextMessage);
+    const result = sdexEngine.encryptMessage(clearTextMessage);
     expect(result).toEqual(encryptedMessage);
 });
 
 test("Decrypting a message properly.", () => {
-    const result = messageEncryptorDecryptor.decryptMessage(encryptedMessage);
+    const result = sdexEngine.decryptMessage(encryptedMessage);
     expect(result).toBe(clearTextMessage);
+});
+
+test("SDEx encryption is reversible.", () => {
+    const encrypted = sdexEngine.encryptMessage(clearTextMessage);
+    const decrypted = sdexEngine.decryptMessage(encrypted);
+    expect(clearTextMessage).toBe(decrypted);
 });
