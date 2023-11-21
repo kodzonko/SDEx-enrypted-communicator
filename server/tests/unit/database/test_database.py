@@ -16,51 +16,49 @@ def db_manager() -> DatabaseManager:
 @pytest.fixture
 def user() -> User:
     return User(
-        id=123, public_key="rsa-test", private_key_hash="test-hash", salt="salt"
+        id=123, public_key="rsa-test", login="test_login"
     )
 
 
 @pytest.fixture
 def updating_user(db_manager: DatabaseManager) -> bool:
     previous_user = User(
-        public_key="old-rsa", private_key_hash="old-test-hash", salt="old-salt"
+        public_key="old-rsa", login="some_user"
     )
     new_user = User(
-        public_key="new-rsa", private_key_hash="new-test-hash", salt="new-salt"
+        public_key="new-rsa", login="some_user"
     )
-    yield db_manager.update_user(previous_user.public_key, new_user)  # type: ignore
-    db_manager.update_user(new_user.public_key, previous_user)
+    yield db_manager.update_user(new_user.login, new_user.public_key)  # type: ignore
+    db_manager.update_user(previous_user.login, previous_user.public_key)
 
 
 @pytest.fixture
 def adding_user(db_manager: DatabaseManager) -> bool:
     user_to_add = User(
-        id=987,
-        public_key="added-user-rsa",
-        private_key_hash="added-user-rsa-hash",
-        salt="added-salt55",
+        public_key="added-user-key",
+        login="added-user"
     )
     yield db_manager.add_user(user_to_add)  # type: ignore
-    db_manager.remove_user(user_to_add.public_key)
+    db_manager.remove_user(user_to_add.login)
 
 
 @pytest.fixture
 def deleting_user(db_manager: DatabaseManager) -> bool:
     user_to_delete = User(
-        id=1111, public_key="test", private_key_hash="test-priv-hash", salt="salt123"
+        public_key="test-key", login="test123"
     )
-    yield db_manager.remove_user(user_to_delete.public_key)  # type: ignore
+    yield db_manager.remove_user(user_to_delete.login)  # type: ignore
     db_manager.add_user(user_to_delete)
 
 
-def test_get_user_by_public_key_returns_user(
+def test_get_user_by_login_returns_user(
     db_manager: DatabaseManager, user: User
 ) -> None:
-    assert db_manager.get_user_by_public_key("rsa-test") == user
+    assert db_manager.get_user_by_login(user.login) == user
 
 
-def test_get_user_by_public_key_doesnt_find_user(db_manager: DatabaseManager) -> None:
-    assert db_manager.get_user_by_public_key("public_key") is None
+def test_get_user_by_login_doesnt_find_user(db_manager: DatabaseManager) -> None:
+    assert db_manager.get_user_by_login("some_false_login") is None
 
 
 def test_check_public_key_public_returns_public_key_exists(
@@ -82,7 +80,7 @@ def test_update_user_executes_successfully(updating_user: bool) -> None:
 def test_update_user_public_key_doesnt_find_user(
     db_manager: DatabaseManager, user: User
 ) -> None:
-    assert db_manager.update_user("doesnt-exist", user) is False
+    assert db_manager.update_user("doesnt-exist", "some-key") is False
 
 
 def test_add_user_inserts_user_successfully(adding_user: bool) -> None:
