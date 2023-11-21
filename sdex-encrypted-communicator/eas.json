@@ -1,35 +1,39 @@
 {
-  "cli": {
-    "version": ">= 3.9.0"
-  },
-  "build": {
-    "development": {
-      "extends": "production",
-      "prebuildCommand": "prebuild --npm",
-      "developmentClient": true,
-      "distribution": "internal",
-      "ios": {
-        "resourceClass": "m-medium"
-      },
-      "channel": "development"
+    "cli": {
+        "version": ">= 3.9.0"
     },
-    "preview": {
-      "distribution": "internal",
-      "prebuildCommand": "prebuild --npm",
-      "ios": {
-        "resourceClass": "m-medium"
-      },
-      "channel": "preview"
+    "build": {
+        "development": {
+            "extends": "production",
+            "prebuildCommand": "prebuild --npm",
+            "developmentClient": true,
+            "distribution": "internal",
+            "ios": {
+                "resourceClass": "m-medium"
+            },
+            "channel": "development"
+        },
+        "preview": {
+            "distribution": "internal",
+            "prebuildCommand": "prebuild --npm",
+            "ios": {
+                "resourceClass": "m-medium"
+            },
+            "channel": "preview",
+            "android": {
+                "buildType": "apk",
+                "gradleCommand": ":app:assembleRelease"
+            }
+        },
+        "production": {
+            "prebuildCommand": "prebuild --npm",
+            "ios": {
+                "resourceClass": "m-medium"
+            },
+            "channel": "production"
+        }
     },
-    "production": {
-      "prebuildCommand": "prebuild --npm",
-      "ios": {
-        "resourceClass": "m-medium"
-      },
-      "channel": "production"
+    "submit": {
+        "production": {}
     }
-  },
-  "submit": {
-    "production": {}
-  }
 }
