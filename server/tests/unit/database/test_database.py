@@ -15,38 +15,27 @@ def db_manager() -> DatabaseManager:
 
 @pytest.fixture
 def user() -> User:
-    return User(
-        id=123, public_key="rsa-test", login="test_login"
-    )
+    return User(id=123, public_key="rsa-test", login="test_login")
 
 
 @pytest.fixture
 def updating_user(db_manager: DatabaseManager) -> bool:
-    previous_user = User(
-        public_key="old-rsa", login="some_user"
-    )
-    new_user = User(
-        public_key="new-rsa", login="some_user"
-    )
+    previous_user = User(public_key="old-rsa", login="some_user")
+    new_user = User(public_key="new-rsa", login="some_user")
     yield db_manager.update_user(new_user.login, new_user.public_key)  # type: ignore
     db_manager.update_user(previous_user.login, previous_user.public_key)
 
 
 @pytest.fixture
 def adding_user(db_manager: DatabaseManager) -> bool:
-    user_to_add = User(
-        public_key="added-user-key",
-        login="added-user"
-    )
+    user_to_add = User(public_key="added-user-key", login="added-user")
     yield db_manager.add_user(user_to_add)  # type: ignore
     db_manager.remove_user(user_to_add.login)
 
 
 @pytest.fixture
 def deleting_user(db_manager: DatabaseManager) -> bool:
-    user_to_delete = User(
-        public_key="test-key", login="test123"
-    )
+    user_to_delete = User(public_key="test-key", login="test123")
     yield db_manager.remove_user(user_to_delete.login)  # type: ignore
     db_manager.add_user(user_to_delete)
 
