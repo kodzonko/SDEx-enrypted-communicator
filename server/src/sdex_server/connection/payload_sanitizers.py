@@ -81,3 +81,14 @@ def validate_chat_init_payload(data: Any) -> bool:
     if not data.get("sessionKeyPartEncrypted", None):
         return False
     return True
+
+
+def validate_update_public_key_payload(data: Any) -> bool:
+    """Validate the payload for update login request."""
+    if not isinstance(data, dict):
+        return False
+    if not data.get("login", None):
+        return False
+    if not data.get("publicKey", None):
+        return False
+    return True

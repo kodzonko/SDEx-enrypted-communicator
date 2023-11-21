@@ -16,6 +16,7 @@ from sdex_server.connection.payload_sanitizers import (
     validate_check_online_payload,
     validate_connect_payload,
     validate_register_follow_up_payload,
+    validate_update_public_key_payload,
 )
 from sdex_server.crypto.randomness import generate_challenge
 from sdex_server.database.database import DatabaseManager
@@ -248,13 +249,38 @@ async def handle_check_online_status(sid: str, data: Any) -> bool:
     if not validate_check_online_payload(data):
         logger.info("Bad payload. Returning False.")
         return False
-    elif sid not in AUTHENTICATED_USERS:
+    if sid not in AUTHENTICATED_USERS:
         logger.info("User not authenticated. Returning False.")
         return False
+    result = data["publicKey"] in PUBLIC_KEYS_SIDS_MAPPING.keys()
+    logger.debug(f"User is online: {result}")
+    return result
+
+
+@socket_manager.on("updatePublicKey")  # type: ignore
+async def handle_update_public_key(sid: str, data: Any) -> bool:
+    """Handle user login update."""
+    logger.info('Received "updateLogin" event.')
+    logger.debug(f"data={data}.")
+    if not validate_update_public_key_payload(data):
+        logger.info("Bad payload. Returning False.")
+        return False
+    if sid not in AUTHENTICATED_USERS:
+        logger.info("User not authenticated. Returning False.")
+        return False
+
+    update_successful = db_manager.update_user(
+        login=data["login"], new_public_key=data["publicKey"]
+    )
+    if update_successful:
+        logger.info("User's public key changed successfully.")
+        logger.debug(
+            f"User's public key changed from: {PUBLIC_KEYS_SIDS_MAPPING.inverse.get(sid)} to: {data['publicKey']}"
+        )
+        return True
     else:
-        result = data["publicKey"] in PUBLIC_KEYS_SIDS_MAPPING.keys()
-        logger.debug(f"User is online: {result}")
-        return result
+        logger.error("Failed to update user's public key due to database write error.")
+        return False
 
 
 if __name__ == "__main__":
