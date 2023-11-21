@@ -268,15 +268,25 @@ async def handle_update_public_key(sid: str, data: Any) -> bool:
     if sid not in AUTHENTICATED_USERS:
         logger.info("User not authenticated. Returning False.")
         return False
-
+    user = db_manager.get_user_by_login(data["login"])
+    if user and user.public_key != PUBLIC_KEYS_SIDS_MAPPING.inverse.get(sid, None):
+        logger.info(
+            "Provided login doesn't belong to requesting user. Returning False."
+        )
+        return False
+    logger.info("Login and public key match. Updating user's public key.")
     update_successful = db_manager.update_user(
         login=data["login"], new_public_key=data["publicKey"]
     )
     if update_successful:
         logger.info("User's public key changed successfully.")
         logger.debug(
-            f"User's public key changed from: {PUBLIC_KEYS_SIDS_MAPPING.inverse.get(sid)} to: {data['publicKey']}"
+            f"User's public key changed from: "
+            f"{PUBLIC_KEYS_SIDS_MAPPING.inverse.get(sid)} to: {data['publicKey']}"
         )
+        PUBLIC_KEYS_SIDS_MAPPING.update({data["publicKey"]: sid})
+        logger.info("User's public key updated in PUBLIC_KEYS_SIDS_MAPPING.")
+        logger.debug(f"{PUBLIC_KEYS_SIDS_MAPPING=}")
         return True
     else:
         logger.error("Failed to update user's public key due to database write error.")
