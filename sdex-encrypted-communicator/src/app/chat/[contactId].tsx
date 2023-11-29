@@ -232,11 +232,9 @@ export default function Chat() {
                 .then((registered) => {
                     setThirdPartyKeyRegistered(registered);
                 })
-                .catch((errror: Error) => {
+                .catch((error: Error) => {
                     logger.error(
-                        `[Chat.useEffect] Error while checking if key is registered: ${JSON.stringify(
-                            error,
-                        )}`,
+                        `[Chat.useEffect] Error while checking if key is registered: ${error.message}`,
                     );
                 });
         }

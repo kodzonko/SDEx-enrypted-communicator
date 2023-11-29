@@ -20,12 +20,9 @@ export async function generateKeyPair(bits = 2048): Promise<KeyPair> {
             publicKey: keyPair.public,
             privateKey: keyPair.private,
         }))
-        .catch((error: any) => {
+        .catch((error: Error) => {
             logger.error(
-                `[RsaCrypto.generateKeyPair] Error when generating key pair: ${JSON.stringify(
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                    error.message,
-                )}`,
+                `[RsaCrypto.generateKeyPair] Error when generating key pair: ${error.message}`,
             );
             throw new RsaGenerationError(
                 "[RsaCrypto.generateKeyPair] Failed to generate RSA key pair.",

@@ -36,12 +36,9 @@ export async function createDb(fileName = DEFAULT_SQLITE_DB_FILE_NAME): Promise<
             );
             return true;
         })
-        .catch((error: any) => {
+        .catch((error: Error) => {
             logger.error(
-                `[createDb] Failed to copy the SQL database template. Error=${JSON.stringify(
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                    error.message,
-                )}`,
+                `[createDb] Failed to copy the SQL database template. Error=${error.message}`,
             );
             return false;
         });
