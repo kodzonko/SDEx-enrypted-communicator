@@ -35,8 +35,8 @@ export default function ChatRooms() {
         <List.Icon {...props} icon="email" />
     );
 
+    // Check if there are any new messages in the local database - and repeat that check every 2 seconds
     React.useEffect(() => {
-        // Check if there are any new messages in the local database - and repeat that check every 5 seconds
         const interval = setInterval(() => {
             if (isFocused && sqlDbSession) {
                 (async () => {
@@ -55,7 +55,7 @@ export default function ChatRooms() {
                     setChatRooms(sortedChatRooms);
                 })();
             }
-        }, 5000);
+        }, 2000);
         return () => clearInterval(interval);
     }, [sqlDbSession, isFocused]);
 

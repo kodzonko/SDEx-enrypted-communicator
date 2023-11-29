@@ -536,9 +536,9 @@ export async function addMessageQuery(
                     message.text,
                     message.createdAt,
                     message.unread ? 1 : 0,
-                    message.image ? message.image : "",
-                    message.video ? message.video : "",
-                    message.audio ? message.audio : "",
+                    message.image ? message.image : null,
+                    message.video ? message.video : null,
+                    message.audio ? message.audio : null,
                 ],
                 (_, resultSet) => {
                     logger.info(`[addMessageQuery] ${GENERIC_LOCAL_STORAGE_SQL_QUERY_SUCCESS_MSG}`);

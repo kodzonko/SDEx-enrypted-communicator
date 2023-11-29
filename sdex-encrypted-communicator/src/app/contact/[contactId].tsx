@@ -4,10 +4,14 @@ import { Alert, SafeAreaView, View } from "react-native";
 import { Appbar, Button, Text, TextInput } from "react-native-paper";
 
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import Toast from "react-native-root-toast";
 import Icon from "react-native-vector-icons/Ionicons";
+import { updatePublicKey } from "../../communication/Sockets";
 import { GENERIC_OKAY_DISMISS_ALERT_BUTTON } from "../../components/Buttons";
 import { useSqlDbSessionStore } from "../../contexts/DbSession";
 import { useQrScannedStore } from "../../contexts/QrScannedData";
+import { generateKeyPair } from "../../crypto/RsaCrypto";
+import { PreconditionError } from "../../Errors";
 import logger from "../../Logger";
 import {
     addContact,
@@ -16,8 +20,58 @@ import {
     selectRsaKeyFile,
     updateContact,
 } from "../../storage/DataHandlers";
+import { mmkvStorage } from "../../storage/MmkvStorageMiddlewares";
 import styles, { theme } from "../../Styles";
 import { Contact } from "../../Types";
+
+function LoginField() {
+    return (
+        <>
+            <Text variant="titleLarge" className="mt-4">
+                Login
+            </Text>
+            <TextInput
+                className="mt-2"
+                mode="outlined"
+                defaultValue={mmkvStorage.getString("login")}
+                disabled
+            />
+        </>
+    );
+}
+
+function PrivateKeyField({
+    inputValue,
+    onChangeFunc,
+    readFileFunc,
+}: {
+    inputValue: string;
+    onChangeFunc: (value: string) => void;
+    readFileFunc: () => Promise<void>;
+}) {
+    return (
+        <>
+            <Text variant="titleLarge" className="mt-4">
+                Klucz prywatny RSA
+            </Text>
+            <View className="mt-2 flex-row items-center">
+                <TextInput
+                    mode="outlined"
+                    className="mr-5 basis-8/12"
+                    defaultValue={mmkvStorage.getString("privateKey")}
+                    value={inputValue}
+                    onChangeText={(value) => {
+                        onChangeFunc(value);
+                    }}
+                />
+                <View className="mt-2 flex-row items-center space-x-3">
+                    {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+                    <Icon name="folder-open-outline" size={40} onPress={readFileFunc} />
+                </View>
+            </View>
+        </>
+    );
+}
 
 export default function ContactView() {
     const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
@@ -28,6 +82,9 @@ export default function ContactView() {
         surname: "",
         publicKey: "",
     });
+    const [privateKey, setPrivateKey] = React.useState<string>(
+        mmkvStorage.getString("privateKey") ?? "",
+    );
 
     const publicKey = useQrScannedStore((state) => state.publicKey);
     const setPublicKey = useQrScannedStore((state) => state.setPublicKey);
@@ -36,10 +93,18 @@ export default function ContactView() {
     const { contactId } = params;
     const router = useRouter();
 
+    function isFirstParty() {
+        return contactId === "0";
+    }
+
+    function isExistingContact() {
+        return Boolean(contactId) && contactId !== "-1";
+    }
+
+    // If it's existing contact's id (i.e. id != -1) - pull contact data from db and populate state
     React.useEffect(() => {
         (async () => {
-            // If contactID is -1, then user is creating a new contact (so we don't look for it in database).
-            if (contactId && contactId !== "-1") {
+            if (isExistingContact()) {
                 logger.info(
                     `[ContactView.useEffect] Fetching contact info for contactId=${JSON.stringify(
                         contactId,
@@ -61,6 +126,8 @@ export default function ContactView() {
         })();
     }, [contactId]);
 
+    // Filling forms with contact data fetched from db.
+    // Switching to update mode.
     React.useEffect(() => {
         if (contact) {
             logger.info(
@@ -75,6 +142,7 @@ export default function ContactView() {
         }
     }, [contact]);
 
+    // Updating form with scanned RSA key
     React.useEffect(() => {
         if (publicKey) {
             logger.info("[ContactView.useEffect] Updating form with scanned RSA key.");
@@ -101,7 +169,7 @@ export default function ContactView() {
             contactBuilder.publicKey.length < 1
         ) {
             logger.error(
-                "[ContactView.verifyContactBuilder] Contact builder verification unsuccessful. Some fields are empty strings.",
+                "[ContactView.verifyContactBuilder] Contact builder verification unsuccessful. Some fields are empty.",
             );
             return false;
         }
@@ -109,9 +177,26 @@ export default function ContactView() {
         return true;
     };
 
+    const updatePublicKeyOnServer = async (pubKey: string): Promise<boolean> => {
+        const userLogin = mmkvStorage.getString("login");
+        if (!userLogin) {
+            throw new PreconditionError("User login not found in storage.");
+        }
+        return updatePublicKey(userLogin, pubKey);
+    };
+
     const handleContactSave = async (): Promise<void> => {
         logger.info("[ContactView.handleContactSave] Handling contact save.");
-        if (verifyContactBuilder()) {
+        if (!verifyContactBuilder()) {
+            // verification failed
+            logger.info("[ContactView.handleContactSave] Form validation failed.");
+            Alert.alert(
+                "Błąd",
+                "Nie zapisano kontaktu. Sprawdź poprawność danych.",
+                [GENERIC_OKAY_DISMISS_ALERT_BUTTON],
+                { cancelable: true },
+            );
+        } else {
             const contactFromBuilder: Contact = new Contact(
                 contactBuilder.name.trim(),
                 contactBuilder.surname.trim(),
@@ -120,14 +205,41 @@ export default function ContactView() {
             );
             setPublicKey("");
             let dbQueryResult = false;
-            if (updateMode) {
-                logger.info("[ContactView.handleContactSave] Updating contact in database.");
-                dbQueryResult = await updateContact(contactFromBuilder, sqlDbSession);
-                router.back();
-            } else {
+            if (!updateMode) {
                 logger.info("[ContactView.handleContactSave] Adding new contact to database.");
                 dbQueryResult = await addContact(contactFromBuilder, sqlDbSession);
-                router.back();
+            } else {
+                if (isFirstParty() && privateKey !== mmkvStorage.getString("privateKey")) {
+                    logger.info(
+                        "[ContactView.handleContactSave] Updating user's private key in storage.",
+                    );
+                    mmkvStorage.set("privateKey", privateKey);
+                }
+                if (
+                    isFirstParty() &&
+                    contactBuilder.publicKey !== mmkvStorage.getString("publicKey")
+                ) {
+                    logger.info(
+                        "[ContactView.handleContactSave] Updating user's public key on server.",
+                    );
+                    const serverUpdateResult = await updatePublicKeyOnServer(
+                        contactBuilder.publicKey,
+                    );
+                    if (!serverUpdateResult) {
+                        logger.error(
+                            "[ContactView.handleContactSave] Failed to update user's public key on server. Skipping contact update in the database.",
+                        );
+                        Alert.alert(
+                            "Błąd",
+                            "Nie udało się zaktualizować klucza publicznego na serwerze.",
+                            [GENERIC_OKAY_DISMISS_ALERT_BUTTON],
+                            { cancelable: true },
+                        );
+                        return;
+                    }
+                }
+                logger.info("[ContactView.handleContactSave] Updating contact in database.");
+                dbQueryResult = await updateContact(contactFromBuilder, sqlDbSession);
             }
             if (!dbQueryResult) {
                 logger.error("[ContactView.handleContactSave] Failed to save contact to database.");
@@ -140,15 +252,11 @@ export default function ContactView() {
                 return;
             }
             logger.info("[ContactView.handleContactSave] Contact saved to database successfully.");
-            return;
+            Toast.show(updateMode ? "Kontakt został zaktualizowany." : "Kontakt został zapisany.", {
+                duration: Toast.durations.SHORT,
+            });
+            router.back();
         }
-        // verification failed
-        Alert.alert(
-            "Błąd",
-            "Nie zapisano kontaktu. Sprawdź poprawność danych.",
-            [GENERIC_OKAY_DISMISS_ALERT_BUTTON],
-            { cancelable: true },
-        );
     };
 
     const handleContactRemove = (): void => {
@@ -195,16 +303,37 @@ export default function ContactView() {
         }
     };
 
-    const handleImportRsaKey = React.useCallback(async () => {
-        logger.info("[ContactView.handleImportRsaKey] Handling RSA key import.");
+    const handleImportPublicRsaKey = React.useCallback(async () => {
+        logger.info("[ContactView.handleImportPublicRsaKey] Handling RSA key import.");
         const rsaKey = await selectRsaKeyFile();
         if (!rsaKey) {
-            logger.warn("[ContactView.handleImportRsaKey] No RSA key file selected.");
+            logger.warn("[ContactView.handleImportPublicRsaKey] No RSA key file selected.");
             return;
         }
-        logger.info("[ContactView.handleImportRsaKey] Selected RSA key file.");
+        logger.info("[ContactView.handleImportPublicRsaKey] Selected RSA key file.");
         setContactBuilder({ ...contactBuilder, publicKey: rsaKey });
     }, [selectRsaKeyFile]);
+
+    const handleImportPrivateRsaKey = React.useCallback(async () => {
+        logger.info("[ContactView.handleImportPrivateRsaKey] Handling RSA key import.");
+        const rsaKey = await selectRsaKeyFile();
+        if (!rsaKey) {
+            logger.warn("[ContactView.handleImportPrivateRsaKey] No RSA key file selected.");
+            return;
+        }
+        logger.info("[ContactView.handleImportPrivateRsaKey] Selected RSA key file.");
+        setPrivateKey(rsaKey);
+    }, [selectRsaKeyFile]);
+
+    const handleGenerateKeyPair = async () => {
+        logger.info("[ContactView.handleGenerateKeyPair] Handling RSA key pair generation.");
+        const keyPair = await generateKeyPair();
+        setContactBuilder({ ...contactBuilder, publicKey: keyPair.publicKey });
+        setPrivateKey(keyPair.privateKey);
+        Toast.show("Wygenerowano nową parę kluczy", {
+            duration: Toast.durations.SHORT,
+        });
+    };
 
     return (
         <SafeAreaView className="grow">
@@ -218,6 +347,7 @@ export default function ContactView() {
                 </Link>
             </Appbar.Header>
             <View className="mx-8 grow">
+                {updateMode && contactId === "0" ? <LoginField /> : null}
                 <Text variant="titleLarge" className="mt-4">
                     Imię
                 </Text>
@@ -256,19 +386,39 @@ export default function ContactView() {
                         }}
                     />
                     <View className="mt-2 flex-row items-center space-x-3">
-                        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-                        <Icon name="folder-open-outline" size={40} onPress={handleImportRsaKey} />
-                        <Link href="/qrScanner" asChild>
-                            <Icon name="qr-code-outline" size={40} />
-                        </Link>
+                        <Icon
+                            name="folder-open-outline"
+                            size={40}
+                            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                            onPress={handleImportPublicRsaKey}
+                        />
+                        {isFirstParty() ? (
+                            <Icon
+                                name="reload-outline"
+                                size={40}
+                                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                                onPress={handleGenerateKeyPair}
+                            />
+                        ) : (
+                            <Link href="/qrScanner" asChild>
+                                <Icon name="qr-code-outline" size={40} />
+                            </Link>
+                        )}
                     </View>
                 </View>
+                {isFirstParty() ? (
+                    <PrivateKeyField
+                        inputValue={privateKey}
+                        onChangeFunc={setPrivateKey}
+                        readFileFunc={handleImportPrivateRsaKey}
+                    />
+                ) : null}
                 {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
                 <Button mode="contained" className="mx-auto my-7 w-40" onPress={handleContactSave}>
                     Zapisz
                 </Button>
                 <View className="grow">
-                    {updateMode ? (
+                    {updateMode && !isFirstParty ? (
                         <Button
                             mode="contained"
                             className="mb-5 mt-auto w-40 self-center"

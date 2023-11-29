@@ -34,6 +34,12 @@ AUTHENTICATED_USERS: set[str] = set()
 # Maps sids to challenges sent to users for authentication
 SID_TO_CHALLENGE_MAPPING: dict[str, str] = {}
 
+
+def is_authenticated(sid: str) -> bool:
+    """Check if user with that sid is authenticated on the server."""
+    return sid in AUTHENTICATED_USERS
+
+
 db_manager = DatabaseManager(SQLITE_DB_PATH)
 
 app = FastAPI(title="SDEx communicator server", debug=True)
@@ -71,7 +77,7 @@ async def handle_disconnect(sid) -> None:
 async def handle_register_init(sid: str) -> str:
     """Request for challenge to authenticate or register a user."""
     logger.info(f'Received "registerInit" event from sid={sid}.')
-    if sid in AUTHENTICATED_USERS:
+    if is_authenticated(sid):
         logger.info("User already authenticated. Ignoring request.")
         return "already authenticated"
     if existing_challenge := SID_TO_CHALLENGE_MAPPING.get(sid, None):
@@ -154,7 +160,7 @@ async def handle_chat_init(sender_sid: str, data: Any) -> str | None:
     if not validate_chat_init_payload(data):
         logger.info("Bad payload. Ignoring request.")
         return None
-    if sender_sid not in AUTHENTICATED_USERS:
+    if not is_authenticated(sender_sid):
         logger.info("User not authenticated. Ignoring request.")
         return None
     receiver_sid = PUBLIC_KEYS_SIDS_MAPPING.get(data["publicKeyTo"], None)
@@ -198,9 +204,11 @@ async def handle_chat(sender_sid: str, data: Any) -> ResponseStatusType:
         )
 
     # Check if both parties are authenticated
-    if sender_sid not in AUTHENTICATED_USERS:
+    if not is_authenticated(sender_sid):
         logger.info("Message sender is not authenticated. Ignoring the message.")
-        logger.debug(f"sender_sid={sender_sid}")
+        return "error"
+    if not is_authenticated(receiver_sid):
+        logger.info("Message receiver is not authenticated. Withholding the message.")
         return "error"
 
     # All conditions met, forwarding the message
@@ -223,18 +231,20 @@ async def handle_chat(sender_sid: str, data: Any) -> ResponseStatusType:
 
 
 @socket_manager.on("checkKey")  # type: ignore
-async def handle_check_public_key_exists(sid: str, data: Any) -> bool | None:
+async def handle_check_public_key_exists(sid: str, data: Any) -> bool:
     """Check if the public_key exists on server."""
     logger.info('Received "checkKey" event.')
     logger.debug(f"data={data}.")
     if not validate_check_key_payload(data):
-        logger.info("Bad payload. Ignoring request.")
-    elif sid not in AUTHENTICATED_USERS:
-        logger.info("User not authenticated. Ignoring request.")
+        logger.info("Bad payload. Returning False.")
+        return False
+    elif not is_authenticated(sid):
+        logger.info("User not authenticated. Returning False.")
+        return False
     else:
-        result = db_manager.check_public_key(data["publicKey"])
+        result = db_manager.check_public_key(data)
         logger.debug(
-            f'User with public key={data["publicKey"]} exists? - result={result}'
+            f'User with public key={data} exists: {result}'
         )
         return result
 
@@ -249,23 +259,24 @@ async def handle_check_online_status(sid: str, data: Any) -> bool:
     if not validate_check_online_payload(data):
         logger.info("Bad payload. Returning False.")
         return False
-    if sid not in AUTHENTICATED_USERS:
+    elif not is_authenticated(sid):
         logger.info("User not authenticated. Returning False.")
         return False
-    result = data["publicKey"] in PUBLIC_KEYS_SIDS_MAPPING.keys()
-    logger.debug(f"User is online: {result}")
-    return result
+    else:
+        result = data in PUBLIC_KEYS_SIDS_MAPPING.keys()
+        logger.debug(f"User is online: {result}")
+        return result
 
 
 @socket_manager.on("updatePublicKey")  # type: ignore
 async def handle_update_public_key(sid: str, data: Any) -> bool:
     """Handle user login update."""
-    logger.info('Received "updateLogin" event.')
+    logger.info('Received "updatePublicKey" event.')
     logger.debug(f"data={data}.")
     if not validate_update_public_key_payload(data):
         logger.info("Bad payload. Returning False.")
         return False
-    if sid not in AUTHENTICATED_USERS:
+    if not is_authenticated(sid):
         logger.info("User not authenticated. Returning False.")
         return False
     user = db_manager.get_user_by_login(data["login"])
@@ -284,7 +295,7 @@ async def handle_update_public_key(sid: str, data: Any) -> bool:
             f"User's public key changed from: "
             f"{PUBLIC_KEYS_SIDS_MAPPING.inverse.get(sid)} to: {data['publicKey']}"
         )
-        PUBLIC_KEYS_SIDS_MAPPING.update({data["publicKey"]: sid})
+        PUBLIC_KEYS_SIDS_MAPPING.inverse[sid] = data["publicKey"]
         logger.info("User's public key updated in PUBLIC_KEYS_SIDS_MAPPING.")
         logger.debug(f"{PUBLIC_KEYS_SIDS_MAPPING=}")
         return True

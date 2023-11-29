@@ -159,23 +159,6 @@ export type QrScannedStoreType = {
     setPublicKey: (publicKey: string) => void;
 };
 
-export type MessageBufferStoreType = {
-    newMessage?: Message;
-    addNewMessage: (message: Message) => void;
-    clearBuffer: () => void;
-};
-
-export type FirstPartySdexEngineContext = {
-    initializationHash?: Uint8Array;
-    hashFromUserPassword?: Uint8Array;
-};
-
-export type ThirdPartySdexEngineContext = {
-    initializationHash?: Uint8Array;
-    hashFromUserPassword?: Uint8Array;
-    sessionKey?: Uint8Array;
-};
-
 export type CryptoContextState = {
     sdexEngines: Map<string, SdexCrypto>;
     addUserEngine: (publicKey: string, sdexEngine: SdexCrypto) => void;
@@ -200,6 +183,11 @@ export type ChatInitFollowUpPayload = {
     publicKeyFrom: string;
 };
 
+export type UpdateKeyPayload = {
+    login: string;
+    publicKey: string;
+};
+
 export interface ServerToClientEvents {
     connect: () => void;
     disconnect: (
@@ -222,9 +210,7 @@ export interface ClientToServerEvents {
     ) => StatusResponse;
     chatInit: (data: ChatInitPayload, callback: (response?: string) => void) => boolean;
     chat: (message: TransportedMessage, callback: (status: StatusResponse) => void) => boolean;
-    checkKey: (publicKey: { publicKey: string }, callback: (response: boolean) => void) => boolean;
-    checkOnline: (
-        publicKey: { publicKey: string },
-        callback: (response: boolean) => void,
-    ) => boolean;
+    checkKey: (publicKey: string, callback: (response: boolean) => void) => boolean;
+    checkOnline: (publicKey: string, callback: (response: boolean) => void) => boolean;
+    updatePublicKey: (payload: UpdateKeyPayload, callback: (response: boolean) => void) => boolean;
 }

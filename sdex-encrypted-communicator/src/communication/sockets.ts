@@ -467,61 +467,6 @@ export async function outsideChatRoomChatListener(
 
 socket.on("chat", outsideChatRoomChatListener);
 
-// socket.on(
-//     "chat",
-//     async (message: TransportedMessage, callback: (response: boolean) => void): Promise<void> => {
-//         logger.info('[socket.on("chat")] Received "chat" event from server.');
-//         logger.info('[socket.on("chat")] Getting context for SDEx engine.');
-//         const sdexEngine = useCryptoContextStore.getState().sdexEngines.get(message.publicKeyFrom);
-//         if (!sdexEngine) {
-//             logger.error('[socket.on("chat")] Crypto context not found. Cannot decrypt message.');
-//             callback(false);
-//             return;
-//         }
-
-//         const firstPartyPrivateKey = mmkvStorage.getString("privateKey");
-//         if (!firstPartyPrivateKey) {
-//             logger.error(
-//                 '[socket.on("chat")] First party private key not found. Cannot decrypt message.',
-//             );
-//             callback(false);
-//             return;
-//         }
-
-//         const { sqlDbSession } = useSqlDbSessionStore.getState();
-//         if (!sqlDbSession) {
-//             logger.error(
-//                 '[socket.on("chat")] Database session not found. Cannot ingest a new message.',
-//             );
-//             callback(false);
-//             return;
-//         }
-//         const contactFrom = await getContactByPublicKey(message.publicKeyFrom, sqlDbSession);
-//         if (!contactFrom) {
-//             logger.error('[socket.on("chat")] Contact not found. Cannot ingest a new message.');
-//             callback(false);
-//             return;
-//         }
-
-//         logger.info('[socket.on("chat")] Decrypting message.');
-//         logger.debug(`[socket.on("chat")] Received message encrypted=${JSON.stringify(message)}`);
-//         logger.debug(`[socket.on("chat")] SDEx engine=${JSON.stringify(sdexEngine)}`);
-//         const decryptedMessage = await prepareToIngest(
-//             message,
-//             sdexEngine,
-//             firstPartyPrivateKey,
-//             contactFrom.id as number, // if it's fetched from db we know it has an id
-//         );
-//         logger.debug(`[socket.on("chat")] Decrypted message=${JSON.stringify(decryptedMessage)}`);
-
-//         await addMessage(decryptedMessage, sqlDbSession);
-//         logger.info('[socket.on("chat")] Message ingested successfully.');
-//         logger.info('[socket.on("chat")] Adding message to the buffer.');
-//         // useMessagesBufferStore.getState().addNewMessage(decryptedMessage);
-//         callback(true);
-//     },
-// );
-
 /**
  * Check whether a public key is registered on the server.
  * This doesn't mean that a third party is currently online,
@@ -532,7 +477,7 @@ socket.on("chat", outsideChatRoomChatListener);
 export async function checkKey(publicKey: string): Promise<boolean> {
     logger.info('[checkKey] Sending "checkKey" event to server.');
     try {
-        const response = await socket.emitWithAck("checkKey", { publicKey });
+        const response = await socket.emitWithAck("checkKey", publicKey);
         logger.debug(`[checkKey] Response from server=${JSON.stringify(response)}.`);
         return response;
     } catch (error) {
@@ -549,11 +494,29 @@ export async function checkKey(publicKey: string): Promise<boolean> {
 export async function checkOnline(publicKey: string): Promise<boolean> {
     logger.info('[checkOnline] Sending "checkOnline" event to server.');
     try {
-        const response = await socket.emitWithAck("checkOnline", { publicKey });
+        const response = await socket.emitWithAck("checkOnline", publicKey);
         logger.debug(`[checkOnline] Response from server=${JSON.stringify(response)}.`);
         return response;
     } catch (error) {
         logger.error(`[checkOnline] Error=${JSON.stringify(error)}`);
+        return false;
+    }
+}
+
+/**
+ * Update user's public key on the server.
+ * @param login User's login to change
+ * @param publicKey New public key to change to
+ * @returns true if public key is registered on the server, false otherwise
+ */
+export async function updatePublicKey(login: string, publicKey: string): Promise<boolean> {
+    logger.info('[updatePublicKey] Sending "updatePublicKey" event to server.');
+    try {
+        const response = await socket.emitWithAck("updatePublicKey", { login, publicKey });
+        logger.debug(`[updatePublicKey] Response from server=${JSON.stringify(response)}.`);
+        return response;
+    } catch (error) {
+        logger.error(`[updatePublicKey] Error=${JSON.stringify(error)}`);
         return false;
     }
 }

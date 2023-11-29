@@ -29,10 +29,8 @@ export const saveImage = async (fileName: string, base64String: string): Promise
             logger.info("[saveImage] Image saved successfully.");
             return true;
         })
-        .catch((error) => {
-            if (error instanceof Error) {
-                logger.error(`[saveImage] Failed to save image. Error=${error.message}`);
-            }
+        .catch((error: Error) => {
+            logger.error(`[saveImage] Failed to save image. Error=${error.message}`);
             return false;
         });
 
@@ -44,12 +42,10 @@ export const saveImage = async (fileName: string, base64String: string): Promise
                 .then(() => {
                     logger.info("[saveImage] Image saved to the gallery.");
                 })
-                .catch((error) => {
-                    if (error instanceof Error) {
-                        logger.error(
-                            `[saveImage] Failed to save image to the gallery. Error=${error.message}`,
-                        );
-                    }
+                .catch((error: Error) => {
+                    logger.error(
+                        `[saveImage] Failed to save image to the gallery. Error=${error.message}`,
+                    );
                 });
         }
     } catch (error) {

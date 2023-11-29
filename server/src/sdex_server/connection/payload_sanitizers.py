@@ -47,18 +47,14 @@ def validate_chat_payload(data: Any) -> bool:
 
 def validate_check_key_payload(data: Any) -> bool:
     """Validate the payload for check key request."""
-    if not isinstance(data, dict):
-        return False
-    if not data.get("publicKey", None):
+    if not isinstance(data, str):
         return False
     return True
 
 
 def validate_check_online_payload(data: Any) -> bool:
     """Validate the payload for check online request."""
-    if not isinstance(data, dict):
-        return False
-    if "publicKey" not in data.keys():
+    if not isinstance(data, str):
         return False
     return True
 

@@ -7,6 +7,7 @@ import { Appbar, Banner } from "react-native-paper";
 import { Link, useLocalSearchParams } from "expo-router";
 import { prepareToIngest } from "../../communication/PayloadComposers";
 import socket, {
+    checkKey,
     checkOnline,
     initiateChat,
     outsideChatRoomChatListener,
@@ -16,9 +17,9 @@ import socket, {
 } from "../../communication/Sockets";
 import { useCryptoContextStore } from "../../contexts/CryptoContext";
 import { useSqlDbSessionStore } from "../../contexts/DbSession";
-import { useMessagesBufferStore } from "../../contexts/MessagesBuffer";
 import logger from "../../Logger";
 import {
+    addMessage,
     getContactById,
     getContactByPublicKey,
     getMessagesByContactId,
@@ -36,11 +37,10 @@ export default function Chat() {
         undefined,
     );
     const [bannerOfflineVisible, setBannerOfflineVisible] = React.useState<boolean>(false);
-    const [thirdPartyOnline, setThirdPartyOnline] = React.useState<boolean>(false);
+    const [thirdPartyOnline, setThirdPartyOnline] = React.useState<boolean>(true);
+    const [thirdPartyKeyRegistered, setThirdPartyKeyRegistered] = React.useState<boolean>(true);
 
     const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
-    const newMessage = useMessagesBufferStore((state) => state.newMessage);
-    // const clearBuffer = useMessagesBufferStore((state) => state.clearBuffer);
     const sdexEngines = useCryptoContextStore((state) => state.sdexEngines);
 
     const params = useLocalSearchParams();
@@ -133,7 +133,7 @@ export default function Chat() {
                     )}`,
                 );
 
-                // await addMessage(decryptedMessage, sqlDbSession);
+                await addMessage(decryptedMessage, sqlDbSession);
                 logger.info(
                     '[socket.on("chat", <foreground listener>)] Message ingested successfully.',
                 );
@@ -151,7 +151,6 @@ export default function Chat() {
                     );
                     setMessages([giftedChatMessage, ...messages]);
                 }
-                // useMessagesBufferStore.getState().addNewMessage(decryptedMessage);
                 callback(true);
             },
         );
@@ -164,28 +163,9 @@ export default function Chat() {
         };
     }, []);
 
-    // Check if third party is online - and repeat that check every 10 seconds
-    // eslint-disable-next-line consistent-return
-    React.useEffect(() => {
-        if (contact?.publicKey) {
-            const interval = setInterval(() => {
-                // eslint-disable-next-line no-void
-                void checkOnline(contact?.publicKey).then((online) => {
-                    logger.info(
-                        `[Chat.useEffect] Third party connected is to the server: ${JSON.stringify(
-                            online,
-                        )}.`,
-                    );
-                    setThirdPartyOnline(online);
-                });
-            }, 10000);
-            return () => clearInterval(interval);
-        }
-    }, [contact?.publicKey]);
-
+    // Get third party's contact info from the db
     React.useEffect(() => {
         if (contactId) {
-            // Get current contact info from the db
             (async () => {
                 logger.info(
                     `[Chat.useEffect] Fetching contact info for contactId=${JSON.stringify(
@@ -216,7 +196,53 @@ export default function Chat() {
         }
     }, [contactId]);
 
-    // initiate chat with the third party (exchange session key parts)
+    function runOnlineCheck(publicKey: string) {
+        checkOnline(publicKey)
+            .then((online) => {
+                logger.info(
+                    `[Chat.useEffect] Third party connected is to the server: ${JSON.stringify(
+                        online,
+                    )}.`,
+                );
+                setThirdPartyOnline(online);
+            })
+            .catch((error: Error) => {
+                logger.error(
+                    `[Chat.useEffect] Error while checking if third party is online: ${error.message}`,
+                );
+            });
+    }
+
+    // Check if third party is online - and repeat that check every 10 seconds
+    // eslint-disable-next-line consistent-return
+    React.useEffect(() => {
+        if (contact?.publicKey) {
+            runOnlineCheck(contact.publicKey);
+            const interval = setInterval(() => {
+                runOnlineCheck(contact.publicKey);
+            }, 10000);
+            return () => clearInterval(interval);
+        }
+    }, [contact?.publicKey]);
+
+    // Check if third party's key is registered on the server
+    React.useEffect(() => {
+        if (contact?.publicKey) {
+            checkKey(contact.publicKey)
+                .then((registered) => {
+                    setThirdPartyKeyRegistered(registered);
+                })
+                .catch((errror: Error) => {
+                    logger.error(
+                        `[Chat.useEffect] Error while checking if key is registered: ${JSON.stringify(
+                            error,
+                        )}`,
+                    );
+                });
+        }
+    }, [contact?.publicKey]);
+
+    // Initiate chat with the third party (exchange session key parts)
     React.useEffect(() => {
         logger.info("[Chat.useEffect] Attempting to initiate chat.");
         if (contact?.publicKey && sdexEngines.has(contact?.publicKey)) {
@@ -266,40 +292,14 @@ export default function Chat() {
         }
     }, [contact, firstPartyContact]);
 
-    // Show banner when offline
+    // Show banner when offline or third party's key is wrong
     React.useEffect(() => {
-        if (!socket.connected || !thirdPartyOnline) {
+        if (!socket.connected || !thirdPartyOnline || !thirdPartyKeyRegistered) {
             setBannerOfflineVisible(true);
         } else {
             setBannerOfflineVisible(false);
         }
-    }, [thirdPartyOnline, socket.connected]);
-
-    // Monitor new messages from the buffer
-    // If message is from the current contact, re-fetch messages from the db to display it
-    React.useEffect(() => {
-        if (contact && firstPartyContact && newMessage?.contactIdFrom === contact.id) {
-            logger.info(
-                `[Chat.useEffect] New message appeared in a buffer. Fetching messages for contactId=${JSON.stringify(
-                    contact.id,
-                )}.`,
-            );
-            (async () => {
-                const messagesFromStorage = await getMessagesByContactId(
-                    Number(contactId),
-                    sqlDbSession,
-                );
-                const giftedChatMessages: GiftedChatMessage[] = [];
-                messagesFromStorage.forEach((message) => {
-                    giftedChatMessages.push(
-                        messageToGiftedChatMessage(message, contact, firstPartyContact),
-                    );
-                });
-                setMessages(giftedChatMessages);
-            })();
-            // clearBuffer();
-        }
-    }, [newMessage, contact, firstPartyContact]);
+    }, [thirdPartyOnline, socket.connected, thirdPartyKeyRegistered]);
 
     async function onSend(newMessages: GiftedChatMessage[] = []): Promise<void> {
         // Adding messages to chat window locally
@@ -356,6 +356,9 @@ export default function Chat() {
         if (!socket.connected) {
             text =
                 "Brak połączenia z serwerem. Aby wysyłać i odbierać wiadomości, połącz się z serwerem.";
+        } else if (!thirdPartyKeyRegistered) {
+            text =
+                "Klucz publiczny użytkownika nie jest zarejestrowany na serwerze (prawdopodobnie jest nieprawidłowy).";
         } else if (!thirdPartyOnline) {
             text =
                 "Użytkownik jest offline. Możesz wysyłać wiadomości, ale nie ma gwarancji, że dotrą.";
@@ -367,7 +370,7 @@ export default function Chat() {
         let text = "";
         if (!socket.connected) {
             text = "Połącz";
-        } else if (!thirdPartyOnline) {
+        } else if (!thirdPartyOnline || !thirdPartyKeyRegistered) {
             text = "Okej";
         }
         return text;
