@@ -53,8 +53,7 @@ async def handle_connect(sid, environ: Any, auth: Any) -> None:
     logger.info(f"User connected sid={sid}.")
     if not validate_connect_payload(auth):
         logger.info("Bad payload. Dropping connection.")
-        logger.debug(f"auth={auth}")
-        await socket_manager.disconnect(sid)
+        logger.debug(f"{auth=}")
     else:
         PUBLIC_KEYS_SIDS_MAPPING[auth["publicKey"]] = sid
         logger.info("User connected. User's public key and sid saved.")
@@ -160,12 +159,12 @@ async def handle_chat_init(sender_sid: str, data: Any) -> str | None:
     if not validate_chat_init_payload(data):
         logger.info("Bad payload. Ignoring request.")
         return None
-    if not is_authenticated(sender_sid):
-        logger.info("User not authenticated. Ignoring request.")
-        return None
     receiver_sid = PUBLIC_KEYS_SIDS_MAPPING.get(data["publicKeyTo"], None)
     if not receiver_sid:
         logger.info("Receiver not connected. Ignoring request.")
+        return None
+    if not is_authenticated(sender_sid) or not is_authenticated(receiver_sid):
+        logger.info("User not authenticated. Ignoring request.")
         return None
     logger.debug(f"sender_sid={sender_sid}, receiver_sid={receiver_sid}")
     logger.info("Forwarding chatInit request to the second client.")
@@ -202,6 +201,7 @@ async def handle_chat(sender_sid: str, data: Any) -> ResponseStatusType:
                 "Message may not reach the receiver."
             )
         )
+        return "error"
 
     # Check if both parties are authenticated
     if not is_authenticated(sender_sid):

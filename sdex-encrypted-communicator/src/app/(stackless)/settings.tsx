@@ -144,7 +144,7 @@ export default function Settings() {
                             {"\n"}
                             Program używa algorytmu szyfrowania SDEx z funkcją skrótu BLAKE3. Klucze
                             szyfrujące są tworzone algorytmem RSA. A wymiana wiadomości odbywa się
-                            za pomocą protokołu TLS 1.3
+                            za pomocą protokołu WebSocket
                             {"\n"}
                             {"\n"}
                             Wiadomości i dane kontaktowe są przechowywane wyłącznie na urządzeniu

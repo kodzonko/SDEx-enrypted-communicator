@@ -531,7 +531,7 @@ export async function addMessageQuery(
                     message.contactIdFrom,
                     message.contactIdTo,
                     message.text,
-                    message.createdAt,
+                    message.createdAt.toString(),
                     message.unread ? 1 : 0,
                     message.image ? message.image : null,
                     message.video ? message.video : null,
@@ -556,6 +556,39 @@ export async function addMessageQuery(
         }),
     );
 }
+
+// export function addMessageSyncQuery(message: Message, dbSession: SQLite.WebSQLDatabase) {
+//     logger.info("[addMessageSyncQuery] Executing query to insert a message to SQL database.");
+//     logger.debug(`[addMessageSyncQuery] Inserting message=${JSON.stringify(message)}`);
+//     dbSession.exec(
+//         [
+//             {
+//                 sql: `INSERT INTO
+//                                    messages (contact_id_from, contact_id_to, text, created_at, unread, image, video, audio)
+//                                VALUES(?, ?, ?, ?, ?, ?, ?, ?);`,
+//                 args: [
+//                     message.contactIdFrom,
+//                     message.contactIdTo,
+//                     message.text,
+//                     message.createdAt,
+//                     message.unread ? 1 : 0,
+//                     message.image ? message.image : null,
+//                     message.video ? message.video : null,
+//                     message.audio ? message.audio : null,
+//                 ],
+//             },
+//         ],
+//         false,
+//         (error) => {
+//             if (error) {
+//                 logger.error("[addMessageSyncQuery] Error in SQL execution of addMessageSyncQuery");
+//                 throw new SqlDatabaseError(
+//                     `[addMessageSyncQuery] Transaction failed: ${error.message}`,
+//                 );
+//             }
+//         },
+//     );
+// }
 
 export async function markMessagesAsReadQuery(
     thirdPartyContactId: number,

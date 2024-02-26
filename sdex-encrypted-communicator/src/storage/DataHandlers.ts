@@ -286,6 +286,7 @@ export const addMessage = async (
             "[addMessage] Cannot save a message. Database session is missing.",
         );
     }
+    logger.debug(`[addMessage] Message to save=${JSON.stringify(message)}`);
     const senderContact = await getContactById(message.contactIdFrom, dbSession);
     const receiverContact = await getContactById(message.contactIdFrom, dbSession);
     if (!(senderContact || receiverContact)) {

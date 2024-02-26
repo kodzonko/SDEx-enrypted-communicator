@@ -4,8 +4,9 @@ import { Tabs } from "expo-router";
 import * as React from "react";
 import { useTheme } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
-import socket, { requestRegister } from "../../communication/Sockets";
+import socket, { requestRegister, socketConnect } from "../../communication/Sockets";
 import { useSqlDbSessionStore } from "../../contexts/DbSession";
+import { mmkvStorage } from "../../storage/MmkvStorageMiddlewares";
 
 function makeIcon(
     icon: keyof typeof Ionicons.glyphMap,
@@ -29,6 +30,13 @@ export default function TabsLayout() {
     const setSqlDbSession = useSqlDbSessionStore((state) => state.setSqlDbSession);
     const sqlDbSession = useSqlDbSessionStore((state) => state.sqlDbSession);
     const theme = useTheme();
+
+    React.useEffect(() => {
+        if (!socket.connected) {
+            socket.auth = { publicKey: mmkvStorage.getString("publicKey") };
+            socketConnect();
+        }
+    }, [socket]);
 
     React.useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises

@@ -2,6 +2,9 @@ PROJECT_ROOT := $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 SRC := $(PROJECT_ROOT)src
 TESTS := $(PROJECT_ROOT)tests
 
+install:
+	poetry install
+
 run:
 	poetry run python $(SRC)/sdex_server/main.py
 
@@ -14,9 +17,6 @@ format:
 
 test-unit:
 	poetry run pytest --failed-first --new-first --cov=$(SRC) $(TESTS)/unit
-
-test-integration:
-	poetry run pytest $(TESTS)/integration
 
 update-deps:
 	poetry update

@@ -17,37 +17,23 @@ test("Encrypt and decrypt a message between two clients.", async () => {
     B0NWaNdlul/i0EkQZs45dJHe2HZebw7ZbOJmPyhUZAzmzastB7u69qNJANfxIFVB
     uII/u4ssaGki5iTJAgMBAAE=
     -----END PUBLIC KEY-----`;
-    const receiverPrivateKey = `-----BEGIN RSA PRIVATE KEY-----
-    MIICWwIBAAKBgFn8Dq9VxuIjiBzLmLZY5HUkHcr7czMdBKmsY3CiK6zauqmIXZqY
-    LadVJBTh2+v2/kShiQViY+i9HbTJbzl7BTw6p8frB0NWaNdlul/i0EkQZs45dJHe
-    2HZebw7ZbOJmPyhUZAzmzastB7u69qNJANfxIFVBuII/u4ssaGki5iTJAgMBAAEC
-    gYA6EYKYe04g2LUZf/lIkwy621euiZ3JukwsAmcZZE2y+mPCy5E8FkA/352tLCNz
-    nqxvNZ7qrpeytXfaFrOD8HNrqYxpsYjrhc5dmmVsZ6ER7rGMmM1Jqn+cE0l7Ve3S
-    V96BXngQkiGNwBmfRns7XjOaPPUWsT2/QNp8sWbne6V/0QJBAKlgV+O8YiesCN6L
-    2KF9iw+PrUR3j/6kE0ShqSzsQS9YQm1KQLKHVd5tnsqbXUTeKIIjMDmpNOrwwDP9
-    qjvmSwsCQQCIAVKMyPj3kdttw69xFfWGNOJgmhup3SIrUqXEqN6VTULyKEInn3Xp
-    Uw2Dy9OmurzkcsWMCkNKnMFbz+zFElP7AkEAmf+6CZsn15BIhCe8sKAYBu8Ih/75
-    knoV9snRqsGoRubFht8DUg9Q2KrsvKRkOhCP3jsmRtb9ATwiVWMnG804nwJAJV1f
-    pYgNRk7PHw/U4lerFYzv6KROF1PGcGqLWkUeqZwJWWgQDLy1cz27B8t2wWaqQIT7
-    muay6Au635N3NAk+AwJAESyykEnrU3yYXhU0hZFUIqUoB01g3qfUa7Ik/eo5NTky
-    i/f+WqIAP4RwpCa6eV9bmcI+6WDzU8wDRmYYMA3jew==
-    -----END RSA PRIVATE KEY-----`;
     const inputMessage = new Message(0, 1, "test ąęćśóżź.", new Date(2000, 1, 1), true);
     const sessionKeyFirstPart = generateSessionKeyPart();
     const sessionKeySecondPart = generateSessionKeyPart();
     const sessionKey = mergeUint8Arrays(sessionKeyFirstPart, sessionKeySecondPart);
     const sdexEngine = new SdexCrypto(sessionKey);
-    const transportReadyMessage: TransportedMessage = await prepareToSend(
+    const transportReadyMessage: TransportedMessage = prepareToSend(
         inputMessage,
         senderPublicKey,
         receiverPublicKey,
         sdexEngine,
     );
-    const decryptedMessage = await prepareToIngest(
-        transportReadyMessage,
-        sdexEngine,
-        receiverPrivateKey,
-        5,
-    );
-    expect(inputMessage).toEqual(decryptedMessage);
+    const decryptedMessage = prepareToIngest(transportReadyMessage, sdexEngine, 5);
+    expect(decryptedMessage.contactIdFrom).toEqual(5);
+    expect(decryptedMessage.contactIdTo).toEqual(0);
+    expect(inputMessage.text).toEqual(decryptedMessage.text);
+    expect(inputMessage.image).toEqual(decryptedMessage.image);
+    expect(inputMessage.video).toEqual(decryptedMessage.video);
+    expect(inputMessage.audio).toEqual(decryptedMessage.audio);
+    expect(inputMessage.createdAt).toEqual(decryptedMessage.createdAt);
 });

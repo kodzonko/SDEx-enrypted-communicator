@@ -15,12 +15,28 @@ export default function RootLayout() {
 
     React.useEffect(() => {
         if (!isSignedIn) {
-            router.replace("/sign-in");
+            try {
+                router.replace("/sign-in");
+            } catch (error) {
+                logger.error(
+                    `[RootLayout.useEffect] Error while trying to redirect to /sign-in: ${JSON.stringify(
+                        error,
+                    )}`,
+                );
+            }
         } else {
             logger.info("[RootLayout.useEffect] Registering client on the server...");
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             requestRegister();
-            router.replace("/chats");
+            try {
+                router.replace("/chats");
+            } catch (error) {
+                logger.error(
+                    `[RootLayout.useEffect] Error while trying to redirect to /chats: ${JSON.stringify(
+                        error,
+                    )}`,
+                );
+            }
         }
     }, [isSignedIn]);
 

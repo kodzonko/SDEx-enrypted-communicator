@@ -208,7 +208,7 @@ export async function sendMessage(
             "[sendMessage] First party's key(s) not found. Cannot send message.",
         );
     }
-    const transportReadyMessage: TransportedMessage = await prepareToSend(
+    const transportReadyMessage: TransportedMessage = prepareToSend(
         message,
         publicKeyFrom,
         publicKeyTo,
@@ -412,15 +412,6 @@ export async function outsideChatRoomChatListener(
         return;
     }
 
-    const firstPartyPrivateKey = mmkvStorage.getString("privateKey");
-    if (!firstPartyPrivateKey) {
-        logger.error(
-            '[socket.on("chat", <background listener>)] First party private key not found. Cannot decrypt message.',
-        );
-        callback(false);
-        return;
-    }
-
     const { sqlDbSession } = useSqlDbSessionStore.getState();
     if (!sqlDbSession) {
         logger.error(
@@ -447,10 +438,9 @@ export async function outsideChatRoomChatListener(
     logger.debug(
         `[socket.on("chat", <background listener>)] SDEx engine=${JSON.stringify(sdexEngine)}`,
     );
-    const decryptedMessage = await prepareToIngest(
+    const decryptedMessage = prepareToIngest(
         message,
         sdexEngine,
-        firstPartyPrivateKey,
         contactFrom.id as number, // if it's fetched from db we know it has an id
     );
     logger.debug(
@@ -461,7 +451,6 @@ export async function outsideChatRoomChatListener(
 
     await addMessage(decryptedMessage, sqlDbSession);
     logger.info('[socket.on("chat", <background listener>)] Message ingested successfully.');
-    logger.info('[socket.on("chat", <background listener>)] Adding message to the buffer.');
     callback(true);
 }
 

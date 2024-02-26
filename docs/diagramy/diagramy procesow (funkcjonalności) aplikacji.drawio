@@ -1,0 +1,742 @@
+<mxfile host="app.diagrams.net" modified="2024-02-21T01:22:03.211Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" etag="HibFrBZ7CfNhzHF7mBca" version="23.1.4" type="device">
+  <diagram id="prtHgNgQTEPvFCAcTncT" name="Page-1">
+    <mxGraphModel dx="4790" dy="2843" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-28" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;response:&lt;/b&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&quot;success&quot; / &quot;error&quot;&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="193" y="543" width="139" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-19" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;login:&lt;/font&gt;&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&amp;lt;identyfikator użytkownika&amp;gt;&lt;/span&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;publicKey:&lt;/font&gt;&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;klucz publiczny RSA użytkownika&amp;gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;signature:&lt;/font&gt;&lt;/b&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;podpis kodu (challenge)&amp;gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="351" y="327" width="251" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-13" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;challenge:&lt;/font&gt;&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;losowo wygenerowany kod&amp;gt;&lt;br&gt;&lt;/font&gt;&lt;/span&gt;lub&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;informacja o tym, że użytkownik jest już uwierzytelniony&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="36" y="160" width="277" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-2" value="Klient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="60" y="40" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-3" value="Serwer" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="520" y="130" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-4" value="" style="endArrow=classic;html=1;rounded=0;entryX=-0.023;entryY=0.452;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="hMmeVdPa3TFVPshaFbfD-2" target="hMmeVdPa3TFVPshaFbfD-3" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="290" y="230" as="sourcePoint" />
+            <mxPoint x="340" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-5" value="registerInit" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=12;fontSize=15;labelBackgroundColor=none;" parent="hMmeVdPa3TFVPshaFbfD-4" vertex="1" connectable="0">
+          <mxGeometry x="-0.2211" y="1" relative="1" as="geometry">
+            <mxPoint x="77" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-8" value="Klient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="58" y="373" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-11" value="" style="endArrow=classic;html=1;rounded=0;exitX=-0.026;exitY=0.558;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="hMmeVdPa3TFVPshaFbfD-3" target="hMmeVdPa3TFVPshaFbfD-8" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="80" y="210" as="sourcePoint" />
+            <mxPoint x="150" y="220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-12" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;registerInit (callback)&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=332;labelBackgroundColor=none;fontSize=15;" parent="hMmeVdPa3TFVPshaFbfD-11" vertex="1" connectable="0">
+          <mxGeometry x="-0.2211" y="1" relative="1" as="geometry">
+            <mxPoint x="-60" y="15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-15" value="" style="endArrow=classic;html=1;rounded=0;entryX=-0.01;entryY=0.113;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;" parent="1" source="hMmeVdPa3TFVPshaFbfD-8" target="hMmeVdPa3TFVPshaFbfD-16" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="238" y="473" as="sourcePoint" />
+            <mxPoint x="518" y="503" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-26" value="registerFollowUp" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=14;labelBackgroundColor=none;fontSize=15;spacing=2;" parent="hMmeVdPa3TFVPshaFbfD-15" vertex="1" connectable="0">
+          <mxGeometry x="-0.4995" y="-1" relative="1" as="geometry">
+            <mxPoint x="151" y="27" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-16" value="Serwer" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="518" y="503" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-24" value="Klient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="58" y="668" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-25" value="" style="endArrow=classic;html=1;rounded=0;exitX=-0.023;exitY=0.667;exitDx=0;exitDy=0;exitPerimeter=0;dashed=1;" parent="1" source="hMmeVdPa3TFVPshaFbfD-16" target="hMmeVdPa3TFVPshaFbfD-24" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="508" y="533" as="sourcePoint" />
+            <mxPoint x="318" y="553" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-29" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;registerFollowUp&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=342;labelBackgroundColor=none;fontSize=15;" parent="hMmeVdPa3TFVPshaFbfD-25" vertex="1" connectable="0">
+          <mxGeometry x="0.5535" relative="1" as="geometry">
+            <mxPoint x="144" y="-55" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-35" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;podpisanie kodu kluczem prywatnym klienta&lt;/font&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="16" y="466" width="213" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-1" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;weryfikacja podpisu kluczem publicznym klienta&lt;/span&gt;&lt;/li&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;jeśli niepoprawny &lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: &quot;error&quot;&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;sprawdzenie czy login użytkownika znajduje się w bazie danych serwera&lt;/span&gt;&lt;/li&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;jeśli istnieje i klucz publiczny się zgadza - uwierzytelnienie użytkownika (&lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: &quot;success&quot;)&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;jeśli istnieje, ale klucz publiczny się nie zgadza - &lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: &quot;error&quot;&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;jeśli nie istnieje - zapisanie loginu i klucza publicznego w bazie danych (rejestracja nowego użytkownika) oraz uwierzytelnienie użytkownika (&lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: &quot;success&quot;)&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-17;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="411" y="603" width="436" height="223" as="geometry" />
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-2" value="Diagram procesu uwierzytelnienia" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=36;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="73" y="-159" width="600" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-3" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="728" y="503" width="60" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-30" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="Lk_NrazdhThPDiIbwe2l-3" vertex="1">
+          <mxGeometry y="40" width="60" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-31" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="Lk_NrazdhThPDiIbwe2l-3" vertex="1">
+          <mxGeometry y="20" width="60" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="hMmeVdPa3TFVPshaFbfD-32" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="Lk_NrazdhThPDiIbwe2l-3" vertex="1">
+          <mxGeometry width="60" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-4" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0;exitY=0;exitDx=120;exitDy=50;exitPerimeter=0;entryX=0;entryY=0;entryDx=0;entryDy=30;entryPerimeter=0;" parent="1" source="hMmeVdPa3TFVPshaFbfD-16" target="hMmeVdPa3TFVPshaFbfD-31" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="378" y="663" as="sourcePoint" />
+            <mxPoint x="428" y="613" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-5" value="Diagram procesu nawiązania komunikacji&lt;br&gt;między klientami" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=36;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="-1671" y="-228" width="730" height="98" as="geometry" />
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-8" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;publicKeyFrom:&lt;/font&gt;&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&amp;lt;klucz publiczny klienta 1&amp;gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/span&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;publicKeyTo:&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;klucz publiczny klienta 2&amp;gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;sessionKeyPartEncrypted:&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;zaszyfrowana kluczem publicznym klienta 2 część klucza sesji wygenerowana przez klienta 1&amp;gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1801" y="-30" width="356" height="141" as="geometry" />
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-9" value="Klient 1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1884" y="70" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-10" value="Serwer" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1424" y="160" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-11" value="" style="endArrow=classic;html=1;rounded=0;entryX=-0.023;entryY=0.452;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=15;" parent="1" source="Lk_NrazdhThPDiIbwe2l-9" target="Lk_NrazdhThPDiIbwe2l-10" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1654" y="260" as="sourcePoint" />
+            <mxPoint x="-1604" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-12" value="chatInit" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=13;fontSize=15;" parent="Lk_NrazdhThPDiIbwe2l-11" vertex="1" connectable="0">
+          <mxGeometry x="-0.2211" y="1" relative="1" as="geometry">
+            <mxPoint x="78" y="2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-18" value="Serwer" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1424" y="403" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-19" value="Klient 1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1884" y="543" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-22" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;odszyfrowanie odebranej części klucza kluczem prywatnym klienta 1&lt;/font&gt;&lt;/li&gt;&lt;li style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;zapisanie klucza sesji (część 1 klucza + część 2 klucza) w pamięci niezachowawczej aplikacji&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1990" y="637" width="289" height="107" as="geometry" />
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-29" value="Klient 2" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-852" y="277" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-30" value="" style="endArrow=classic;html=1;rounded=0;fontSize=15;" parent="1" source="Lk_NrazdhThPDiIbwe2l-10" target="Lk_NrazdhThPDiIbwe2l-29" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1234" y="170" as="sourcePoint" />
+            <mxPoint x="-867" y="356.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-31" value="chatInit" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=13;fontSize=15;" parent="Lk_NrazdhThPDiIbwe2l-30" vertex="1" connectable="0">
+          <mxGeometry x="-0.2211" y="1" relative="1" as="geometry">
+            <mxPoint x="78" y="2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Lk_NrazdhThPDiIbwe2l-32" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;weryfikacja poprawności przesłanych danych&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;sprawdzenie czy obaj klienci są uwierzytelnieni&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;zidentyfikowanie identyfikatora połączenia (SID) klienta 2 na podstawie jego klucza&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;przekazanie wiadomości od klienta 1 do klienta 2&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1432" y="-30" width="223" height="179" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-1" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;zwrócenie True / False w zależności od wyniku uwierzytelnienia - potrzebne dla innych procesów&lt;/font&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="23" y="753" width="283" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-2" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;odszyfrowanie części klucza wygenerowanej przez klienta 1 kluczem prywatnym klienta 2&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;wygenerowanie drugiej części klucza sesji&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;zaszyfrowanie drugiej części klucza sesji kluczem publicznym klienta 1&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;zapisanie klucza sesji (część 1 klucza + część 2 klucza) w pamięci niezachowawczej aplikacji&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;wysłanie zaszyfrowanej drugiej części klucza sesji do serwera&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-941" y="367" width="332" height="191" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-3" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;publicKeyFrom:&lt;/font&gt;&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&amp;lt;klucz publiczny klienta 1&amp;gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/span&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;publicKeyTo:&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;klucz publiczny klienta 2&amp;gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;sessionKeyPartEncrypted:&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;zaszyfrowana kluczem publicznym klienta 2 część klucza sesji wygenerowana przez klienta 1&amp;gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1184" y="83" width="358" height="147" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-6" value="" style="endArrow=classic;html=1;rounded=0;entryX=1.008;entryY=0.414;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=15;" parent="1" source="Lk_NrazdhThPDiIbwe2l-29" target="Lk_NrazdhThPDiIbwe2l-18" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1367" y="474" as="sourcePoint" />
+            <mxPoint x="-1317" y="424" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-8" value="chatInit (callback)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;rotation=344;fontSize=15;" parent="7EqNihi-GNMJjYa_B4wX-6" vertex="1" connectable="0">
+          <mxGeometry x="0.3" y="3" relative="1" as="geometry">
+            <mxPoint x="7" y="-16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-7" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;background-color: initial; font-size: 15px;&quot;&gt;sessionKeySecondPartEncrypted:&lt;/b&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;zaszyfrowana kluczem publicznym klienta 1 część klucza sesji wygenerowana przez klienta 2&amp;gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1251" y="428" width="297" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-9" value="" style="endArrow=classic;html=1;rounded=0;exitX=-0.017;exitY=0.618;exitDx=0;exitDy=0;exitPerimeter=0;fontSize=15;" parent="1" source="Lk_NrazdhThPDiIbwe2l-18" target="Lk_NrazdhThPDiIbwe2l-19" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1479" y="452" as="sourcePoint" />
+            <mxPoint x="-1657" y="593" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-10" value="chatInit (callback)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;rotation=344;fontSize=15;" parent="7EqNihi-GNMJjYa_B4wX-9" vertex="1" connectable="0">
+          <mxGeometry x="0.3" y="3" relative="1" as="geometry">
+            <mxPoint x="38" y="-25" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-12" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;background-color: initial; font-size: 15px;&quot;&gt;sessionKeySecondPartEncrypted:&lt;/b&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;zaszyfrowana kluczem publicznym klienta 1 część klucza sesji wygenerowana przez klienta 2&amp;gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1858.5" y="386" width="360" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-13" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;sprawdzenie czy istnieje klucz sesji przypisany do klienta 2&lt;/li&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;jeśli istnieje pominięcie wykonania dalszej części procesu&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;jeśli nie istnieje: wygenerowanie pierwszej części klucza sesji i zaszyfrowanie jej kluczem publicznym klienta 2&lt;/li&gt;&lt;/ul&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1990" y="163" width="275" height="187" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-14" value="`" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=36;" parent="1" vertex="1">
+          <mxGeometry x="-1383" y="1057" width="30" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-15" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;transportedMessage:&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;publicKeyTo:&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;klucz publiczny klienta 2&amp;gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;div style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;&lt;font style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;&lt;b style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;publicKeyFrom:&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;&lt;font style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;&lt;span style=&quot;border-color: var(--border-color); background-color: initial; font-size: 15px;&quot;&gt;&amp;lt;klucz publiczny klienta 1&amp;gt;&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;text:&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;zaszyfrowana algorytmem SDEx treść wiadomości&amp;gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;createdAt:&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&amp;lt;data stworzenia wiadomości przez klienta 1&amp;gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1789" y="1302" width="321" height="219" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-16" value="Klient 1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1886" y="1479" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-17" value="Serwer" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1426" y="1569" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-18" value="" style="endArrow=classic;html=1;rounded=0;entryX=-0.023;entryY=0.452;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=15;" parent="1" source="7EqNihi-GNMJjYa_B4wX-16" target="7EqNihi-GNMJjYa_B4wX-17" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1656" y="1669" as="sourcePoint" />
+            <mxPoint x="-1606" y="1619" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-19" value="chat" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=13;fontSize=15;" parent="7EqNihi-GNMJjYa_B4wX-18" vertex="1" connectable="0">
+          <mxGeometry x="-0.2211" y="1" relative="1" as="geometry">
+            <mxPoint x="75" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-23" value="Klient 2" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-854" y="1686" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-24" value="" style="endArrow=classic;html=1;rounded=0;fontSize=15;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1305" y="1621.1821631878556" as="sourcePoint" />
+            <mxPoint x="-853" y="1712.954459203036" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-25" value="chat" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=13;fontSize=15;" parent="7EqNihi-GNMJjYa_B4wX-24" vertex="1" connectable="0">
+          <mxGeometry x="-0.2211" y="1" relative="1" as="geometry">
+            <mxPoint x="73" y="6" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-26" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;border-color: var(--border-color);&quot;&gt;weryfikacja poprawności przesłanych danych&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;zidentyfikowanie identyfikatora połączenia (SID) klienta 2 na podstawie jego klucza&lt;/span&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/li&gt;&lt;li style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;sprawdzenie czy obaj klienci są połączeni z serwerem (jeśli nie - &lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: &quot;error&quot;&lt;/li&gt;&lt;li style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;sprawdzenie czy obaj klienci są uwierzytelnieni na serwerze (jeśli nie - &lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: &quot;error&quot;)&lt;/li&gt;&lt;li style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;przekazanie wiadomości do klienta 2&lt;/li&gt;&lt;li style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;odesłanie statusu do klienta 1&lt;/li&gt;&lt;li style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;oczekiwanie na potwierdzenie odbioru i odszyfrowania wiadomości od klienta 2&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1447" y="1311" width="311" height="248" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-27" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;sprawdzenie czy klient 2 jest zapisany w kontaktach - jeśli nie odpowiedź negatywna&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;sprawdzenie, czy klucz sesji przypisany do klucza publicznego klienta 1 istnieje w pamięci aplikacji&lt;/li&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;jeśli nie - odpowiedź negatywna&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;jeśli istnieje - odszyfrowanie wiadomości i zapisanie jej w bazie danych aplikacji oraz zwrócenie odpowiedzi pozytywnej&lt;/li&gt;&lt;/ul&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1046" y="1796" width="358" height="154" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-35" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;zaszyfrowanie tekstu wiadomości algorytmem SDEx&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;przygotowanie wiadomości do transportu (transportedMessage)&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;wysłanie wiadomości&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1938" y="1583" width="247" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-37" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;transportedMessage:&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;publicKeyTo:&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;klucz publiczny klienta 2&amp;gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;div style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;&lt;font style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;&lt;b style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;publicKeyFrom:&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;&lt;font style=&quot;border-color: var(--border-color); font-size: 15px;&quot;&gt;&lt;span style=&quot;border-color: var(--border-color); background-color: initial; font-size: 15px;&quot;&gt;&amp;lt;klucz publiczny klienta 1&amp;gt;&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;text:&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;zaszyfrowana algorytmem SDEx treść wiadomości&amp;gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;createdAt:&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&amp;lt;data stworzenia wiadomości przez klienta 1&amp;gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1130.5" y="1422" width="324" height="213" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-39" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;response:&lt;/b&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&quot;error&quot;&lt;br style=&quot;font-size: 15px;&quot;&gt;(warunkowo)&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1657" y="1629" width="175" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-40" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Funkcja obsługująca wysyłkę wiadomości zwraca true /false w zależności od statusu otrzymanego z serwera&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1909" y="2095" width="288" height="76.5" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-41" value="Diagram procesu sprawdzania&lt;br&gt;statusu połączenia klienta" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=36;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="238" y="1232" width="538" height="98" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-42" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;background-color: initial; font-size: 15px;&quot;&gt;publicKey:&lt;/b&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;klucz publiczny klienta 2&amp;gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="312" y="1691" width="185" height="44.75" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-43" value="Klient 1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="195" y="1714.25" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-44" value="Serwer" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="655" y="1804.25" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-45" value="" style="endArrow=classic;html=1;rounded=0;entryX=-0.023;entryY=0.452;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=15;" parent="1" source="7EqNihi-GNMJjYa_B4wX-43" target="7EqNihi-GNMJjYa_B4wX-44" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="425" y="1904.25" as="sourcePoint" />
+            <mxPoint x="475" y="1854.25" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-46" value="checkOnline" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=13;labelBackgroundColor=none;fontSize=15;" parent="7EqNihi-GNMJjYa_B4wX-45" vertex="1" connectable="0">
+          <mxGeometry x="-0.2211" y="1" relative="1" as="geometry">
+            <mxPoint x="75" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-50" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;border-color: var(--border-color);&quot;&gt;weryfikacja poprawności przesłanych danych&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;sprawdzenie czy klient 1 jest uwierzytelniony&lt;/span&gt;&lt;/li&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;jeśli nie &lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: false&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;zidentyfikowanie identyfikatora połączenia (SID) klienta 2 na podstawie odebranego &lt;b style=&quot;font-size: 15px;&quot;&gt;publicKey&lt;/b&gt;&lt;/li&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;jeśli istnieje - klient 2 jest połączony (&lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: true)&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;jeśli nie - &lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: false&lt;/li&gt;&lt;/ul&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="533" y="1638" width="341" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-52" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.005;exitY=0.594;exitDx=0;exitDy=0;exitPerimeter=0;fontSize=15;" parent="1" source="7EqNihi-GNMJjYa_B4wX-44" target="7EqNihi-GNMJjYa_B4wX-56" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="712" y="2118.25" as="sourcePoint" />
+            <mxPoint x="291" y="1969.25" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-53" value="checkOnline (callback)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;rotation=344;fontSize=15;" parent="7EqNihi-GNMJjYa_B4wX-52" vertex="1" connectable="0">
+          <mxGeometry x="0.3" y="3" relative="1" as="geometry">
+            <mxPoint x="7" y="-16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-56" value="Klient 1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="195" y="1945.25" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7EqNihi-GNMJjYa_B4wX-57" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;response:&lt;/b&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;boolean&amp;gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="268" y="1853" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Ux3iRll6E9tTE1sqxh1b-3" value="Serwer" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1420" y="1842" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Ux3iRll6E9tTE1sqxh1b-4" value="" style="endArrow=classic;html=1;rounded=0;fontSize=15;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-858" y="1736" as="sourcePoint" />
+            <mxPoint x="-1296" y="1864" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Ux3iRll6E9tTE1sqxh1b-5" value="chat (callback)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;rotation=344;fontSize=15;" parent="Ux3iRll6E9tTE1sqxh1b-4" vertex="1" connectable="0">
+          <mxGeometry x="0.3" y="3" relative="1" as="geometry">
+            <mxPoint x="7" y="-16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-1" value="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1636" y="163" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-2" value="2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1117" y="262.5" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-3" value="3" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1180" y="337" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-4" value="4" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1696" y="462" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-6" value="logika wykonywana na danym etapie procesu" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="-568" y="-1083" width="140" height="47.5" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-8" value="zawartość przesyłanej wiadomości" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="-568" y="-1013" width="137" height="47" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-9" value="2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
+          <mxGeometry x="-525" y="-947" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-10" value="numer porządkowy etapu&lt;br&gt;w danym procesie" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="-464" y="-953" width="153" height="41" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-16" value="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
+          <mxGeometry x="326" y="70" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-17" value="2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
+          <mxGeometry x="355.5" y="198" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-18" value="3" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
+          <mxGeometry x="306" y="413" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-19" value="4" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
+          <mxGeometry x="229" y="593" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-23" value="nazwa identyfikująca typ&lt;br&gt;wysyłanej wiadomości&lt;br&gt;(rozpoznawalna dla&lt;br&gt;serwera i klienta)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="-464" y="-890" width="148" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-24" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-568" y="-872" as="sourcePoint" />
+            <mxPoint x="-468" y="-852" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-25" value="chatInit" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=13;" parent="HwPHRrXcO-eZisySN2Ia-24" vertex="1" connectable="0">
+          <mxGeometry x="-0.2211" y="1" relative="1" as="geometry">
+            <mxPoint x="15" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-26" value="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="451" y="1746" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-27" value="2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="462" y="1855.5" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-41" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;fontSize=15;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1446" y="1630" as="sourcePoint" />
+            <mxPoint x="-1841" y="1548" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-42" value="chat (callback)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=15;fontSize=15;" parent="HwPHRrXcO-eZisySN2Ia-41" vertex="1" connectable="0">
+          <mxGeometry x="-0.2211" y="1" relative="1" as="geometry">
+            <mxPoint x="-19" y="-15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-43" value="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1570" y="1527" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-44" value="2a" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-986" y="1643" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="HwPHRrXcO-eZisySN2Ia-45" value="2b" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1674" y="1591.5" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-1" value="Diagram procesu nawiązywania i zrywania&lt;br&gt;połączenia klienta z serwerem" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=36;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="-1985" y="-1445" width="742" height="98" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-2" value="Klient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1772" y="-1193" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-3" value="Serwer" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1476" y="-1189" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-4" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;pobranie klucza publicznego RSA klienta z pamięci aplikacji&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-2032" y="-1205" width="247" height="49" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-8" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;auth:&lt;/font&gt;&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&amp;lt;klucz publiczny klienta&amp;gt;&lt;/span&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1702.5" y="-1247" width="189.5" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-10" value="Oznaczenia" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=36;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="-573" y="-1248" width="216" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-11" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;weryfikacja poprawności przesłanych danych&lt;/li&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;jeśli weryfikacja poprawna - dodanie do słownika klucza publicznego klienta wraz z jego SIDem (&lt;i style=&quot;font-size: 15px;&quot;&gt;session id&lt;/i&gt; - identyfikatorem połączenia)&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;jeśli nie - zerwanie połączenia&lt;/li&gt;&lt;/ul&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1343" y="-1209" width="357" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-12" value="Klient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1772.5" y="-916.5" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-13" value="Serwer" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1476.5" y="-912" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-15" value="" style="endArrow=classic;html=1;rounded=0;fontSize=15;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1726" y="-893" as="sourcePoint" />
+            <mxPoint x="-1482" y="-893" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-16" value="disconnect" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=0;fontSize=15;" parent="lXd5I3u9zGBROD6FqVUv-15" vertex="1" connectable="0">
+          <mxGeometry x="-0.2211" y="1" relative="1" as="geometry">
+            <mxPoint x="39" y="-13" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-18" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;usunięcie klucza publicznego i SIDa połączenia ze słownika&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;usunięcie klucza publicznego z listy autoryzowanych użytkowników (jeśli się tam znajdował)&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;usunięcie klucza publicznego użytkownika ze słownika z kodami do weryfikacji tożsamości (jeśli tam się znajdował)&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1344" y="-927" width="358" height="164.5" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-21" value="(inicjatywa zerwania połączenia&lt;br style=&quot;font-size: 15px;&quot;&gt;może być rozpoczęta przez każdą ze stron)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1754" y="-856.5" width="307" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-25" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;wyświetlenie powiadomienia o zerwaniu połączenia na ekranie urządzenia&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-2037.5" y="-915" width="252" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-27" value="" style="endArrow=classic;html=1;rounded=0;fontSize=15;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1487.5" y="-868" as="sourcePoint" />
+            <mxPoint x="-1731.5" y="-868" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-29" value="" style="endArrow=classic;html=1;rounded=0;fontSize=15;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1728" y="-1159" as="sourcePoint" />
+            <mxPoint x="-1484" y="-1159" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-30" value="connect" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=0;fontSize=15;" parent="lXd5I3u9zGBROD6FqVUv-29" vertex="1" connectable="0">
+          <mxGeometry x="-0.2211" y="1" relative="1" as="geometry">
+            <mxPoint x="39" y="-13" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-31" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;pobranie z pamięci klucza prywatnego, publicznego i loginu użytkownika&lt;/font&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="25" y="-36" width="213" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-32" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;jeśli klient jest już autoryzowany - zwrócenie informacji o tym&lt;/font&gt;&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;jeśli kod autoryzacji dla tego użytkownika już istnieje - ponowne go wykorzystanie, jeśli nie - wygenerowanie nowego kodu&lt;/font&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="545" y="8" width="299" height="111" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-33" value="(jeśli użytkownik nie został uprzednio uwierzytelniony)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=15;rotation=14;" parent="1" vertex="1">
+          <mxGeometry x="117" y="461" width="376" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-34" value="(jeśli użytkownik nie został uprzednio uwierzytelniony)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=15;rotation=342;" parent="1" vertex="1">
+          <mxGeometry x="121" y="621" width="376" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-35" value="Diagram procesu przekazania wiadomości między użytkownikami" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=36;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="-1890.5" y="1134" width="1140" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-36" value="" style="endArrow=classic;html=1;rounded=0;fontSize=15;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1420" y="1903.5" as="sourcePoint" />
+            <mxPoint x="-1858" y="2031.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-37" value="chat (callback)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;rotation=344;fontSize=15;" parent="lXd5I3u9zGBROD6FqVUv-36" vertex="1" connectable="0">
+          <mxGeometry x="0.3" y="3" relative="1" as="geometry">
+            <mxPoint x="7" y="-16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-38" value="Klient 1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1890.5" y="2002" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-39" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;response:&lt;/b&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&amp;lt;boolean&amp;gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1275" y="1728" width="175" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-40" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;response:&lt;/b&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&quot;success&quot; / &quot;error&quot;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1761" y="1869" width="175" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-41" value="3" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1067" y="1746" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-42" value="4" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1557" y="1887" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="lXd5I3u9zGBROD6FqVUv-43" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Po otrzymaniu odpowiedzi od klienta 2 (True / False) przekazanie statusu do klienta 1&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1432" y="1934" width="276" height="76.5" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-1" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;border-color: var(--border-color);&quot;&gt;na podstawie otrzymanej odpowiedzi z serwera funkcja sprawdzająca status zwraca true / false&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="182.5" y="2034" width="341" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-2" value="Diagram procesu sprawdzania&lt;br&gt;klucza publicznego innego klienta" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=36;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="-1801" y="2451" width="600" height="98" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-3" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;background-color: initial; font-size: 15px;&quot;&gt;publicKey:&lt;/b&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;klucz publiczny klienta 2&amp;gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1764.5" y="2888" width="186" height="45.75" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-4" value="Klient 1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1880.5" y="2912.25" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-5" value="Serwer" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1420.5" y="3002.25" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-6" value="" style="endArrow=classic;html=1;rounded=0;entryX=-0.023;entryY=0.452;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=15;" parent="1" source="dX6bvoOl2MVWJN_i-BOH-4" target="dX6bvoOl2MVWJN_i-BOH-5" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1650.5" y="3102.25" as="sourcePoint" />
+            <mxPoint x="-1600.5" y="3052.25" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-7" value="checkKey" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=13;labelBackgroundColor=none;fontSize=15;" parent="dX6bvoOl2MVWJN_i-BOH-6" vertex="1" connectable="0">
+          <mxGeometry x="-0.2211" y="1" relative="1" as="geometry">
+            <mxPoint x="75" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-8" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;border-color: var(--border-color);&quot;&gt;weryfikacja poprawności przesłanych danych&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;sprawdzenie czy klient 1 jest uwierzytelniony&lt;/span&gt;&lt;/li&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;jeśli nie &lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: false&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;sprawdzenie w bazie danych, czy klient z otrzymanym kluczem publicznym w niej występuje&lt;/li&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;jeśli tak - klient 2 jest zarejestrowany (&lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: true)&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;jeśli nie - &lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: false&lt;/li&gt;&lt;/ul&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1542.5" y="2853" width="419" height="141" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-9" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.005;exitY=0.594;exitDx=0;exitDy=0;exitPerimeter=0;fontSize=15;" parent="1" source="dX6bvoOl2MVWJN_i-BOH-5" target="dX6bvoOl2MVWJN_i-BOH-11" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1363.5" y="3316.25" as="sourcePoint" />
+            <mxPoint x="-1784.5" y="3167.25" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-10" value="checkKey (callback)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;rotation=344;fontSize=15;" parent="dX6bvoOl2MVWJN_i-BOH-9" vertex="1" connectable="0">
+          <mxGeometry x="0.3" y="3" relative="1" as="geometry">
+            <mxPoint x="7" y="-16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-11" value="Klient 1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1880.5" y="3143.25" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-12" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;response:&lt;/b&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;boolean&amp;gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1807.5" y="3051" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-13" value="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1624.5" y="2944" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-14" value="2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1613.5" y="3053.5" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-15" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;border-color: var(--border-color);&quot;&gt;na podstawie otrzymanej odpowiedzi z serwera funkcja sprawdzająca status klucza zwraca true / false&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1893" y="3232" width="381.5" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-16" value="Klient 2" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="684" y="1473" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-17" value="Serwer" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="293" y="1463" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-18" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="173" y="1562" as="sourcePoint" />
+            <mxPoint x="939" y="1562" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-19" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="663" y="1506" as="sourcePoint" />
+            <mxPoint x="423" y="1506" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-20" value="connect" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=15;labelBackgroundColor=none;" parent="dX6bvoOl2MVWJN_i-BOH-19" vertex="1" connectable="0">
+          <mxGeometry x="-0.1083" y="-1" relative="1" as="geometry">
+            <mxPoint y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-21" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;border-color: var(--border-color);&quot;&gt;klient 2 łączy się z serwerem&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="728" y="1479" width="215" height="37.5" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-22" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;border-color: var(--border-color);&quot;&gt;serwer zapamiętuje skojarzenie:&lt;br&gt;klucz publiczny klienta 2 - SID jego połączenia&amp;nbsp;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="196" y="1399" width="331" height="54.75" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-23" value="Klient 2" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1423" y="2706" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-24" value="Serwer" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1814" y="2696" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-25" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1922.5" y="2812" as="sourcePoint" />
+            <mxPoint x="-1112" y="2812" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-26" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1444" y="2739" as="sourcePoint" />
+            <mxPoint x="-1684" y="2739" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-27" value="registerInit" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=15;labelBackgroundColor=none;" parent="dX6bvoOl2MVWJN_i-BOH-26" vertex="1" connectable="0">
+          <mxGeometry x="-0.1083" y="-1" relative="1" as="geometry">
+            <mxPoint y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-28" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;border-color: var(--border-color);&quot;&gt;klient 2 rejestruje się na serwerze&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1379" y="2712" width="165" height="37.5" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-29" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;border-color: var(--border-color);&quot;&gt;serwer zapisuje jego dane w bazie danych&amp;nbsp;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-1876" y="2639" width="196" height="48.75" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-33" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="-1209.5" y="2999" width="60" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-34" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="dX6bvoOl2MVWJN_i-BOH-33" vertex="1">
+          <mxGeometry y="40" width="60" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-35" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="dX6bvoOl2MVWJN_i-BOH-33" vertex="1">
+          <mxGeometry y="20" width="60" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-36" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="dX6bvoOl2MVWJN_i-BOH-33" vertex="1">
+          <mxGeometry width="60" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-37" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0;exitY=0;exitDx=120;exitDy=50;exitPerimeter=0;entryX=0;entryY=0;entryDx=0;entryDy=30;entryPerimeter=0;" parent="1" target="dX6bvoOl2MVWJN_i-BOH-35" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1299.5" y="3049" as="sourcePoint" />
+            <mxPoint x="-1509.5" y="3109" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-38" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1445" y="2762" as="sourcePoint" />
+            <mxPoint x="-1685" y="2762" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-39" value="registerFollowUp" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=15;labelBackgroundColor=none;" parent="dX6bvoOl2MVWJN_i-BOH-38" vertex="1" connectable="0">
+          <mxGeometry x="-0.1083" y="-1" relative="1" as="geometry">
+            <mxPoint y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-40" value="Diagram procesu zmiany klucza publicznego&lt;br&gt;klienta na serwerze" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=36;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="-464" y="2451" width="784" height="98" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-41" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;background-color: initial; font-size: 15px;&quot;&gt;login:&lt;/b&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;&amp;lt;login klienta&amp;gt;&lt;br&gt;&lt;b&gt;publicKey:&lt;/b&gt;&lt;/span&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;klucz publiczny klienta&amp;gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-357" y="2856" width="186" height="77.75" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-42" value="Klient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-473" y="2912.25" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-43" value="Serwer" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-13" y="3002.25" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-44" value="" style="endArrow=classic;html=1;rounded=0;entryX=-0.023;entryY=0.452;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=15;" parent="1" source="dX6bvoOl2MVWJN_i-BOH-42" target="dX6bvoOl2MVWJN_i-BOH-43" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-243" y="3102.25" as="sourcePoint" />
+            <mxPoint x="-193" y="3052.25" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-45" value="updatePublicKey" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=13;labelBackgroundColor=none;fontSize=15;" parent="dX6bvoOl2MVWJN_i-BOH-44" vertex="1" connectable="0">
+          <mxGeometry x="-0.2211" y="1" relative="1" as="geometry">
+            <mxPoint x="75" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-46" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;border-color: var(--border-color);&quot;&gt;weryfikacja poprawności przesłanych danych&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;sprawdzenie czy klient jest uwierzytelniony&lt;/span&gt;&lt;/li&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;&lt;span style=&quot;background-color: initial; font-size: 15px;&quot;&gt;jeśli nie &lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: false&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;sprawdzenie w bazie danych, czy klient z otrzymanym loginem i kluczem publicznym w niej występuje&lt;/li&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;jeśli tak (i transakcja zmiany klucza publicznego się powiodła) - zwrócenie pozytywnej odpowiedzi (&lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: true)&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;jeśli nie - &lt;b style=&quot;font-size: 15px;&quot;&gt;response&lt;/b&gt;: false&lt;/li&gt;&lt;/ul&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-135" y="2845" width="549" height="149" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-47" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.005;exitY=0.594;exitDx=0;exitDy=0;exitPerimeter=0;fontSize=15;" parent="1" source="dX6bvoOl2MVWJN_i-BOH-43" target="dX6bvoOl2MVWJN_i-BOH-49" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="44" y="3316.25" as="sourcePoint" />
+            <mxPoint x="-377" y="3167.25" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-48" value="updatePublicKey (callback)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;rotation=345;fontSize=15;" parent="dX6bvoOl2MVWJN_i-BOH-47" vertex="1" connectable="0">
+          <mxGeometry x="0.3" y="3" relative="1" as="geometry">
+            <mxPoint x="7" y="-16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-49" value="Klient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-473" y="3143.25" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-50" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;font-size: 15px;&quot;&gt;response:&lt;/b&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;lt;boolean&amp;gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-396" y="3049" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-51" value="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-217" y="2944" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-52" value="2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-206" y="3053.5" width="35" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-53" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;border-color: var(--border-color);&quot;&gt;na podstawie otrzymanej odpowiedzi z serwera funkcja sprawdzająca status klucza zwraca true / false&lt;/li&gt;&lt;li style=&quot;border-color: var(--border-color);&quot;&gt;jeśli odpowiedź była negatywna (false) - nie dochodzi do zmiany klucza także lokalnie&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-485.5" y="3232" width="381.5" height="83" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-54" value="Klient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-15.5" y="2706" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-55" value="Serwer" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-406.5" y="2696" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-56" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-515" y="2812" as="sourcePoint" />
+            <mxPoint x="295.5" y="2812" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-57" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-36.5" y="2739" as="sourcePoint" />
+            <mxPoint x="-276.5" y="2739" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-58" value="registerInit" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=15;labelBackgroundColor=none;" parent="dX6bvoOl2MVWJN_i-BOH-57" vertex="1" connectable="0">
+          <mxGeometry x="-0.1083" y="-1" relative="1" as="geometry">
+            <mxPoint y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-59" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;border-color: var(--border-color);&quot;&gt;klient rejestruje się na serwerze&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="28.5" y="2712" width="165" height="37.5" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-60" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;border-color: var(--border-color);&quot;&gt;serwer zapisuje jego dane w bazie danych&amp;nbsp;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=0;verticalAlign=middle;spacingBottom=0;opacity=70;align=left;labelPosition=center;verticalLabelPosition=middle;spacingLeft=-25;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="-468.5" y="2639" width="196" height="48.75" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-61" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="198" y="2999" width="60" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-62" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="dX6bvoOl2MVWJN_i-BOH-61" vertex="1">
+          <mxGeometry y="40" width="60" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-63" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="dX6bvoOl2MVWJN_i-BOH-61" vertex="1">
+          <mxGeometry y="20" width="60" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-64" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="dX6bvoOl2MVWJN_i-BOH-61" vertex="1">
+          <mxGeometry width="60" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-65" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0;exitY=0;exitDx=120;exitDy=50;exitPerimeter=0;entryX=0;entryY=0;entryDx=0;entryDy=30;entryPerimeter=0;" parent="1" target="dX6bvoOl2MVWJN_i-BOH-63" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="108" y="3049" as="sourcePoint" />
+            <mxPoint x="-102" y="3109" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-66" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-37.5" y="2762" as="sourcePoint" />
+            <mxPoint x="-277.5" y="2762" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dX6bvoOl2MVWJN_i-BOH-67" value="registerFollowUp" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=15;labelBackgroundColor=none;" parent="dX6bvoOl2MVWJN_i-BOH-66" vertex="1" connectable="0">
+          <mxGeometry x="-0.1083" y="-1" relative="1" as="geometry">
+            <mxPoint y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -25,7 +25,6 @@ import {
     getMessagesByContactId,
     markMessagesAsRead,
 } from "../../storage/DataHandlers";
-import { mmkvStorage } from "../../storage/MmkvStorageMiddlewares";
 import styles from "../../Styles";
 import { Contact, TransportedMessage } from "../../Types";
 import { giftedChatMessageToMessage, messageToGiftedChatMessage } from "../../utils/Converters";
@@ -53,6 +52,39 @@ export default function Chat() {
         requestRegister();
     }, []);
 
+    // Get third party's contact info from the db
+    React.useEffect(() => {
+        if (contactId) {
+            (async () => {
+                logger.info(
+                    `[Chat.useEffect] Fetching contact info for contactId=${JSON.stringify(
+                        contactId,
+                    )}.`,
+                );
+
+                const fetchedContact = await getContactById(Number(contactId), sqlDbSession);
+                if (!fetchedContact) {
+                    logger.error(
+                        `[Chat.useEffect] User with contactId=${JSON.stringify(
+                            contactId,
+                        )} not found in storage.`,
+                    );
+                } else {
+                    setContact(fetchedContact);
+                }
+            })();
+        }
+    }, [contactId, sqlDbSession]);
+
+    // First party contact info from the db
+    React.useEffect(() => {
+        logger.info("[Chat.useEffect] Fetching contact info for first party contact.");
+        (async () => {
+            const fetchedFirstPartyContact = await getContactById(0, sqlDbSession);
+            setFirstPartyContact(fetchedFirstPartyContact);
+        })();
+    }, [sqlDbSession]);
+
     // Swap chat event listener from "background" to "foreground"
     React.useEffect(() => {
         logger.info(
@@ -77,15 +109,6 @@ export default function Chat() {
                 if (!sdexEngine) {
                     logger.error(
                         '[socket.on("chat", <foreground listener>)] Crypto context not found. Cannot decrypt message.',
-                    );
-                    callback(false);
-                    return;
-                }
-
-                const firstPartyPrivateKey = mmkvStorage.getString("privateKey");
-                if (!firstPartyPrivateKey) {
-                    logger.error(
-                        '[socket.on("chat", <foreground listener>)] First party private key not found. Cannot decrypt message.',
                     );
                     callback(false);
                     return;
@@ -121,37 +144,58 @@ export default function Chat() {
                         sdexEngine,
                     )}`,
                 );
-                const decryptedMessage = await prepareToIngest(
+                const decryptedMessage = prepareToIngest(
                     message,
                     sdexEngine,
-                    firstPartyPrivateKey,
                     contactFrom.id as number, // if it's fetched from db we know it has an id
                 );
+                if (contactId === decryptedMessage.contactIdFrom) {
+                    decryptedMessage.unread = false;
+                }
                 logger.debug(
                     `[socket.on("chat", <foreground listener>)] Decrypted message=${JSON.stringify(
                         decryptedMessage,
                     )}`,
                 );
 
-                await addMessage(decryptedMessage, sqlDbSession);
-                logger.info(
-                    '[socket.on("chat", <foreground listener>)] Message ingested successfully.',
-                );
+                addMessage(decryptedMessage, sqlDbSession)
+                    .then(() => {
+                        logger.info(
+                            '[socket.on("chat", <foreground listener>)] Message ingested successfully.',
+                        );
+                        logger.debug(
+                            `[socket.on("chat", <foreground listener>)] contact?.id=${JSON.stringify(
+                                contact?.id,
+                            )}, decryptedMessage.contactIdFrom=${decryptedMessage.contactIdFrom}`,
+                        );
 
-                // If incoming message is from the current contact, add it to the chat window
-                if (firstPartyContact && contact?.id === decryptedMessage.contactIdFrom) {
-                    logger.info(
-                        '[socket.on("chat", <foreground listener>)] Adding message to current chat window buffer.',
-                    );
+                        // If incoming message is from the current contact, add it to the chat window
+                        if (
+                            firstPartyContact &&
+                            contact?.id &&
+                            contactId === decryptedMessage.contactIdFrom
+                        ) {
+                            logger.info(
+                                '[socket.on("chat", <foreground listener>)] Adding message to current chat window buffer.',
+                            );
 
-                    const giftedChatMessage = messageToGiftedChatMessage(
-                        decryptedMessage,
-                        contact,
-                        firstPartyContact,
-                    );
-                    setMessages([giftedChatMessage, ...messages]);
-                }
-                callback(true);
+                            const giftedChatMessage = messageToGiftedChatMessage(
+                                decryptedMessage,
+                                contact,
+                                firstPartyContact,
+                            );
+                            setMessages((previousMessages) =>
+                                GiftedChat.append(previousMessages, [giftedChatMessage]),
+                            );
+                        }
+                        callback(true);
+                    })
+                    .catch((error: Error) => {
+                        logger.error(
+                            `[socket.on("chat", <foreground listener>)] Error while ingesting message: ${error.message}`,
+                        );
+                        callback(false);
+                    });
             },
         );
 
@@ -159,42 +203,10 @@ export default function Chat() {
             logger.info(
                 '[Chat.useEffect] Leaving chat window. Swapping "chat" event listener from "foreground" to "background".',
             );
+            socket.removeAllListeners("chat");
             socket.on("chat", outsideChatRoomChatListener);
         };
-    }, []);
-
-    // Get third party's contact info from the db
-    React.useEffect(() => {
-        if (contactId) {
-            (async () => {
-                logger.info(
-                    `[Chat.useEffect] Fetching contact info for contactId=${JSON.stringify(
-                        contactId,
-                    )}.`,
-                );
-
-                const fetchedContact = await getContactById(Number(contactId), sqlDbSession);
-                if (!fetchedContact) {
-                    logger.error(
-                        `[Chat.useEffect] User with contactId=${JSON.stringify(
-                            contactId,
-                        )} not found in storage.`,
-                    );
-                } else {
-                    setContact(fetchedContact);
-                }
-
-                const fetchedFirstPartyContact = await getContactById(0, sqlDbSession);
-                if (!fetchedFirstPartyContact) {
-                    logger.error(
-                        `[Chat.useEffect] First party contact info not found in the database..`,
-                    );
-                } else {
-                    setFirstPartyContact(fetchedFirstPartyContact);
-                }
-            })();
-        }
-    }, [contactId]);
+    }, [firstPartyContact, contact, sqlDbSession, socket]);
 
     function runOnlineCheck(publicKey: string) {
         checkOnline(publicKey)
@@ -213,14 +225,14 @@ export default function Chat() {
             });
     }
 
-    // Check if third party is online - and repeat that check every 10 seconds
+    // Check if third party is online - and repeat that check every 30 seconds
     // eslint-disable-next-line consistent-return
     React.useEffect(() => {
         if (contact?.publicKey) {
             runOnlineCheck(contact.publicKey);
             const interval = setInterval(() => {
                 runOnlineCheck(contact.publicKey);
-            }, 10000);
+            }, 30000);
             return () => clearInterval(interval);
         }
     }, [contact?.publicKey]);
@@ -276,6 +288,7 @@ export default function Chat() {
                     Number(contactId),
                     sqlDbSession,
                 );
+                messagesFromStorage.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
 
                 await markMessagesAsRead(contact.id as number, sqlDbSession);
 
@@ -318,21 +331,35 @@ export default function Chat() {
             logger.info(
                 "[Chat.onSend] Preconditions met. Encrypting and sending messages to third party.",
             );
-            const results = [];
-            // eslint-disable-next-line no-restricted-syntax
-            for (const msg of newMessages) {
-                const message = giftedChatMessageToMessage(msg, contact.id as number);
-                logger.debug(`Sending message=${JSON.stringify(message)}`);
-                results.push(
-                    sendMessage(message, contact.publicKey, sqlDbSession, thirdPartyCryptoEngine),
+            const sendingJobs: Promise<boolean>[] = [];
+            newMessages.forEach((msg) => {
+                const messageConverted = giftedChatMessageToMessage(msg, contact.id as number);
+                logger.debug(
+                    `[Chat.onSend] Creating send job. Message=${JSON.stringify(messageConverted)}`,
                 );
-            }
-            await Promise.all(results);
-            logger.info(
-                `[Chat.onSend] Message sent to server, received status: ${JSON.stringify(
-                    results,
-                )}.`,
-            );
+                sendingJobs.push(
+                    sendMessage(
+                        messageConverted,
+                        contact.publicKey,
+                        sqlDbSession,
+                        thirdPartyCryptoEngine,
+                    ),
+                );
+            });
+
+            const sendingResults = await Promise.allSettled(sendingJobs);
+            if (sendingResults.every((result) => result.status === "fulfilled")) {
+                logger.info(
+                    `[Chat.onSend] Messages sent to server, received status: ${JSON.stringify(
+                        sendingResults,
+                    )}.`,
+                );
+            } else
+                logger.error(
+                    `[Chat.onSend] Some messages failed to send to server, received status: ${JSON.stringify(
+                        sendingResults,
+                    )}.`,
+                );
         } else {
             logger.error(
                 "[Chat.onSend] Unable to send message to server. Some conditions are not met.",
@@ -385,8 +412,6 @@ export default function Chat() {
         }
         return action();
     }
-
-    // const { width, height } = Dimensions.get("window");
 
     return (
         <SafeAreaView className="flex-1">

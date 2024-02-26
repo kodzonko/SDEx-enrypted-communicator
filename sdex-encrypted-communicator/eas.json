@@ -30,6 +30,10 @@
             "ios": {
                 "resourceClass": "m-medium"
             },
+            "android": {
+                "buildType": "apk",
+                "gradleCommand": ":app:assembleRelease"
+            },
             "channel": "production"
         }
     },
