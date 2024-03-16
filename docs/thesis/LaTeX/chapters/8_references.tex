@@ -1,0 +1,17 @@
+\documentclass[
+  toc=listof,
+  ../main.tex
+]{scrreprt}{subfiles}
+\begin{document}
+
+\printbibliography[heading=bibintoc]
+\newpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Spis rysunków} % dodaje wpis do spisu treści
+\listoffigures
+\newpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Spis listingów kodu} % dodaje wpis do spisu treści
+\lstlistoflistings
+
+\end{document}

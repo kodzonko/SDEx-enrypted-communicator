@@ -1,0 +1,26 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\chapter{Podsumowanie}
+
+Osiągnięte zostały cele pracy zdefiniowane w sekcji \ref{sec:goals_of_the_publication}. Zostały stworzone aplikacje mobilna i serwerowa oferujące funkcjonalności wymienione w sekcjach \ref{sec:mobile_application_requirements} i \ref{sec:backend_application_requirements}, oraz wyciągnięto na podstawie tego wnioski opisane w sekcji \ref{sec:conclusions}.
+
+\section{Wnioski po stworzeniu aplikacji}\label{sec:conclusions}
+
+\begin{itemize}
+	\item Wykorzystane algorytmy SDEx są stosunkowo proste w implementacji z wykorzystaniem funkcji bibliotecznej do generowania hashu oraz podstawowych funkcji oferowanych przez język programowania JavaScript (operacje na listach, operacja XOR).
+	\item SDEx jest do pewnego stopnia skalowalny w zakresie długości bloku tekstu podlegającego pojedynczej iteracji szyfrowania / deszyfrowania (ograniczeniem jest tu maksymalna długość hashu jaką można uzyskać) oraz ograniczony jedynie sprzętowo pod względem całkowitej długości tekstu do zaszyfrowania / deszyfrowania - liczba iteracji jest nieograniczona od góry.
+	\item Nowoczesne technologie mobilne pozwalają w prosty sposób wykorzystywać różnorakie funkcjonalności nowoczesnych telefonów (dostęp do pamięci, aparatu, zarządzanie uprawnieniami, udostępnianie plików przy pomocy zainstalowanych aplikacji) dzięki licznym bibliotekom i platformom takim jak Expo.
+	\item Środowisko mobilne stawia pewne wyzwania, szczególnie dla aplikacji wymagającej podtrzymywania połączenia z serwerem do realizacji jej kluczowych funkcjonalności. Możliwość zerwania połączenia oraz utracenia połączenia z lokalną bazą danych wymagają sprawdzania dostępów do tych zasobów w wielu miejscach w aplikacji, co nie stanowi w takim stopniu ryzyka w aplikacji działającej na serwerze.
+	\item Architektura aplikacji działającej w oparciu o interakcję z użytkownikiem w czasie rzeczywistym znacząco różni się od architektury aplikacji serwerowej, która z założenia powinna funkcjonować bez obsługi człowieka.
+\end{itemize}
+
+\subsection{Ocena możliwości wdrożenia zaimplementowanego rozwiązania do środowiska produkcyjnego}
+
+W obecnej formie aplikacja nie nadaje się do wdrożenia na środowisku produkcyjnym, mimo że spełnia postawione wymogi funkcjonalne i oferuje bezpieczną wymianę danych między serwerem i klientem mobilnym. Serwer daje taką możliwość, ale nie został skonfigurowany pod kątem obsługi jednoczesnego ruchu z bardzo wielu urządzeń.
+
+Baza danych SQLite nie daje możliwości zarządzania dostępami dla różnych użytkowników, co w środowisku produkcyjnym również mogłoby być nieakceptowalne.
+
+Klucze RSA serwera przechowywane są lokalnie w niezaszyfrowanych plikach tekstowych, a ich zawartość wczytywana do użytku przez serwer. W rozwiązaniu produkcyjnym klucze powinny być przechowywane w formie zaszyfrowanej lub pobierane z usługi zewnętrznej.
+
+\end{document}

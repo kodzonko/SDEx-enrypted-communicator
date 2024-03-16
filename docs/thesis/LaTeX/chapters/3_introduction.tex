@@ -1,0 +1,67 @@
+\pagestyle{fancy} % this is what you miss
+% \setcounter{page}{1}  % this is not needed as the \pagenumbering{roman} resets the page counter
+\fancyhf{} % to clear the header and the footer simultaneously
+\fancyfoot[OR,EL]{\thepage}   
+\renewcommand{\headrulewidth}{0pt} % to remove the rules
+\renewcommand{\footrulewidth}{0pt} % to remove the rules
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\chapter{Wstęp}
+
+\section{Streszczenie}
+
+Niniejsza praca prezentuje aspekty teoretyczne oraz praktyczne implementacji i wykorzystania algorytmu SDEx w procesie komunikacji między użytkownikami. W celu ilustracji tego zagadnienia została stworzona oraz opisana aplikacja komunikatora mobilnego, w której wiadomości są szyfrowane i deszyfrowane przy użyciu metody SDEx oraz funkcji skrótu BLAKE3.
+
+\textbf{słowa kluczowe:} komunikator, mobilny, szyfrowanie, metoda sdex
+
+\section{Problematyka i zakres pracy}
+Niniejsza praca dotyczy zakresu szyfrowania i bezpieczeństwa komunikacji w Internecie.
+
+Głównym przedmiotem pracy jest stworzenie aplikacji mobilnej umożliwiającej wymianę zaszyfrowanych wiadomości tekstowych między jej użytkownikami.
+
+Podjęcie tego tematu jest istotne ze względu na rosnącą liczbę ataków na komunikatory internetowe, mających na celu podszycie się pod osoby lub instytucje, do których adresat ma zaufanie, a w konsekwencji wzmożone zainteresowanie bezpiecznymi środkami komunikacji za pośrednictwem Internetu. Choć istnieją bezpieczne metody szyfrowanej komunikacji zapewniającej uwierzytelnienie zarówno odbiorcy, jak i nadawcy, jednak są one trudne w użyciu dla osób niezaznajomionych z metodami kryptograficznymi (takimi jak kryptografia klucza publicznego) lub nieznających programów umożliwiających stosowanie tych metod. Przez to grupa użytkowników takich narzędzi jest mocno ograniczona.
+
+Istotnym asumptem do wdrożenia aplikacji komunikatora z wykorzystaniem szyfrowania SDEx oraz funkcji skrótu BLAKE w wersji 3 jest także wysoka wydajność szyfrowania przy pomocy tych technologii oraz skalowalność tej wydajności w środowisku przetwarzania współbieżnego, które jest obecnie powszechne w nowoczesnych telefonach komórkowych.
+
+Pewne znaczenie w podejściu do tematu ma ogromna popularność platform społecznościowych umożliwiających publikowanie zdjęć dla wybranych grup użytkowników (na przykład znajomi, znajomi znajomych lub wszyscy zarejestrowani użytkownicy platformy). Wykorzystując tę funkcjonalność użytkownicy stworzonego komunikatora mogą publikować swoje klucze publiczne w postaci wygenerowanego przez aplikację obrazka z kodem QR w galeriach zdjęć na swoich profilach, tym samym udostępniając je swoim znajomym i zachęcając do kontaktu przy pomocy stworzonego komunikatora.
+
+Efektem pracy jest działająca aplikacja mobilna (aplikacja kliencka) i aplikacja serwerowa obsługująca przekazywanie wiadomości między użytkownikami oraz wnioski wyciągnięte z pracy nad wymienionymi produktami.
+\vfill
+
+\section{Cele pracy}\label{sec:goals_of_the_publication}
+\begin{enumerate}
+	\item Stworzenie działającego komunikatora tekstowego na urządzenia mobilne.
+	\item Stworzenie oprogramowania serwerowego umożliwiającego uwierzytelnianie użytkowników oraz wymianę wiadomości pomiędzy klientami mobilnymi.
+	\item Ocena możliwości wdrożenia zaimplementowanego rozwiązania do środowiska produkcyjnego.
+\end{enumerate}
+
+\section{Analiza wymagań funkcjonalnych aplikacji}
+\subsection{Dla aplikacji mobilnej}\label{sec:mobile_application_requirements}
+\begin{enumerate}
+	\item Aplikacja obsługiwana przez klienta końcowego (użytkownika aplikacji) winna być w stanie samodzielnie (tzn. bez wymiany informacji z serwerem) obsługiwać proces szyfrowania i deszyfrowania wiadomości przekazywanych do serwera i od niego otrzymywanych.
+	\item Aplikacja ma odpowiadać za generowanie pary kluczy RSA (prywatnego i publicznego) służących do kryptografii klucza publicznego (kryptografii asymetrycznej).
+	\item Aplikacja ma być w stanie generować kody QR zawierające klucz publiczny użytkownika oraz eksportować je w formie obrazu rastrowego.
+	\item Aplikacja musi być wstanie skanować obrazki z takimi kodami QR przy pomocy aparatu, w jaki wyposażony jest telefon komórkowy klienta i wczytywać zakodowany w tym kodzie klucz publiczny RSA innego użytkownika.
+	\item Aplikacja musi posiadać możliwość rejestracji i logowania klienta, zarówno lokalnie, czyli uwierzytelnienie i autoryzacja dające dostęp do funkcjonalności aplikacji i danych przechowywanych w jej pamięci, jak i zdalnie, czyli uwierzytelnienia użytkownika z danym loginem i kluczem publicznym na serwerze oraz uzyskania na nim uprawnień do niektórych chronionych funkcjonalności, takich jak wymiana wiadomości.
+	\item Wymagana jest możliwość zmiany informacji użytkownika oraz jego kontaktów - ich nazw oraz kluczy a także możliwość dodawania i usuwania kontaktów.
+	\item Aplikacja musi być w stanie nawiązywać połączenie internetowe z serwerem i wysyłać oraz odbierać od niego wiadomości w sposób bezpieczny (tzn. szyfrując wrażliwe dane).
+\end{enumerate}
+
+\subsection{Dla aplikacji serwerowej}\label{sec:backend_application_requirements}
+\begin{enumerate}
+	\item Aplikacja serwerowa winna działać w sposób bezobsługowy, to jest po jej wdrożeniu na serwerze i uruchomieniu powinna bez konieczności czynnej obsługi administratora obsługiwać komunikację z klientami mobilnymi zgodnie z przewidzianymi scenariuszami działania.
+	\item Aplikacja musi działać w sposób scentralizowany tzn. jedna instancja aplikacji musi być w stanie obsługiwać równocześnie, w granicach przewidzianego obciążenia, wielu klientów mobilnych.
+	\item Aplikacja ma komunikować się z klientami zewnętrznymi (tzn. oprogramowaniem operującym na innych urządzeniach) w sposób bezpieczny, czyli przesyłając wrażliwe dane w formie zaszyfrowanej.
+	\item Aplikacja powinna być możliwie bezstanowa, tzn. przechowywać minimalną ilość informacji o użytkownikach i dane jedynie aktywnych sesji. Dane o zakończonych sesjach oraz historia wymienianych wiadomości ma nie być zapamiętywana.
+	\item Serwer powinien być w stanie uwierzytelniać użytkownika na podstawie jego loginu weryfikując przy tym, że użytkownik z zarejestrowanym loginem i kluczem publicznym posiada pasujący do niego klucz prywatny. Klucz prywatny użytkownika nie może jednak być przechowywany (ani nawet wysyłany) do serwera.
+	\item Autoryzacja ma być możliwa zarówno w procesie początkowego rejestrowania użytkownika na serwerze, jak i przy kolejnych żądaniach logowania na serwerze.
+	\item Serwer musi autoryzować użytkownika wykonującego niektóre zastrzeżone operacje (takie jak wysyłanie wiadomości), tzn. sprawdzać czy połączony użytkownik wykonujący zapytanie jest zarejestrowany na serwerze.
+	\item Serwer ma umożliwiać przesyłanie wiadomości między klientami, tzn. przekazywać otrzymaną od jednego z klientów wiadomość do klienta wskazanego jako odbiorca wiadomości (i tylko do niego).
+	\item Serwer ma nie ingerować w żaden sposób w proces deszyfrowania wiadomości przez klienta-adresata wiadomości.
+	\item Serwer ma umożliwiać sprawdzanie stanu połączenia (połączony / nie połączony) wybranego klienta na żądanie innego klienta.
+	\item Serwer ma umożliwiać zmianę klucza publicznego danego klienta na żądanie tego klienta, jednak w taki sposób, aby żaden klient nie mógł wykonać tej operacji dla osoby trzeciej.
+	\item Serwer powinien realizować na żądanie użytkownika weryfikacji, czy dany klucz publiczny jest zarejestrowany na serwerze.
+\end{enumerate}
+
+\end{document}

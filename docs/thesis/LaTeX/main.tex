@@ -1,0 +1,192 @@
+\documentclass[a4paper, 12pt, headsepline, twoside]{report}
+
+\usepackage{subfiles}
+
+% obsługa języka polskiego
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Marginesy
+\usepackage[paperwidth=210mm, 
+        paperheight=297mm,
+        inner=30mm,
+        outer=20mm,
+        top=25mm,
+        bottom=25mm
+        %,showframe
+      ]
+      {geometry}
+\usepackage{flushend} % For aligning content at the top ???????
+\usepackage{graphicx}
+\usepackage{subfig}
+\graphicspath{ {images/} }
+
+\usepackage{amsmath}
+\usepackage{float}
+
+% znak konkatenacji stringów
+\newcommand\mdoubleplus{\mathbin{+\mkern-10mu+}}
+% Dodawanie źródła obrazków
+\usepackage[justification=centering]{caption}
+\newcommand{\source}[1]{\caption*{Źródło: {#1}} }
+
+% Spis treści wciśnięty na pojedynczą stronę
+% \addtocontents{toc}{\protect\enlargethispage{\baselineskip}}
+
+% Dodawanie pustej strony
+\def\blankpage{%
+\newpage
+\
+\newpage}
+
+% strona A4 poziomo
+\usepackage{pdflscape}
+
+\usepackage[usenames,dvipsnames]{xcolor}
+
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+% listingi kodu
+\usepackage{csquotes}
+\usepackage{listings}
+\usepackage{pythonhighlight}
+\renewcommand\lstlistingname{Listing kodu}
+\renewcommand\lstlistlistingname{Spis listingów kodu}
+\lstnewenvironment{mypython}[1][]{\lstset{style=mypython,#1}}{}
+
+\newcommand{\code}[1]{\lstinline{#1}}
+
+% ręczne dodawanie wpisów do spisu treści
+\usepackage{tocloft}
+
+% komendy w shellu
+\lstdefinestyle{BashInputStyle}{
+  language=bash,
+  basicstyle=\small\sffamily,
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=3pt,
+  frame=tb,
+  columns=fullflexible,
+  backgroundcolor=\color{White},
+  linewidth=0.9\linewidth,
+  xleftmargin=0.1\linewidth
+}
+
+\lstdefinelanguage{JavaScript}{
+  keywords={abstract, any, as, boolean, break, case, catch, class, console, 
+    const, continue, debugger, declare, default, delete, do, else, enum, export, 
+    extends, false, finally, for, from, function, get, if, implements, import, in, 
+    infer, instanceof, interface, keyof, let, module, namespace, never, new, null, 
+    number, object, package, private, protected, public, readonly, require, return, 
+    set, static, string, super, switch, symbol, this, throw, true, try, type, typeof, 
+    undefined, unique, unknown, var, void, while, with, yield},
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  sensitive=true
+}
+
+\lstset{
+   language=JavaScript,
+   backgroundcolor=\color{white},
+   extendedchars=true,
+   basicstyle=\footnotesize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+   numbers=left,
+   numberstyle=\footnotesize,
+   numbersep=9pt,
+   tabsize=2,
+   frame=single,
+   breaklines=true,
+   showtabs=false,
+   captionpos=b
+}
+
+\lstset{literate=%
+{ą}{{\k{a}}}1
+{ł}{{\l{}}}1 
+{ń}{{\'n}}1 
+{ę}{{\k{e}}}1 
+{ś}{{\'s}}1 
+{ż}{{\.z}}1 
+{ó}{{\'o}}1 
+{ź}{{\'z}}1 
+{Ą}{{\k{A}}}1 
+{Ł}{{\L{}}}1 
+{Ń}{{\'N}}1 
+{Ę}{{\k{E}}}1 
+{Ś}{{\'S}}1 
+{Ż}{{\.Z}}1 
+{Ó}{{\'O}}1 
+{Ź}{{\'Z}}1 
+}
+
+% wstawianie stron(y) z pdfa
+\usepackage{pdfpages}
+
+% bibliografia i załączniki
+\usepackage{biblatex}
+\addbibresource{bibliography.bib}
+\usepackage[page,toc,titletoc,title]{appendix}
+\usepackage{tocloft}
+\usepackage{indentfirst} % pierwszy paragraf po tytule sekcji ma wcięcie
+
+% klikalne linki
+\usepackage[hidelinks]{hyperref}
+
+% Redefine \raggedbottom to align content at the top of the page
+\makeatletter
+\def\@textbottom{\vskip \z@ \@plus 1fil}
+\let\@texttop\relax
+\let\@textfloatsheight\relax
+\makeatother
+\raggedbottom
+
+% puste strony bez numeracji (\cleardoublepage)
+\usepackage{emptypage}
+
+% numeracja stron po zewnętrznej stronie stopki
+\usepackage{fancyhdr}
+\usepackage{titleps}
+\renewpagestyle{plain}{%
+\sethead{}{}{}
+\setfoot[\thepage][][]{}{}{\thepage}
+}%
+ \pagestyle{plain}
+
+
+% metadane
+\title{Bezpieczny komunikator wykorzystujący metodę
+szyfrowania SDEx z zastosowaniem funkcji skrótu
+BLAKE}
+\author{Jan Wądołowski}
+\date{February 2024}
+
+\begin{document}
+
+\includepdf[pages={1}]{chapters/1_titlepage.pdf}
+\cleardoublepage
+\subfile{chapters/2_table_of_contents.tex}
+\subfile{chapters/3_introduction.tex}
+\subfile{chapters/4_theory.tex}
+\subfile{chapters/5_practice.tex}
+\subfile{chapters/6_developer_documentation.tex}
+\subfile{chapters/7_summary.tex}
+\subfile{chapters/8_references.tex}
+
+\end{document}
