@@ -6,7 +6,9 @@
 <img height="300" src=./docs/app%20screenshots/ss_chat_screen.jpg/>
 <img height="300" src=./docs/app%20screenshots/ss_contact_edit_screen.jpg/>
 </p>
-The thesis and app UI is in Polish, logs and comments in code are in English.
+
+| :exclamation: | The thesis and app UI is in Polish, logs and comments in code are in English.       |
+|---------------|:------------------------------------------------------------------------------------|
 
 ## Core functionalities
 
@@ -54,4 +56,5 @@ uvicorn main:app --reload
 - Pydantic
 - SQLite
 
-App has only been tested on Android emulators and physical device, iOS hasn't been tested.
+| :exclamation: | App has only been tested on Android emulators and physical device, iOS hasn't been tested.       |
+|---------------|:-------------------------------------------------------------------------------------------------|
