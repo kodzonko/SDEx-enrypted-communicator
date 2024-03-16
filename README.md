@@ -17,8 +17,9 @@
 cd <PROJECT_ROOT>/sdex-encrypted-communicator
 npm install
 npm start
-next press <a> to open in an avd (needs to be created beforehand)
 ```
+
+next press <a> to open in an avd (needs to be created beforehand)
 
 ### Server
 
