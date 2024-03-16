@@ -1,7 +1,11 @@
 # BSc thesis project - encrypted mobile communicator app using SDEx encryption method
 
-![chat_rooms_screen](./docs/app screenshots/ss_chat_rooms_screen.jpg)
-
+<p align="center">
+<img height="300" src=./docs/app%20screenshots/ss_registration_screen.jpg/>
+<img height="300" src=./docs/app%20screenshots/ss_chat_rooms_screen.jpg/>
+<img height="300" src=./docs/app%20screenshots/ss_chat_screen.jpg/>
+<img height="300" src=./docs/app%20screenshots/ss_contact_edit_screen.jpg/>
+</p>
 The thesis and app UI is in Polish, logs and comments in code are in English.
 
 ## Core functionalities
